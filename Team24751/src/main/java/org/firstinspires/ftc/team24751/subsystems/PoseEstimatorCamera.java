@@ -13,11 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PoseEstimatorCamera {
-    String cameraName = "FieldWideCamera";
+    String cameraName;
     AprilTagProcessor aprilTag;
     VisionPortal visionPortal;
 
-
+    PoseEstimatorCamera(String cameraName)
+    {
+        this.cameraName =  cameraName;
+    }
     public VectorF cameraLoop() {
         float decisionMarginSum = 0;
         ArrayList<Pair<VectorF, Float>> robotPoseResult = new ArrayList<>();
