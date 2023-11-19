@@ -78,6 +78,23 @@ public class Constants {
         // factor that multiplies strafe velocity to compensate for slip;
         // increase it to boost the distance traveled in the strafe direction
         public static final double LATERAL_MULTIPLER = 1;
+
+        // Gain constants
+        public static final double AXIAL_GAIN = 300*MM_TO_INCH;
+        public static final double LATERAL_GAIN = 300*MM_TO_INCH;
+        public static final double HEADING_GAIN = Math.PI/2;
+        public static final double AXIAL_VEL_GAIN = 150*MM_TO_INCH;
+        public static final double LATERAL_VEL_GAIN = 150*MM_TO_INCH;
+        public static final double HEADING_VEL_GAIN = Math.PI/4;
+
+        // Constrain
+        public static final double MAX_WHEEL_VEL = 50;
+        public static final double MIN_PROFILE_ACCEL = -30;
+        public static final double MAX_PROFILE_ACCEL = 50;
+
+        // turn profile parameters (in radians)
+        public static final double MAX_ANG_VEL = Math.PI; // shared with path
+        public static final double MAX_ANG_ACCEL = Math.PI;
     }
 
     /**

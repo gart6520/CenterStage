@@ -1,5 +1,5 @@
 /*
- * Main class for GART 24751's FTC code
+ * Main manual drive OpMode for GART 24751's FTC code
  * Written by gvl610
  * Date created: 9/11/2023
  */
@@ -26,6 +26,9 @@ public class Manual extends LinearOpMode {
     // Subsystem objects
     private Gyro gyro = new Gyro(this);
     private Drivebase drivebase = new Drivebase(this, gyro);
+
+    // Mode flags
+    private boolean manualDrivebase = true; // True if drivebase control mode is set to manual drive
 
     @Override
     public void runOpMode() {
@@ -54,14 +57,24 @@ public class Manual extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            // Get joystick axis values
-            // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
-            double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y; // Y axis is inverted
-            double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X;
-            double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z;
+            // Control drivebase manually if the manualDrivebase flag is true
+            if (manualDrivebase) {
+                // Get joystick axis values
+                // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
+                double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y; // Y axis is inverted
+                double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X;
+                double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z;
 
-            // Drive
-            drivebase.drive(left_x, left_y, right_x);
+                // Drive
+                drivebase.drive(left_x, left_y, right_x);
+            }
+
+            // TODO: Implement buttons for mechanisms and semi-auto drive
+            // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
+            // RUN_USING_ENCODER mode (using drivebase.resetRunUsingEncoder())
+            // before following any trajectory, and MUST be reset back to
+            // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
+            // after finishing the trajectory
 
             // Show elapsed run time
             telemetry.addData("Status", "Run Time: " + runtime.toString());
