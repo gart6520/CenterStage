@@ -77,13 +77,30 @@ public class Constants {
         // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
         // For https://www.gobilda.com/strafer-chassis-kit-96mm-mecanum-wheels/ kit,
         // track width should be [PLACEHOLDER] and wheelbase distance should be 336mm
-        public static final double TRACK_WIDTH = 420.8*MM_TO_INCH;
+        public static final double TRACK_WIDTH = 413.2*MM_TO_INCH;
         public static final double WHEELBASE_DISTANCE = 336*MM_TO_INCH;
 
         // Lateral multipler
         // factor that multiplies strafe velocity to compensate for slip;
         // increase it to boost the distance traveled in the strafe direction
         public static final double LATERAL_MULTIPLER = 1;
+
+        // Gain constants
+        public static final double AXIAL_GAIN = 300*MM_TO_INCH;
+        public static final double LATERAL_GAIN = 300*MM_TO_INCH;
+        public static final double HEADING_GAIN = Math.PI/2;
+        public static final double AXIAL_VEL_GAIN = 150*MM_TO_INCH;
+        public static final double LATERAL_VEL_GAIN = 150*MM_TO_INCH;
+        public static final double HEADING_VEL_GAIN = Math.PI/2;
+
+        // Constrain
+        public static final double MAX_WHEEL_VEL = 300*MM_TO_INCH;
+        public static final double MIN_PROFILE_ACCEL = -150*MM_TO_INCH;
+        public static final double MAX_PROFILE_ACCEL = 150*MM_TO_INCH;
+
+        // turn profile parameters (in radians)
+        public static final double MAX_ANG_VEL = Math.PI; // shared with path
+        public static final double MAX_ANG_ACCEL = Math.PI;
     }
 
     /**
