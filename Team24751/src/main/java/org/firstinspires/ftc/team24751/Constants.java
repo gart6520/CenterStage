@@ -2,10 +2,14 @@ package org.firstinspires.ftc.team24751;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
+import java.util.ArrayList;
+
 public class Constants {
     // Some general constants
     public static final double INCH_TO_MM = 25.4;
     public static final double MM_TO_INCH = 1/INCH_TO_MM;
+    public static final double M_TO_INCH = MM_TO_INCH * 1000;
+
 
     /**
      * Device names
@@ -20,6 +24,8 @@ public class Constants {
 
         // Sensors
         public static final String IMU_NAME = "IMU";
+
+        //Camera
     }
 
     /**
@@ -50,7 +56,7 @@ public class Constants {
         // You don't need to worry about a bunch of constants, a good Java compiler will optimize this
 
         // Pulse per revolution
-        public static final double BASE_ENCODER_PPR = ((((1+(46/17))) * (1+(46/11))) * 28);
+        public static final double BASE_ENCODER_PPR = ((((1+(46.0/17))) * (1+(46.0/11))) * 28);
 
         // Counts per pulse
         public static final double BASE_ENCODER_CPP = 4;
@@ -88,5 +94,29 @@ public class Constants {
         public static final double SENSE_X = 0.15;
         public static final double SENSE_Y = 0.15;
         public static final double SENSE_Z = 0.15;
+
+        //Apriltag marginDecision threshold
+        public static final double MARGIN_DECISION_THRESHOLD = 0.1;
+    }
+    /**
+    * Field related parameters
+    * */
+    public static class FIELD_PARAMETER
+    {
+        public FIELD_PARAMETER()
+        {
+            //TODO Add Appropriate April Tag ID
+            BIG_APRIL_TAG_ID.add(1);
+            BIG_APRIL_TAG_ID.add(2);
+        }
+        public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
+    }
+
+    /**
+     * Initial values which doesn't fit above categories
+     */
+    public static class INIT_VALUE
+    {
+        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE = 0;
     }
 }

@@ -1,52 +1,73 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.sun.tools.javac.util.Pair;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import com.acmerobotics.roadrunner.Vector2d;
+
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.*;
+import static org.firstinspires.ftc.team24751.Constants.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 public class PoseEstimatorCamera {
     String cameraName;
     AprilTagProcessor aprilTag;
     VisionPortal visionPortal;
+    LinearOpMode linearOpMode;
 
-    PoseEstimatorCamera(String cameraName)
-    {
-        this.cameraName =  cameraName;
+    public PoseEstimatorCamera(String cameraName, LinearOpMode linearOpMode) {
+        this.cameraName = cameraName;
+        this.linearOpMode = linearOpMode;
     }
-    public VectorF cameraLoop() {
-        float decisionMarginSum = 0;
-        ArrayList<Pair<VectorF, Float>> robotPoseResult = new ArrayList<>();
+
+    //Null if no result or result too unreliable
+    public Vector2d cameraLoop() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        if (currentDetections.isEmpty()) return null;
+        float decisionMarginSum = 0;
+        ArrayList<Pair<Vector2d, Float>> robotPoseResult = new ArrayList<>();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata == null) continue;
             decisionMarginSum += detection.decisionMargin;
             robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection), detection.decisionMargin));
         }
-        VectorF currentPose = new VectorF(0, 0);
-        for (Pair<VectorF, Float> result : robotPoseResult) {
-            currentPose.add(result.fst.multiplied(result.snd / decisionMarginSum));
+        if (decisionMarginSum < MARGIN_DECISION_THRESHOLD) return null;
+        Vector2d currentPose = new Vector2d(0, 0);
+        for (Pair<Vector2d, Float> result : robotPoseResult) {
+            currentPose = currentPose.plus(result.fst.times(result.snd / decisionMarginSum));
         }
         return currentPose;
     }
 
-    private VectorF getCameraPoseFromApriltagDetection(AprilTagDetection detection) {
-        VectorF pos = detection.metadata.fieldPosition;
-        VectorF aprilTagPose = new VectorF(pos.get(0), pos.get(1));
-        VectorF cameraToApriltag = new VectorF((float) detection.ftcPose.x, (float) detection.ftcPose.y);
-        return aprilTagPose.subtracted(cameraToApriltag);
+    private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection) {
+        VectorF _pos = detection.metadata.fieldPosition;
+        Vector2d pos = new Vector2d(_pos.get(0), _pos.get(1));
+        Vector2d aprilTagPose = new Vector2d(pos.x, pos.y);
+        float conversionFactor = detection.metadata.distanceUnit == DistanceUnit.METER? (float)M_TO_INCH : 1;
+        Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
+        return aprilTagPose.minus(cameraToApriltag);
     }
 
     public void initAprilTag(HardwareMap hardwareMap) {
-        aprilTag = new AprilTagProcessor.Builder().build();
 
+        aprilTag = new AprilTagProcessor.Builder().setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary()).build();
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
         // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
@@ -63,37 +84,42 @@ public class PoseEstimatorCamera {
                 .addProcessor(aprilTag)
                 .build();
     }
-//      setManualExposure(6, 250);
-//    private void setManualExposure(int exposureMS, int gain) {
-//        // Wait for the camera to be open, then use the controls
-//
-//        if (visionPortal == null) {
-//            return;
-//        }
-//
-//        // Make sure camera is streaming before we try to set the exposure controls
-//        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-//            telemetry.addData("Camera", "Waiting");
-//            telemetry.update();
-//            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-//                sleep(20);
-//            }
-//            telemetry.addData("Camera", "Ready");
-//            telemetry.update();
-//        }
-//
-//        // Set camera controls unless we are stopping.
-//        if (!isStopRequested()) {
-//            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-//            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-//                exposureControl.setMode(ExposureControl.Mode.Manual);
-//                sleep(50);
-//            }
-//            exposureControl.setExposure((long) exposureMS, TimeUnit.MILLISECONDS);
-//            sleep(20);
-//            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-//            gainControl.setGain(gain);
-//            sleep(20);
-//        }
-//    }
+
+    /** Remember to setManualExposure(6, 250); after init
+     *
+     * @param exposureMS exposure
+     * @param gain gain
+     */
+    private void setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!linearOpMode.isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                linearOpMode.sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!linearOpMode.isStopRequested()) {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                linearOpMode.sleep(50);
+            }
+            exposureControl.setExposure((long) exposureMS, TimeUnit.MILLISECONDS);
+            linearOpMode.sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            linearOpMode.sleep(20);
+        }
+    }
 }
