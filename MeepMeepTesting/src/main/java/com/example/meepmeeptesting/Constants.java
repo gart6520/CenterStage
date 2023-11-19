@@ -1,47 +1,9 @@
-package org.firstinspires.ftc.team24751;
-
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+package com.example.meepmeeptesting;
 
 public class Constants {
     // Some general constants
     public static final double INCH_TO_MM = 25.4;
     public static final double MM_TO_INCH = 1/INCH_TO_MM;
-
-    /**
-     * Device names
-     * They are kept here for convenient (eg to quickly change when needed)
-     */
-    public static class DEVICES {
-        // Drivebase motors
-        public static final String LEFT_FRONT = "leftFront";
-        public static final String LEFT_BACK = "leftBack";
-        public static final String RIGHT_FRONT = "rightFront";
-        public static final String RIGHT_BACK = "rightBack";
-
-        // Sensors
-        public static final String IMU_NAME = "IMU";
-    }
-
-    /**
-     * Orientation of some objects
-     * It should be changed to match with the real bot
-     */
-    public static class ORIENTATIONS {
-        // Control Hub orientation
-        public static final RevHubOrientationOnRobot.LogoFacingDirection HUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        public static final RevHubOrientationOnRobot.UsbFacingDirection HUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-    }
-
-    /**
-     * Some speed constants
-     * NOTE: drivebase speed constant should NOT be used with auto. Auto speed are stored separatedly
-     */
-    public static class SPEED {
-        // Drivebase speed
-        public static final double DRIVEBASE_SPEED_Y = 0.8; // Up/down speed
-        public static final double DRIVEBASE_SPEED_X = 0.8; // Left/right speed
-        public static final double DRIVEBASE_SPEED_Z = 0.8; // Rotate speed
-    }
 
     /**
      * Some drivebase constants (for auto and semi-auto)
@@ -95,15 +57,5 @@ public class Constants {
         // turn profile parameters (in radians)
         public static final double MAX_ANG_VEL = Math.PI; // shared with path
         public static final double MAX_ANG_ACCEL = Math.PI;
-    }
-
-    /**
-     * Joystick axis sensitivity
-     */
-    public static class SENSITIVITY {
-        // Joystick sensitivity
-        public static final double SENSE_X = 0.15;
-        public static final double SENSE_Y = 0.15;
-        public static final double SENSE_Z = 0.15;
     }
 }
