@@ -53,11 +53,15 @@ public class AutoLockApriltagServo {
     public void loop(Vector2d cameraPos, double botAngle) {
         //Raw angle from positive Ox
         ArrayList<Double> fieldAngles = new ArrayList<>();
+        botAngle = normaliseAngle(botAngle);
+        double cameraAngle = PWMServoToAngle(servo.getPosition());
+        double globalCameraAngle = normaliseAngle(cameraAngle + botAngle + INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
         for (Vector2d apPos : aprilTagPos) {
             fieldAngles.add(angleToTurn(apPos, cameraPos));
         }
+
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        double targetFieldAngle = fieldAngles.stream().min((a, b) -> Double.compare(a - botAngle - PWMServoToAngle(servo.getPosition()), b - botAngle - PWMServoToAngle(servo.getPosition()))).get();
+        double targetFieldAngle = fieldAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
         double servoAngle = normaliseAngle(targetFieldAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
         if (servoAngle > 300) {
             //Decide if 0 deg (360 deg) or 300 deg is closer
@@ -68,6 +72,6 @@ public class AutoLockApriltagServo {
 
     private double angleToTurn(Vector2d apriltagPos, Vector2d cameraPos) {
         Vector2d cameraToApriltag = apriltagPos.minus(cameraPos);
-        return Math.atan2(cameraToApriltag.y, cameraToApriltag.x);
+        return normaliseAngle(Math.toDegrees(Math.atan2(cameraToApriltag.y, cameraToApriltag.x)));
     }
 }
