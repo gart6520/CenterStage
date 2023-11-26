@@ -199,8 +199,8 @@ public class Drivebase {
         if (max > 1.0) {
             leftFrontPower  /= max;
             rightFrontPower /= max;
-            leftBackPower  /= max;
-            rightBackPower /= max;
+            leftBackPower   /= max;
+            rightBackPower  /= max;
         }
 
         // Set motor power
@@ -217,6 +217,22 @@ public class Drivebase {
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (rad)", pose.position.x, pose.position.y, pose.heading);
         telemetry.update();
+    }
+
+    /**
+     * Drive field-oriented - Mecanum drive
+     * @param xSpeed horizontal speed. Negative is to the left
+     * @param ySpeed vertical speed. Positive is forward
+     * @param zSpeed rotate speed. Negative is rotate counterclockwise
+     */
+    public void driveFieldOriented(double xSpeed, double ySpeed, double zSpeed) {
+        // Rotate the movement direction counter to the bot's rotation
+        double botHeading = gyro.getYaw();
+        double rotX = xSpeed * Math.cos(-botHeading) - ySpeed * Math.sin(-botHeading);
+        double rotY = xSpeed * Math.sin(-botHeading) + ySpeed * Math.cos(-botHeading);
+
+        // Drive
+        drive(rotX, rotY, zSpeed);
     }
 
     /**

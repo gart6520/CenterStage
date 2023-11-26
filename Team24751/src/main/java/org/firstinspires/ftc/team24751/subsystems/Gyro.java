@@ -54,4 +54,11 @@ public class Gyro {
     public double getYaw() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
+
+    /**
+     * Reset the yaw value
+     */
+    public void reset() {
+        imu.resetYaw();
+    }
 }

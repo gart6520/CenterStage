@@ -10,9 +10,11 @@ package org.firstinspires.ftc.team24751.opmodes;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
+import org.firstinspires.ftc.team24751.subsystems.GamepadHelper;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
@@ -26,6 +28,10 @@ public class Manual extends LinearOpMode {
     // Subsystem objects
     private Gyro gyro = new Gyro(this);
     private Drivebase drivebase = new Drivebase(this, gyro);
+
+    // Gamepad helper object
+    GamepadHelper gp1 = new GamepadHelper(gamepad1);
+    GamepadHelper gp2 = new GamepadHelper(gamepad2);
 
     // Mode flags
     private boolean manualDrivebase = true; // True if drivebase control mode is set to manual drive
@@ -44,8 +50,14 @@ public class Manual extends LinearOpMode {
         }
 
         // Init subsystems
+        gp1.init();
+        gp2.init();
         gyro.init();
         drivebase.init();
+
+        // Update gamepad values
+        gp1.update();
+        gp2.update();
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -57,6 +69,10 @@ public class Manual extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
+            // Update gamepad values
+            gp1.update();
+            gp2.update();
+
             // Control drivebase manually if the manualDrivebase flag is true
             if (manualDrivebase) {
                 // Get joystick axis values
@@ -66,7 +82,13 @@ public class Manual extends LinearOpMode {
                 double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z;
 
                 // Drive
-                drivebase.drive(left_x, left_y, right_x);
+                // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
+                drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            }
+
+            // Button for resetting gyro's yaw
+            if (gp1.options_just_pressed) {
+                gyro.reset();
             }
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
