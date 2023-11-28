@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
 import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.MinVelConstraint;
+import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -521,15 +522,23 @@ public class Drivebase {
             // Compute wheel velocity
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
+            // Create feedforward controller for motor speed
+            final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
+
             // Feed the computed velocity to each motors
             // We need to convert from inch/s to motor velocity (tick/s)
-            // This can be done either by feedforward PID or using built-in PID/PIDF feedback controller
+            // This can be done either by feedforward or using built-in PID/PIDF feedback controller
             // provided in the DcMotorEx class
             // Velocity MUST be something that is reachable regardless the battery is full or not
-            leftFront.setVelocity(wheelVels.leftFront.value() / IN_PER_TICK);
+            /*leftFront.setVelocity(wheelVels.leftFront.value() / IN_PER_TICK);
             leftBack.setVelocity(wheelVels.leftBack.value() / IN_PER_TICK);
             rightFront.setVelocity(wheelVels.rightFront.value() / IN_PER_TICK);
-            rightBack.setVelocity(wheelVels.rightBack.value() / IN_PER_TICK);
+            rightBack.setVelocity(wheelVels.rightBack.value() / IN_PER_TICK);*/
+
+            leftFront.setPower(feedforward.compute(wheelVels.leftFront));
+            leftBack.setPower(feedforward.compute(wheelVels.leftBack));
+            rightBack.setPower(feedforward.compute(wheelVels.rightBack));
+            rightFront.setPower(feedforward.compute(wheelVels.rightFront));
 
             // Draw turn for visualization
             Canvas c = p.fieldOverlay();

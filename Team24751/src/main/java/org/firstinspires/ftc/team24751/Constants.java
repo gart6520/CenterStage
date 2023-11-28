@@ -98,13 +98,19 @@ public class Constants {
         public static final double MIN_PROFILE_ACCEL = -150*MM_TO_INCH;
         public static final double MAX_PROFILE_ACCEL = 150*MM_TO_INCH;
 
-        // turn profile parameters (in radians)
+        // Turn profile parameters (in radians)
         public static final double MAX_ANG_VEL = Math.PI; // shared with path
         public static final double MAX_ANG_ACCEL = Math.PI;
+
+        // Drivebase motor feedforward constants
+        // TODO: Tune this to work in real life
+        public static final double kS = 0;
+        public static final double kV = 1.395;
+        public static final double kA = 0.002;
     }
 
     /**
-     * Joystick axis sensitivity
+     * Sensitivity / Threshold
      */
     public static class SENSITIVITY {
         // Joystick sensitivity
@@ -112,7 +118,7 @@ public class Constants {
         public static final double SENSE_Y = 0.15;
         public static final double SENSE_Z = 0.15;
 
-        //Apriltag marginDecision threshold
+        // AprilTag marginDecision threshold
         public static final double MARGIN_DECISION_THRESHOLD = 0.1;
     }
     /**
@@ -122,7 +128,7 @@ public class Constants {
     {
         public FIELD_PARAMETER()
         {
-            //TODO Add Appropriate April Tag ID
+            // TODO: Add Appropriate April Tag ID
             BIG_APRIL_TAG_ID.add(1);
             BIG_APRIL_TAG_ID.add(2);
         }
