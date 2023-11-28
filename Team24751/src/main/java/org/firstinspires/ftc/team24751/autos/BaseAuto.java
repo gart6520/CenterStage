@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
+import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class BaseAuto extends LinearOpMode {
         runtime.reset();
 
         // TODO: add real auto actions here
+
+        // Save the last Pose2d estimated in auto mode, for using in manual mode
+        PoseStorage.setPose(drivebase.pose);
     }
 
     @Override

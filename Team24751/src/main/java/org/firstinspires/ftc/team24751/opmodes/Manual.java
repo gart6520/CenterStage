@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.GamepadHelper;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
+import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
 import java.util.List;
@@ -58,6 +60,9 @@ public class Manual extends LinearOpMode {
         // Update gamepad values
         gp1.update();
         gp2.update();
+
+        // Load last pose from auto mode
+        drivebase.setCurrentPose(PoseStorage.getPose());
 
         // Update status
         telemetry.addData("Status", "Initialized");

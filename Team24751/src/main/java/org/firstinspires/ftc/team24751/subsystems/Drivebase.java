@@ -66,7 +66,7 @@ public class Drivebase {
 
     // Pose
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private Pose2d pose;
+    public Pose2d pose;
 
     // Default constraints
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
@@ -605,5 +605,16 @@ public class Drivebase {
                 defaultVelConstraint, defaultAccelConstraint,
                 0.25, 0.1
         );
+    }
+
+    /**
+     * Set current drivetrain's pose to a specified pose
+     * Useful for:
+     * - Transfering pose state from auto to manual mode
+     * - Update pose using pose from AprilTag
+     * @param pose Pose2d object to set to
+     */
+    public void setCurrentPose(Pose2d pose) {
+        this.pose = pose;
     }
 }
