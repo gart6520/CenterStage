@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.subsystems;
+package org.firstinspires.ftc.team24751.subsystems.vision;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,6 +31,7 @@ public class AutoLockApriltagServo {
         }
     }
 
+    //Must call
     public void initServo() {
         servo = linearOpMode.hardwareMap.get(Servo.class, servoName);
     }
@@ -40,6 +41,9 @@ public class AutoLockApriltagServo {
         return angle / 300;
     }
 
+    /**
+     * Wrap angle to be from 0-360
+     */
     private double normaliseAngle(double angle) {
         while (angle >= 360) angle -= 360;
         while (angle < 0) angle += 360;
