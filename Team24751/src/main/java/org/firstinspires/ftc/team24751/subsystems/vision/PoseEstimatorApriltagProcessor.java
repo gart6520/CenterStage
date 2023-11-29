@@ -17,13 +17,13 @@ import static org.firstinspires.ftc.team24751.Constants.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PoseEstimatorCamera {
+public class PoseEstimatorApriltagProcessor {
 
     AprilTagProcessor aprilTag;
     Camera camera;
     LinearOpMode linearOpMode;
 
-    public PoseEstimatorCamera(Camera camera, LinearOpMode linearOpMode) {
+    public PoseEstimatorApriltagProcessor(Camera camera, LinearOpMode linearOpMode) {
         this.camera = camera;
         this.linearOpMode = linearOpMode;
     }
@@ -52,18 +52,22 @@ public class PoseEstimatorCamera {
 
     private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection, double botAngle) {
         VectorF _pos = detection.metadata.fieldPosition;
-        Vector2d pos = new Vector2d(_pos.get(0), _pos.get(1));
-        Vector2d aprilTagPose = new Vector2d(pos.x, pos.y);
+        //Global Position of apriltag
+        Vector2d aprilTagPos = new Vector2d(_pos.get(0), _pos.get(1));
+        //Convert unit if needed, TODO: Determine unit and convert beforehand
         float conversionFactor = detection.metadata.distanceUnit == DistanceUnit.METER ? (float) M_TO_INCH : 1;
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
+        //XY swapped between april tag reference frame and FTC reference frame
         double radians = Math.toRadians(90 - botAngle);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
+        //Rotate cameraToApriltag vector from the robot perspective (robot based) to
+        //global perspective (field based)
         Vector2d cameraToAprilTagWorld = new Vector2d(
                 cameraToApriltag.x * cos - cameraToApriltag.y * sin,
                 cameraToApriltag.x * sin + cameraToApriltag.y * cos
         );
-        return aprilTagPose.minus(cameraToAprilTagWorld);
+        return aprilTagPos.minus(cameraToAprilTagWorld);
     }
     public void initAprilTagProcessor() {
 

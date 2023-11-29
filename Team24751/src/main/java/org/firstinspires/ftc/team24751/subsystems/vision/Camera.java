@@ -25,7 +25,10 @@ public class Camera {
         this.cameraName = cameraName;
         this.linearOpMode = linearOpMode;
     }
-
+    public void disableProcessor(VisionProcessor processor)
+    {
+        camera.setProcessorEnabled(processor, false);
+    }
     /**
      * Add a processor to the list of processor that will be added to this camera when
      * .buildCamera() happen

@@ -7,8 +7,16 @@ import java.util.ArrayList;
 public class Constants {
     // Some general constants
     public static final double INCH_TO_MM = 25.4;
-    public static final double MM_TO_INCH = 1/INCH_TO_MM;
+    public static final double MM_TO_INCH = 1 / INCH_TO_MM;
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
+
+    //Really important constants
+    public enum AllianceColor
+    {
+        RED, BLUE
+    }
+    //TODO: All AutoOpMode should init this variable to the correct color
+    public static AllianceColor color = AllianceColor.BLUE;
 
 
     /**
@@ -56,7 +64,7 @@ public class Constants {
         // You don't need to worry about a bunch of constants, a good Java compiler will optimize this
 
         // Pulse per revolution
-        public static final double BASE_ENCODER_PPR = ((((1+(46.0/17))) * (1+(46.0/11))) * 28);
+        public static final double BASE_ENCODER_PPR = ((((1 + (46.0 / 17))) * (1 + (46.0 / 11))) * 28);
 
         // Counts per pulse
         public static final double BASE_ENCODER_CPP = 4;
@@ -66,7 +74,7 @@ public class Constants {
 
         // Wheel diameter (in inch)
         // For goBilda's mecanum wheel, the diameter is 96mm
-        public static final double WHEEL_D_IN = 96*MM_TO_INCH;
+        public static final double WHEEL_D_IN = 96 * MM_TO_INCH;
 
         // Inch traveled per tick/count
         // This can either be calculated using the formula, or by measuring
@@ -77,8 +85,8 @@ public class Constants {
         // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
         // For https://www.gobilda.com/strafer-chassis-kit-96mm-mecanum-wheels/ kit,
         // track width should be [PLACEHOLDER] and wheelbase distance should be 336mm
-        public static final double TRACK_WIDTH = 413.2*MM_TO_INCH;
-        public static final double WHEELBASE_DISTANCE = 336*MM_TO_INCH;
+        public static final double TRACK_WIDTH = 413.2 * MM_TO_INCH;
+        public static final double WHEELBASE_DISTANCE = 336 * MM_TO_INCH;
 
         // Lateral multipler
         // factor that multiplies strafe velocity to compensate for slip;
@@ -86,17 +94,17 @@ public class Constants {
         public static final double LATERAL_MULTIPLER = 1;
 
         // Gain constants
-        public static final double AXIAL_GAIN = 300*MM_TO_INCH;
-        public static final double LATERAL_GAIN = 300*MM_TO_INCH;
-        public static final double HEADING_GAIN = Math.PI/2;
-        public static final double AXIAL_VEL_GAIN = 150*MM_TO_INCH;
-        public static final double LATERAL_VEL_GAIN = 150*MM_TO_INCH;
-        public static final double HEADING_VEL_GAIN = Math.PI/2;
+        public static final double AXIAL_GAIN = 300 * MM_TO_INCH;
+        public static final double LATERAL_GAIN = 300 * MM_TO_INCH;
+        public static final double HEADING_GAIN = Math.PI / 2;
+        public static final double AXIAL_VEL_GAIN = 150 * MM_TO_INCH;
+        public static final double LATERAL_VEL_GAIN = 150 * MM_TO_INCH;
+        public static final double HEADING_VEL_GAIN = Math.PI / 2;
 
         // Constrain
-        public static final double MAX_WHEEL_VEL = 300*MM_TO_INCH;
-        public static final double MIN_PROFILE_ACCEL = -150*MM_TO_INCH;
-        public static final double MAX_PROFILE_ACCEL = 150*MM_TO_INCH;
+        public static final double MAX_WHEEL_VEL = 300 * MM_TO_INCH;
+        public static final double MIN_PROFILE_ACCEL = -150 * MM_TO_INCH;
+        public static final double MAX_PROFILE_ACCEL = 150 * MM_TO_INCH;
 
         // Turn profile parameters (in radians)
         public static final double MAX_ANG_VEL = Math.PI; // shared with path
@@ -120,26 +128,41 @@ public class Constants {
 
         // AprilTag marginDecision threshold
         public static final double MARGIN_DECISION_THRESHOLD = 0.1;
+        //TFOD Team prop position threshold
+        // |    Left     |     Center    |      Right      |
+        // min       left-center     center-right         max
+        public static final double TEAM_PROP_LEFT_CENTER = 100;
+        public static final double TEAM_PROP_CENTER_RIGHT = 200;
     }
+
     /**
-    * Field related parameters
-    * */
-    public static class FIELD_PARAMETER
-    {
-        public FIELD_PARAMETER()
-        {
+     * Field related parameters
+     */
+    public static class FIELD_PARAMETER {
+        public FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
             BIG_APRIL_TAG_ID.add(1);
             BIG_APRIL_TAG_ID.add(2);
         }
+
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
     }
 
     /**
      * Initial values which doesn't fit above categories
      */
-    public static class INIT_VALUE
-    {
+    public static class INIT_VALUE {
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE = 0;
+    }
+
+    /**
+     * Constant used for TFOD
+     */
+    public static class TFOD {
+        public static final String TFOD_TEAM_PROP_MODEL_FILE = "TeamPropModelFile.tflite";
+        public static final String[] TFOD_TEAM_PROP_LABELS = {
+                "BlueTeamProp",
+                "RedTeamProp",
+        };
     }
 }

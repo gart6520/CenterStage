@@ -56,17 +56,22 @@ public class AutoLockApriltagServo {
 
     public void loop(Vector2d cameraPos, double botAngle) {
         //Raw angle from positive Ox
-        ArrayList<Double> fieldAngles = new ArrayList<>();
+        ArrayList<Double> globalTargetAngles = new ArrayList<>();
         botAngle = normaliseAngle(botAngle);
+        //Supposed camera angle from last set command (should be close to actual
+        //camera angle if the the servo is fast enough) from the perspective of the robot
         double cameraAngle = PWMServoToAngle(servo.getPosition());
+        //Same as above but now field-wise
         double globalCameraAngle = normaliseAngle(cameraAngle + botAngle + INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
+        //Get all potential target angles to turn to
         for (Vector2d apPos : aprilTagPos) {
-            fieldAngles.add(angleToTurn(apPos, cameraPos));
+            globalTargetAngles.add(angleToTurn(apPos, cameraPos));
         }
 
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        double targetFieldAngle = fieldAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
-        double servoAngle = normaliseAngle(targetFieldAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
+        double globalTargetAngle = globalTargetAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
+        //Angle to set position
+        double servoAngle = normaliseAngle(globalTargetAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
         if (servoAngle > 300) {
             //Decide if 0 deg (360 deg) or 300 deg is closer
             servoAngle = 360 - servoAngle < servoAngle - 300 ? 0 : 300;
