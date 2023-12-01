@@ -70,6 +70,11 @@ public class AutoLockApriltagServo {
 
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
         double globalTargetAngle = globalTargetAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
+        //Actually turn the servo
+        turnToAngle(globalTargetAngle, botAngle);
+    }
+
+    private void turnToAngle(double globalTargetAngle, double botAngle) {
         //Angle to set position
         double servoAngle = normaliseAngle(globalTargetAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
         if (servoAngle > 300) {
