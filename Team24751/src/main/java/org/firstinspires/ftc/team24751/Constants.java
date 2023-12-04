@@ -33,7 +33,12 @@ public class Constants {
         // Sensors
         public static final String IMU_NAME = "IMU";
 
-        //Camera
+        // Camera
+        // WIP
+
+        // LEDs
+        public static final String LED_RED = "led_red";
+        public static final String LED_GREEN = "led_green";
     }
 
     /**
