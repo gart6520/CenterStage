@@ -69,11 +69,18 @@ public class AutoLockApriltagServo {
         }
 
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        double globalTargetAngle = globalTargetAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
+        double globalTargetAngle = selectAngle(globalTargetAngles, globalCameraAngle);
         //Actually turn the servo
         turnToAngle(globalTargetAngle, botAngle);
     }
-
+    /**
+     * @param globalTargetAngles list of potential target angle
+     * @param globalCameraAngle Other param are for additional information that the compare algo might need
+     * */
+    private double selectAngle (ArrayList<Double> globalTargetAngles, double globalCameraAngle)
+    {
+        return globalTargetAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
+    }
     private void turnToAngle(double globalTargetAngle, double botAngle) {
         //Angle to set position
         double servoAngle = normaliseAngle(globalTargetAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE);
