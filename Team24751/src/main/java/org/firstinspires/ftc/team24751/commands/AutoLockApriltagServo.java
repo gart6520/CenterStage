@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.subsystems.vision;
+package org.firstinspires.ftc.team24751.commands;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
