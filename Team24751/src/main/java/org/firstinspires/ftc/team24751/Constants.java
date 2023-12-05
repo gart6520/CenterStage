@@ -132,6 +132,7 @@ public class Constants {
         public static final double SENSE_Z = 0.15;
 
         // AprilTag marginDecision threshold
+        //TODO: tune
         public static final double MARGIN_DECISION_THRESHOLD = 0.1;
         //TFOD Team prop position threshold
         // |    Left     |     Center    |      Right      |
@@ -157,6 +158,7 @@ public class Constants {
      * Initial values which doesn't fit above categories
      */
     public static class INIT_VALUE {
+        //TODO: tune
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE = 0;
     }
 
