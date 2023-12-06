@@ -11,7 +11,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.*;
+import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY .*;
 import static org.firstinspires.ftc.team24751.Constants.*;
 
 import java.util.ArrayList;
@@ -52,23 +52,29 @@ public class PoseEstimatorApriltagProcessor {
 
     private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection, double botAngle) {
         VectorF _pos = detection.metadata.fieldPosition;
+
         //Global Position of apriltag
         Vector2d aprilTagPos = new Vector2d(_pos.get(0), _pos.get(1));
+
         //Convert unit if needed, TODO: Determine unit and convert beforehand
         float conversionFactor = detection.metadata.distanceUnit == DistanceUnit.METER ? (float) M_TO_INCH : 1;
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
+
         //XY swapped between april tag reference frame and FTC reference frame
         double radians = Math.toRadians(90 - botAngle);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
+
         //Rotate cameraToApriltag vector from the robot perspective (robot based) to
         //global perspective (field based)
         Vector2d cameraToAprilTagWorld = new Vector2d(
                 cameraToApriltag.x * cos - cameraToApriltag.y * sin,
                 cameraToApriltag.x * sin + cameraToApriltag.y * cos
         );
+
         return aprilTagPos.minus(cameraToAprilTagWorld);
     }
+
     public void initAprilTagProcessor() {
 
         aprilTag = new AprilTagProcessor.Builder()
