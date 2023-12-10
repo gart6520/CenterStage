@@ -24,16 +24,16 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.team24751.subsystems.rrhelper.Encoder;
-import org.firstinspires.ftc.team24751.subsystems.rrhelper.OverflowEncoder;
-import org.firstinspires.ftc.team24751.subsystems.rrhelper.PositionVelocityPair;
-import org.firstinspires.ftc.team24751.subsystems.rrhelper.RawEncoder;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.DRIVEBASE.*;
@@ -312,6 +312,9 @@ public class Drivebase {
                             rightFrontPosVel.velocity,
                     }).times(IN_PER_TICK)
             ));
+
+            // TODO: reverse encoders if needed
+            // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
             // Update last position and heading
             lastLeftFrontPos = leftFrontPosVel.position;

@@ -35,6 +35,7 @@ public class TestServo extends LinearOpMode {
         // Init angle
         // Angle range is from 0 -> 300
         double angle = 0;
+        double rate = 1;
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
@@ -43,10 +44,17 @@ public class TestServo extends LinearOpMode {
             telemetry.update();
 
             // Set angle
-            servo.setPosition(angle/360.0);
+            servo.setPosition(angle/300.0);
 
-            // Increase by 1 degree
-            angle += 1;
+            // Overflow
+            if (angle >= 300) {
+                rate = -1;
+            } else if (angle <= 0) {
+                rate = 1;
+            }
+
+            // Increase by rate
+            angle += rate;
 
             // Delay 50ms
             sleep(50);
