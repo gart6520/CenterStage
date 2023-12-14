@@ -216,7 +216,6 @@ public class Drivebase {
         // Show realtime info
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (rad)", pose.position.x, pose.position.y, pose.heading);
         telemetry.update();
     }
 
@@ -323,6 +322,12 @@ public class Drivebase {
             lastRightFrontPos = rightFrontPosVel.position;
             lastHeading = heading;
 
+            /*telemetry.addData("lastLeftFrontPos", lastLeftFrontPos);
+            telemetry.addData("lastLeftBackPos", lastLeftBackPos);
+            telemetry.addData("lastRightFrontPos", lastRightFrontPos);
+            telemetry.addData("lastRightBackPos", lastRightBackPos);
+            telemetry.update();*/
+
             // Return
             return new Twist2dDual<>(
                     twist.line,
@@ -346,6 +351,9 @@ public class Drivebase {
         }
 
         //FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+
+        telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (degree)", pose.position.x, pose.position.y, pose.heading.toDouble()*180/Math.PI);
+        telemetry.update();
 
         return twist.velocity().value();
     }

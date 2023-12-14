@@ -2,7 +2,6 @@ package org.firstinspires.ftc.team24751.subsystems;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Gyro {
     // Useful instances
-    private HardwareMap hardwareMap = null;
+    private LinearOpMode opMode = null;
 
     // IMU instance
     private IMU imu = null;
@@ -23,7 +22,7 @@ public class Gyro {
      * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
      */
     public Gyro(LinearOpMode opMode) {
-        hardwareMap = opMode.hardwareMap;
+        this.opMode = opMode;
     }
 
     /**
@@ -37,7 +36,7 @@ public class Gyro {
      */
     public void init() {
         // Get IMU from hardwareMap
-        imu = hardwareMap.get(IMU.class, IMU_NAME);
+        imu = opMode.hardwareMap.get(IMU.class, IMU_NAME);
 
         // Config IMU
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(HUB_LOGO_DIRECTION, HUB_USB_DIRECTION));

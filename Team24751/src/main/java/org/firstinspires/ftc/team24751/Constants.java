@@ -31,7 +31,7 @@ public class Constants {
         public static final String RIGHT_BACK = "rightBack";
 
         // Sensors
-        public static final String IMU_NAME = "IMU";
+        public static final String IMU_NAME = "imu";
 
         // Camera
         // WIP
@@ -72,10 +72,10 @@ public class Constants {
         public static final double BASE_ENCODER_PPR = ((((1 + (46.0 / 17))) * (1 + (46.0 / 11))) * 28);
 
         // Counts per pulse
-        public static final double BASE_ENCODER_CPP = 4;
+        //public static final double BASE_ENCODER_CPP = 4;
 
         // Count per revolution
-        public static final double BASE_CPR = BASE_ENCODER_PPR * BASE_ENCODER_CPP;
+        //public static final double BASE_CPR = BASE_ENCODER_PPR * BASE_ENCODER_CPP;
 
         // Wheel diameter (in inch)
         // For goBilda's mecanum wheel, the diameter is 96mm
@@ -84,7 +84,7 @@ public class Constants {
         // Inch traveled per tick/count
         // This can either be calculated using the formula, or by measuring
         // The choice is yours
-        public static final double IN_PER_TICK = BASE_CPR / WHEEL_D_IN;
+        public static final double IN_PER_TICK = WHEEL_D_IN*Math.PI / BASE_ENCODER_PPR;
 
         // Track width and wheelbase distance (in inch)
         // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
