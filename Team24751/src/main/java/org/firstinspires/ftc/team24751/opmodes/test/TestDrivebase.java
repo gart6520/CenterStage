@@ -4,7 +4,7 @@
  * Date created: 9/11/2023
  */
 
-package org.firstinspires.ftc.team24751.opmodes.teleop;
+package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
 import com.qualcomm.hardware.lynx.LynxModule;

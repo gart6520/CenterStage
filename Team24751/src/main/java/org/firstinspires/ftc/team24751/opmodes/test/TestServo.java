@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.opmodes.teleop;
+package org.firstinspires.ftc.team24751.opmodes.test;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
