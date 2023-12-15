@@ -29,7 +29,7 @@ public class PoseEstimatorApriltagProcessor {
     }
 
     //Null if no result or result too unreliable
-    public Vector2d getCurrentPoseFromApriltag(double botAngle) {
+    public Vector2d getCurrentPoseFromApriltag(double botAngleDeg) {
         //Get april tag detection
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         if (currentDetections.isEmpty()) return null;
@@ -39,7 +39,7 @@ public class PoseEstimatorApriltagProcessor {
             if (detection.metadata == null) continue;
             decisionMarginSum += detection.decisionMargin;
             //Storing the pose from the detection and its decision margin
-            robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection, botAngle), detection.decisionMargin));
+            robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection, botAngleDeg), detection.decisionMargin));
         }
         if (decisionMarginSum < MARGIN_DECISION_THRESHOLD) return null;
         Vector2d currentPose = new Vector2d(0, 0);
@@ -50,7 +50,7 @@ public class PoseEstimatorApriltagProcessor {
         return currentPose;
     }
 
-    private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection, double botAngle) {
+    private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection, double botAngleDeg) {
         VectorF _pos = detection.metadata.fieldPosition;
 
         //Global Position of apriltag
@@ -61,7 +61,7 @@ public class PoseEstimatorApriltagProcessor {
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
 
         //XY swapped between april tag reference frame and FTC reference frame
-        double radians = Math.toRadians(90 - botAngle);
+        double radians = Math.toRadians(90 - botAngleDeg);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
 

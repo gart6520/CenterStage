@@ -21,7 +21,7 @@ public class Camera {
     private final LinearOpMode linearOpMode;
     private final ArrayList<VisionProcessor> inQueueProcessors = new ArrayList<>();
 
-    Camera(String cameraName, LinearOpMode linearOpMode) {
+    public Camera(String cameraName, LinearOpMode linearOpMode) {
         this.cameraName = cameraName;
         this.linearOpMode = linearOpMode;
     }
@@ -38,7 +38,7 @@ public class Camera {
     }
 
     /**
-     * Remember to add all processor (aka init all camera related class) before build the camera
+     * Remember to add all processor (aka init all processor related class) before build the camera
      */
     public void buildCamera() {
         VisionPortal.Builder cameraBuilder = new VisionPortal.Builder()

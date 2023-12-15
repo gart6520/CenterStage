@@ -227,7 +227,7 @@ public class Drivebase {
      */
     public void driveFieldOriented(double xSpeed, double ySpeed, double zSpeed) {
         // Rotate the movement direction counter to the bot's rotation
-        double botHeading = gyro.getYaw();
+        double botHeading = gyro.getYawRad();
         double rotX = xSpeed * Math.cos(-botHeading) - ySpeed * Math.sin(-botHeading);
         double rotY = xSpeed * Math.sin(-botHeading) + ySpeed * Math.cos(-botHeading);
 
@@ -261,7 +261,7 @@ public class Drivebase {
             resetEncoder();
 
             // Get last heading
-            lastHeading = Rotation2d.exp(gyro.getYaw());
+            lastHeading = Rotation2d.exp(gyro.getYawRad());
         }
 
         /**
@@ -289,7 +289,7 @@ public class Drivebase {
             PositionVelocityPair rightBackPosVel = rightBackEncoder.getPositionAndVelocity();
 
             // Get heading delta
-            Rotation2d heading = Rotation2d.exp(gyro.getYaw());
+            Rotation2d heading = Rotation2d.exp(gyro.getYawRad());
             double headingDelta = heading.minus(lastHeading);
 
             // Compute twist

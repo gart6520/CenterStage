@@ -34,6 +34,8 @@ public class Constants {
         public static final String IMU_NAME = "imu";
 
         // Camera
+        public static final String FIELD_CAMERA_NAME = "fieldCamera";
+        public static final String FOOT_CAMERA_NAME = "footCamera";
         // WIP
 
         // LEDs
@@ -159,7 +161,9 @@ public class Constants {
      */
     public static class INIT_VALUE {
         //TODO: tune
-        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE = 0;
+        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
+        //TODO: Change based on starting location
+        public static final double INITIAL_BOT_ANGLE_DEG = 90;
     }
 
     /**

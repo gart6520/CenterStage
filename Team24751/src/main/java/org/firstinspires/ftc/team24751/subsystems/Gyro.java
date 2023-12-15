@@ -5,9 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG;
 import static org.firstinspires.ftc.team24751.Constants.ORIENTATIONS.*;
+import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team24751.Utility;
 
 public class Gyro {
     // Useful instances
@@ -19,6 +22,7 @@ public class Gyro {
     /**
      * Gyro class for getting data from IMU
      * (Sorry it's just my convention to call it gyro)
+     *
      * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
      */
     public Gyro(LinearOpMode opMode) {
@@ -48,10 +52,18 @@ public class Gyro {
 
     /**
      * Get yaw from gyro
+     *
      * @return Yaw angle, in radian
      */
-    public double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    public double getYawRad() {
+        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.toRadians(INITIAL_BOT_ANGLE_DEG), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
+    }/**
+     * Get yaw from gyro
+     *
+     * @return Yaw angle, in degree
+     */
+    public double getYawDeg() {
+        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + INITIAL_BOT_ANGLE_DEG, Utility.WRAP_ANGLE_TYPE.minus180To180);
     }
 
     /**
