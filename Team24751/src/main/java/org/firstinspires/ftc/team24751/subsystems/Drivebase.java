@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
@@ -58,6 +60,9 @@ public class Drivebase {
     private DcMotorEx leftBack = null;
     private DcMotorEx rightFront = null;
     private DcMotorEx rightBack = null;
+
+    // Voltage sensor
+    private VoltageSensor voltageSensor = null;
 
     // Kinematics
     private final MecanumKinematics kinematics = new MecanumKinematics(TRACK_WIDTH, WHEELBASE_DISTANCE, LATERAL_MULTIPLER);
@@ -132,6 +137,9 @@ public class Drivebase {
 
         // Init localizer
         localizer = new DriveLocalizer();
+
+        // Init voltage sensor
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
     /**
@@ -430,15 +438,26 @@ public class Drivebase {
             // Compute wheel velocity
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
+            // Get voltage
+            double voltage = voltageSensor.getVoltage();
+
+            // Create feedforward controller for motor speed
+            final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
+
             // Feed the computed velocity to each motors
             // We need to convert from inch/s to motor velocity (tick/s)
             // This can be done either by feedforward PID or using built-in PID/PIDF feedback controller
             // provided in the DcMotorEx class
             // Velocity MUST be something that is reachable regardless the battery is full or not
-            leftFront.setVelocity(wheelVels.leftFront.value() / IN_PER_TICK);
+            /*leftFront.setVelocity(wheelVels.leftFront.value() / IN_PER_TICK);
             leftBack.setVelocity(wheelVels.leftBack.value() / IN_PER_TICK);
             rightFront.setVelocity(wheelVels.rightFront.value() / IN_PER_TICK);
-            rightBack.setVelocity(wheelVels.rightBack.value() / IN_PER_TICK);
+            rightBack.setVelocity(wheelVels.rightBack.value() / IN_PER_TICK);*/
+
+            leftFront.setVelocity(feedforward.compute(wheelVels.leftFront) / voltage);
+            leftBack.setVelocity(feedforward.compute(wheelVels.leftBack) / voltage);
+            rightFront.setVelocity(feedforward.compute(wheelVels.rightFront) / voltage);
+            rightBack.setVelocity(feedforward.compute(wheelVels.rightBack) / voltage);
 
             // Draw path for visualization
             p.put("x", pose.position.x);
@@ -533,12 +552,15 @@ public class Drivebase {
             // Compute wheel velocity
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
 
+            // Get voltage
+            double voltage = voltageSensor.getVoltage();
+
             // Create feedforward controller for motor speed
             final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
 
             // Feed the computed velocity to each motors
             // We need to convert from inch/s to motor velocity (tick/s)
-            // This can be done either by feedforward or using built-in PID/PIDF feedback controller
+            // This can be done either by feedforward PID or using built-in PID/PIDF feedback controller
             // provided in the DcMotorEx class
             // Velocity MUST be something that is reachable regardless the battery is full or not
             /*leftFront.setVelocity(wheelVels.leftFront.value() / IN_PER_TICK);
@@ -546,10 +568,10 @@ public class Drivebase {
             rightFront.setVelocity(wheelVels.rightFront.value() / IN_PER_TICK);
             rightBack.setVelocity(wheelVels.rightBack.value() / IN_PER_TICK);*/
 
-            leftFront.setPower(feedforward.compute(wheelVels.leftFront));
-            leftBack.setPower(feedforward.compute(wheelVels.leftBack));
-            rightBack.setPower(feedforward.compute(wheelVels.rightBack));
-            rightFront.setPower(feedforward.compute(wheelVels.rightFront));
+            leftFront.setVelocity(feedforward.compute(wheelVels.leftFront) / voltage);
+            leftBack.setVelocity(feedforward.compute(wheelVels.leftBack) / voltage);
+            rightFront.setVelocity(feedforward.compute(wheelVels.rightFront) / voltage);
+            rightBack.setVelocity(feedforward.compute(wheelVels.rightBack) / voltage);
 
             // Draw turn for visualization
             Canvas c = p.fieldOverlay();

@@ -16,6 +16,7 @@ public class Utility {
      */
     public static double wrapAngle(double angle, WRAP_ANGLE_TYPE type) {
         switch (type) {
+            default:
             case zeroTo360:
                 while (angle >= 360) angle -= 360;
                 while (angle < 0) angle += 360;
