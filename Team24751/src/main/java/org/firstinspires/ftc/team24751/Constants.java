@@ -163,7 +163,7 @@ public class Constants {
         //TODO: tune
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
         //TODO: Change based on starting location
-        public static final double INITIAL_BOT_ANGLE_DEG = 90;
+        public static final double INITIAL_BOT_ANGLE_DEG = 0;
     }
 
     /**

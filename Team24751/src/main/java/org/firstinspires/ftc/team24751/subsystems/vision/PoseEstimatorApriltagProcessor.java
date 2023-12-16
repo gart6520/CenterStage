@@ -11,7 +11,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY .*;
+import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.*;
 
 import java.util.ArrayList;
@@ -61,9 +61,10 @@ public class PoseEstimatorApriltagProcessor {
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
 
         //XY swapped between april tag reference frame and FTC reference frame
-        double radians = Math.toRadians(90 - botAngleDeg);
+        double radians = Math.toRadians(-90 +botAngleDeg);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
+
 
         //Rotate cameraToApriltag vector from the robot perspective (robot based) to
         //global perspective (field based)
@@ -71,8 +72,11 @@ public class PoseEstimatorApriltagProcessor {
                 cameraToApriltag.x * cos - cameraToApriltag.y * sin,
                 cameraToApriltag.x * sin + cameraToApriltag.y * cos
         );
-
-        return aprilTagPos.minus(cameraToAprilTagWorld);
+        linearOpMode.telemetry.addData("Diff rel Pos", detection.id + ":\n" + cameraToApriltag.x + '\n' + cameraToApriltag.y);
+        linearOpMode.telemetry.addData("Diff global Pos", detection.id + ":\n" + cameraToAprilTagWorld.x + '\n' + cameraToAprilTagWorld.y);
+        Vector2d cameraPos = aprilTagPos.minus(cameraToAprilTagWorld);
+        linearOpMode.telemetry.addData("Abs Pos", detection.id + ":\n" + cameraPos.x + '\n' + cameraPos.y);
+        return cameraPos;
     }
 
     public void initAprilTagProcessor() {
