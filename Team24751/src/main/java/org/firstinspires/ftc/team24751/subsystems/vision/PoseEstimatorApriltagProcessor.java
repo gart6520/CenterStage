@@ -61,7 +61,7 @@ public class PoseEstimatorApriltagProcessor {
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
 
         //XY swapped between april tag reference frame and FTC reference frame
-        double radians = Math.toRadians(-90 +botAngleDeg);
+        double radians = Math.toRadians(-90 + botAngleDeg);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
 

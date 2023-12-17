@@ -13,10 +13,11 @@ public class Constants {
     //Really important constants
     public enum AllianceColor
     {
-        RED, BLUE
+        //Test for code usage in testing
+        RED, BLUE, TEST
     }
     //TODO: All AutoOpMode should init this variable to the correct color
-    public static AllianceColor color = AllianceColor.BLUE;
+    public static AllianceColor allianceColor = AllianceColor.TEST;
 
 
     /**
@@ -163,7 +164,9 @@ public class Constants {
         //TODO: tune
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
         //TODO: Change based on starting location
-        public static final double INITIAL_BOT_ANGLE_DEG = 0;
+        public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
+        public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
+        public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
     }
 
     /**

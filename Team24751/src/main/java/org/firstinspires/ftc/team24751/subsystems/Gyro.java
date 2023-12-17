@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG;
+import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_BLUE;
+import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_RED;
+import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_TEST;
 import static org.firstinspires.ftc.team24751.Constants.ORIENTATIONS.*;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
 
 public class Gyro {
@@ -18,6 +21,7 @@ public class Gyro {
 
     // IMU instance
     private IMU imu = null;
+    private double initialBotAngleDeg;
 
     /**
      * Gyro class for getting data from IMU
@@ -39,6 +43,20 @@ public class Gyro {
      * </p>
      */
     public void init() {
+
+        //Set correct initial bot angle
+        switch(Constants.allianceColor)
+        {
+            case BLUE:
+                initialBotAngleDeg = INITIAL_BOT_ANGLE_DEG_BLUE;
+                break;
+            case RED:
+                initialBotAngleDeg = INITIAL_BOT_ANGLE_DEG_RED;
+                break;
+            case TEST:
+                initialBotAngleDeg = INITIAL_BOT_ANGLE_DEG_TEST;
+        }
+
         // Get IMU from hardwareMap
         imu = opMode.hardwareMap.get(IMU.class, IMU_NAME);
 
@@ -56,14 +74,14 @@ public class Gyro {
      * @return Yaw angle, in radian
      */
     public double getYawRad() {
-        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.toRadians(INITIAL_BOT_ANGLE_DEG), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
+        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.toRadians(initialBotAngleDeg), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
     }/**
      * Get yaw from gyro
      *
      * @return Yaw angle, in degree
      */
     public double getYawDeg() {
-        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + INITIAL_BOT_ANGLE_DEG, Utility.WRAP_ANGLE_TYPE.minus180To180);
+        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + initialBotAngleDeg, Utility.WRAP_ANGLE_TYPE.minus180To180);
     }
 
     /**
