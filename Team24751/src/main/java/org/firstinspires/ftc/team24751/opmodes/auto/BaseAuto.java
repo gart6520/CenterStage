@@ -1,29 +1,36 @@
 package org.firstinspires.ftc.team24751.opmodes.auto;
 
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
+import static org.firstinspires.ftc.team24751.Constants.AllianceColor.TEST;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
 import java.util.List;
 
-public class BaseAuto extends LinearOpMode {
+public abstract class BaseAuto extends LinearOpMode {
     // Total run time
-    private ElapsedTime runtime = new ElapsedTime();
+    protected final ElapsedTime runtime = new ElapsedTime();
 
     // Subsystem objects
-    private Gyro gyro = new Gyro(this);
-    private Drivebase drivebase = new Drivebase(this, gyro);
-
-    public void base_runOpMode() {
+    protected final Gyro gyro = new Gyro(this);
+    protected final Drivebase drivebase = new Drivebase(this, gyro);
+    /**
+     * Extends this function and set the allianceColor to appropriate color
+     * */
+    protected abstract void setAllianceColor();
+    protected void base_runOpMode() {
         // Update status
         telemetry.addData("Status", "Initializing");
         telemetry.update();
+
+        // Set alliance color
+        setAllianceColor();
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -53,11 +60,5 @@ public class BaseAuto extends LinearOpMode {
 
         // Save the last Pose2d estimated in auto mode, for using in manual mode
         PoseStorage.setPose(drivebase.pose);
-    }
-
-    @Override
-    public void runOpMode() {
-        // Empty
-        // This function should be overrode by the function in the class that further extends this class
     }
 }
