@@ -56,19 +56,20 @@ public class TeamPropProcessor implements VisionProcessor {
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-//        Vector2d centDetection = (Vector2d) userContext;
-//        Paint paint = new Paint();
-//        paint.setColor(Color.RED);
-//        paint.setStyle(Paint.Style.FILL);
-//        for (MatOfPoint matPoint : contours) {
-//            Point prevPoint = null;
-//            for (Point point : matPoint.toArray()) {
-//                if (prevPoint != null) {
-//                    canvas.drawLine((float) prevPoint.x, (float) prevPoint.y, (float) point.x, (float) point.y, paint);
-//                }
-//                prevPoint = point;
-//            }
-//        }
-//        canvas.drawCircle((float) centDetection.x * scaleBmpPxToCanvasPx, (float) centDetection.y * scaleBmpPxToCanvasPx, 5, paint);
+        Vector2d centDetection = (Vector2d) userContext;
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        for (MatOfPoint matPoint : contours) {
+            Point prevPoint = null;
+            for (Point point : matPoint.toArray()) {
+                if (prevPoint != null) {
+                    canvas.drawLine((float) prevPoint.x * scaleBmpPxToCanvasPx, (float) prevPoint.y * scaleBmpPxToCanvasPx,
+                            (float) point.x * scaleBmpPxToCanvasPx, (float) point.y * scaleBmpPxToCanvasPx, paint);
+                }
+                prevPoint = point;
+            }
+        }
+        canvas.drawCircle((float) centDetection.x * scaleBmpPxToCanvasPx, (float) centDetection.y * scaleBmpPxToCanvasPx, 5, paint);
     }
 }
