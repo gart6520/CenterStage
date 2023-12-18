@@ -11,6 +11,7 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -19,11 +20,11 @@ import org.opencv.imgproc.Moments;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
 public class TeamPropProcessor implements VisionProcessor {
-    Scalar minValue = new Scalar(0, 0, 0);
-    Scalar maxValue = new Scalar(360, 255, 255);
+    Scalar minValue = new Scalar(130, 0, 50);
+    Scalar maxValue = new Scalar(200, 20, 80);
     Vector2d centerOfDetection = new Vector2d(0, 0);
+    ArrayList<MatOfPoint> contours = new ArrayList<>();
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -45,18 +46,29 @@ public class TeamPropProcessor implements VisionProcessor {
         double x = imageMoment.m10 / imageMoment.m00;
         double y = imageMoment.m01 / imageMoment.m00;
         centerOfDetection = new Vector2d(x, y);
+        this.contours = contours;
         return centerOfDetection;
     }
-    public Vector2d getCenterOfDetection()
-    {
+
+    public Vector2d getCenterOfDetection() {
         return centerOfDetection;
     }
+
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-        Vector2d centDetection = (Vector2d) userContext;
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle((float) centDetection.x * scaleBmpPxToCanvasPx, (float) centDetection.y * scaleBmpPxToCanvasPx, 5, paint);
+//        Vector2d centDetection = (Vector2d) userContext;
+//        Paint paint = new Paint();
+//        paint.setColor(Color.RED);
+//        paint.setStyle(Paint.Style.FILL);
+//        for (MatOfPoint matPoint : contours) {
+//            Point prevPoint = null;
+//            for (Point point : matPoint.toArray()) {
+//                if (prevPoint != null) {
+//                    canvas.drawLine((float) prevPoint.x, (float) prevPoint.y, (float) point.x, (float) point.y, paint);
+//                }
+//                prevPoint = point;
+//            }
+//        }
+//        canvas.drawCircle((float) centDetection.x * scaleBmpPxToCanvasPx, (float) centDetection.y * scaleBmpPxToCanvasPx, 5, paint);
     }
 }

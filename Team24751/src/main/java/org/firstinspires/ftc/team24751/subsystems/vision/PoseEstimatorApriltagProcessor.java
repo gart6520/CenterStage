@@ -72,11 +72,7 @@ public class PoseEstimatorApriltagProcessor {
                 cameraToApriltag.x * cos - cameraToApriltag.y * sin,
                 cameraToApriltag.x * sin + cameraToApriltag.y * cos
         );
-        linearOpMode.telemetry.addData("Diff rel Pos", detection.id + ":\n" + cameraToApriltag.x + '\n' + cameraToApriltag.y);
-        linearOpMode.telemetry.addData("Diff global Pos", detection.id + ":\n" + cameraToAprilTagWorld.x + '\n' + cameraToAprilTagWorld.y);
-        Vector2d cameraPos = aprilTagPos.minus(cameraToAprilTagWorld);
-        linearOpMode.telemetry.addData("Abs Pos", detection.id + ":\n" + cameraPos.x + '\n' + cameraPos.y);
-        return cameraPos;
+        return aprilTagPos.minus(cameraToAprilTagWorld);
     }
 
     public void initAprilTagProcessor() {

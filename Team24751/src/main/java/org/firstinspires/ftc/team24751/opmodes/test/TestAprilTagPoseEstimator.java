@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagProcessor;
+import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
 
 import java.util.List;
 
@@ -33,8 +34,11 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
 
         //Init processor
-        PoseEstimatorApriltagProcessor poseEstimator = new PoseEstimatorApriltagProcessor(fieldCamera, this);
-        poseEstimator.initAprilTagProcessor();
+//        PoseEstimatorApriltagProcessor poseEstimator = new PoseEstimatorApriltagProcessor(fieldCamera, this);
+//        poseEstimator.initAprilTagProcessor();
+
+        TeamPropProcessor teamProp = new TeamPropProcessor();
+        fieldCamera.addProcessorToQueue(teamProp);
 
         //Build camera
         //! Remember to init all processor before building camera
@@ -52,16 +56,18 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            Vector2d pos = poseEstimator.getCurrentPoseFromApriltag(gyro.getYawDeg());
-            if (pos != null) {
-                telemetry.addData("Pose X-Y-Theta",
-                        "\n" + pos.x + "\n" + pos.y + "\n" + gyro.getYawDeg());
-            }
-            else {
-                telemetry.addData("Pose X-Y-Theta",
-                        "No detection, " + gyro.getYawDeg());
-            }
-            telemetry.update();
+//            Vector2d pos = poseEstimator.getCurrentPoseFromApriltag(gyro.getYawDeg());
+//            if (pos != null) {
+//                telemetry.addData("Pose X-Y-Theta",
+//                        "\n" + pos.x + "\n" + pos.y + "\n" + gyro.getYawDeg());
+//            }
+//            else {
+//                telemetry.addData("Pose X-Y-Theta",
+//                        "No detection, " + gyro.getYawDeg());
+//            }
+//            telemetry.update();
+            Vector2d pos = teamProp.getCenterOfDetection();
+            telemetry.addData("Center of pixel", "\n" + pos.x + "\n" + pos.y);
         }
     }
 }
