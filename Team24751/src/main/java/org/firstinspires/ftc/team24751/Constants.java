@@ -88,6 +88,7 @@ public class Constants {
         // This can either be calculated using the formula, or by measuring
         // The choice is yours
         public static final double IN_PER_TICK = WHEEL_D_IN*Math.PI / BASE_ENCODER_PPR;
+        public static final double TICK_PER_IN = 1 / IN_PER_TICK;
 
         // Track width and wheelbase distance (in inch)
         // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
@@ -102,17 +103,17 @@ public class Constants {
         public static final double LATERAL_MULTIPLER = 1;
 
         // Gain constants
-        public static final double AXIAL_GAIN = 300 * MM_TO_INCH;
-        public static final double LATERAL_GAIN = 300 * MM_TO_INCH;
+        public static final double AXIAL_GAIN = 30;
+        public static final double LATERAL_GAIN = 20;
         public static final double HEADING_GAIN = Math.PI / 2;
-        public static final double AXIAL_VEL_GAIN = 150 * MM_TO_INCH;
-        public static final double LATERAL_VEL_GAIN = 150 * MM_TO_INCH;
+        public static final double AXIAL_VEL_GAIN = 20;
+        public static final double LATERAL_VEL_GAIN = 50;
         public static final double HEADING_VEL_GAIN = Math.PI / 2;
 
         // Constrain
-        public static final double MAX_WHEEL_VEL = 300 * MM_TO_INCH;
-        public static final double MIN_PROFILE_ACCEL = -150 * MM_TO_INCH;
-        public static final double MAX_PROFILE_ACCEL = 150 * MM_TO_INCH;
+        public static final double MAX_WHEEL_VEL = 40;
+        public static final double MIN_PROFILE_ACCEL = -40;
+        public static final double MAX_PROFILE_ACCEL = 40;
 
         // Turn profile parameters (in radians)
         public static final double MAX_ANG_VEL = Math.PI; // shared with path
@@ -120,9 +121,9 @@ public class Constants {
 
         // Drivebase motor feedforward constants
         // TODO: Tune this to work in real life
-        public static final double kS = 0;
-        public static final double kV = 1.395;
-        public static final double kA = 0.002;
+        public static final double kS = 0.02;
+        public static final double kV = -0.0049;
+        public static final double kA = 0;
     }
 
     /**

@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
 @TeleOp(name="Starter bot", group="Linear OpMode")
+@Disabled
 public class StarterBot extends LinearOpMode {
     // Total run time
     private ElapsedTime runtime = new ElapsedTime();

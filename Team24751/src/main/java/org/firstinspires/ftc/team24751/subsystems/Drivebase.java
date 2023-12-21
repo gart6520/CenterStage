@@ -224,7 +224,7 @@ public class Drivebase {
         // Show realtime info
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        telemetry.update();
+        //telemetry.update();
     }
 
     /**
@@ -321,6 +321,8 @@ public class Drivebase {
             ));
 
             // TODO: reverse encoders if needed
+            rightFrontEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
             // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
             // Update last position and heading
@@ -330,11 +332,11 @@ public class Drivebase {
             lastRightFrontPos = rightFrontPosVel.position;
             lastHeading = heading;
 
-            /*telemetry.addData("lastLeftFrontPos", lastLeftFrontPos);
+            telemetry.addData("lastLeftFrontPos", lastLeftFrontPos);
             telemetry.addData("lastLeftBackPos", lastLeftBackPos);
             telemetry.addData("lastRightFrontPos", lastRightFrontPos);
             telemetry.addData("lastRightBackPos", lastRightBackPos);
-            telemetry.update();*/
+            //telemetry.update();
 
             // Return
             return new Twist2dDual<>(
