@@ -28,7 +28,6 @@ public class TestMotor extends LinearOpMode {
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -45,7 +44,7 @@ public class TestMotor extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            motor.setPower(-gamepad1.left_stick_y * 0.9);
+            motor.setPower(-gamepad1.left_stick_y * 0.5);
 
             // Show elapsed run time
             telemetry.addData("Status", "Run Time: " + runtime.toString());
