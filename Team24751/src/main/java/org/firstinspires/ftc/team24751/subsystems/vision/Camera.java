@@ -43,7 +43,6 @@ public class Camera {
     public void buildCamera() {
         VisionPortal.Builder cameraBuilder = new VisionPortal.Builder()
                 .setCamera(linearOpMode.hardwareMap.get(WebcamName.class, cameraName))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         for (VisionProcessor processor : inQueueProcessors) {

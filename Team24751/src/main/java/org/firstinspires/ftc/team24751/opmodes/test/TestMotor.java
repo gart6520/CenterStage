@@ -16,7 +16,7 @@ import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
 import java.util.List;
 
-@TeleOp(name = "Test Motor")
+@TeleOp(name = "Test Motor", group = "Test")
 public class TestMotor extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -44,10 +44,11 @@ public class TestMotor extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            motor.setPower(-gamepad1.left_stick_y * 0.5);
+            double speed = -gamepad1.left_stick_y * 0.7;
+            motor.setPower(speed);
 
             // Show elapsed run time
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Speed", speed);
         }
     }
 }

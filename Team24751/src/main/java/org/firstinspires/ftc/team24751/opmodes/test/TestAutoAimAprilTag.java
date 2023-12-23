@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 import static org.firstinspires.ftc.team24751.Constants.*;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,9 +17,10 @@ import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
+import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagProcessor;
 
 import java.util.List;
-@TeleOp(name = "Test Auto Aim April Tag", group = "test")
+@TeleOp(name = "Test Auto Aim AprilTag", group = "Test")
 public class TestAutoAimAprilTag extends LinearOpMode {
 
     @Override
@@ -28,14 +30,21 @@ public class TestAutoAimAprilTag extends LinearOpMode {
 
         telemetry.addData("Status", "Initializing");
         telemetry.update();
+
         Camera cam = new Camera("fieldCamera", this);
+
+        PoseEstimatorApriltagProcessor poseEstimator = new PoseEstimatorApriltagProcessor(cam, this);
+        poseEstimator.initAprilTagProcessor();
+
         cam.buildCamera();
+
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
         // Wait for the driver to press PLAY
         waitForStart();
 
@@ -72,6 +81,19 @@ public class TestAutoAimAprilTag extends LinearOpMode {
             drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             autoServo.loop(robotToCamera, gyro.getYawDeg());
+
+            Vector2d pos = poseEstimator.getCurrentPoseFromApriltag(gyro.getYawDeg());
+            if (pos != null) {
+                telemetry.addData("Pose X-Y-Theta",
+                        "\n" + pos.x + "\n" + pos.y + "\n" + gyro.getYawDeg());
+            }
+
+            else {
+                telemetry.addData("Pose X-Y-Theta",
+                        "No detection, " + gyro.getYawDeg());
+            }
+
+            telemetry.update();
         }
     }
 }
