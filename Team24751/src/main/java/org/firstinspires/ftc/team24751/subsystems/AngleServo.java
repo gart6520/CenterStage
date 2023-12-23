@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.team24751.Utility;
+
 /**
  * Servo wrapper that handle get/set angle instead of PWM
- * */
+ */
 public class AngleServo {
     private Servo servo;
     private final String name;
@@ -14,10 +18,10 @@ public class AngleServo {
     private final LinearOpMode linearOpMode;
 
     /**
-     * @param name name of the servo
+     * @param name      name of the servo
      * @param initAngle physical angle correspond to 0 PWM
-     * @param range range of the servo in degree (probably 300 deg)
-     * @param opMode the opMode for hardware map
+     * @param range     range of the servo in degree (probably 300 deg)
+     * @param opMode    the opMode for hardware map
      */
     public AngleServo(String name, double initAngle, double range, LinearOpMode opMode) {
         this.name = name;
@@ -26,15 +30,24 @@ public class AngleServo {
         this.range = range;
     }
 
+    public Servo getServo() {
+        return servo;
+    }
+
     public void init() {
         servo = linearOpMode.hardwareMap.get(Servo.class, name);
     }
 
     public double getAngle() {
-        return range * servo.getPosition() + initAngle;
+        return wrapAngle(range * servo.getPosition() + initAngle, Utility.WRAP_ANGLE_TYPE.zeroTo360);
     }
 
     public void setAngle(double angle) {
-        servo.setPosition((angle - initAngle) / range);
+        double to_angle = wrapAngle(angle - initAngle, Utility.WRAP_ANGLE_TYPE.zeroTo360);
+        if (to_angle > 300) {
+            //Decide if 0 deg (360 deg) or 300 deg is closer
+            to_angle = 360 - to_angle < to_angle - 300 ? 0 : 300;
+        }
+        servo.setPosition((wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range);
     }
 }

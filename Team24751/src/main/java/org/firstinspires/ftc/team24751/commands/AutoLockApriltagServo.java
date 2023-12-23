@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.commands;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.*;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
@@ -18,11 +19,12 @@ import static org.firstinspires.ftc.team24751.Utility.*;
 public class AutoLockApriltagServo {
     LinearOpMode linearOpMode;
     AngleServo servo;
-    ArrayList<Vector2d> aprilTagPos;
+    ArrayList<Vector2d> aprilTagPos = new ArrayList<>();
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, 300, linearOpMode);
         this.linearOpMode = linearOpMode;
+        INIT_FIELD_PARAMETER();
         for (int id : BIG_APRIL_TAG_ID) {
             VectorF _pos = AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(id).fieldPosition;
             aprilTagPos.add(new Vector2d(_pos.get(0), _pos.get(1)));
@@ -32,6 +34,7 @@ public class AutoLockApriltagServo {
     //Must call
     public void initServo() {
         servo.init();
+        servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
 
     public void loop(Vector2d cameraPos, double botAngle) {
@@ -42,7 +45,7 @@ public class AutoLockApriltagServo {
         //camera angle if the the servo is fast enough) from the perspective of the robot
         double cameraAngle = servo.getAngle();
         //Same as above but now field-wise
-        double globalCameraAngle = wrapAngle(cameraAngle + botAngle + INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, WRAP_ANGLE_TYPE.zeroTo360);
+        double globalCameraAngle = wrapAngle(cameraAngle + botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         //Get all potential target angles to turn to
         for (Vector2d apPos : aprilTagPos) {
             globalTargetAngles.add(angleToTurn(apPos, cameraPos));
@@ -51,6 +54,7 @@ public class AutoLockApriltagServo {
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
         double globalTargetAngle = selectAngle(globalTargetAngles, globalCameraAngle);
         //Actually turn the servo
+        linearOpMode.telemetry.addData("Global target angle", globalTargetAngle);
         turnToAngle(globalTargetAngle, botAngle);
     }
 
@@ -64,12 +68,12 @@ public class AutoLockApriltagServo {
 
     private void turnToAngle(double globalTargetAngle, double botAngle) {
         //Angle to set position
-        double servoAngle = wrapAngle(globalTargetAngle - botAngle - INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, WRAP_ANGLE_TYPE.zeroTo360);
-        if (servoAngle > 300) {
-            //Decide if 0 deg (360 deg) or 300 deg is closer
-            servoAngle = 360 - servoAngle < servoAngle - 300 ? 0 : 300;
-        }
+        double servoAngle = wrapAngle(globalTargetAngle - botAngle, WRAP_ANGLE_TYPE.zeroTo360);
+        linearOpMode.telemetry.addData("Servo Angle", servoAngle);
+        linearOpMode.telemetry.addData("Bot Angle", botAngle);
+
         servo.setAngle(servoAngle);
+        linearOpMode.telemetry.addData("Servo PWM", servo.getServo().getPosition());
     }
 
     private double angleToTurn(Vector2d apriltagPos, Vector2d cameraPos) {

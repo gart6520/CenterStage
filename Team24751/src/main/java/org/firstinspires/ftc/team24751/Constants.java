@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.team24751;
 
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Constants {
     // Some general constants
@@ -149,10 +151,10 @@ public class Constants {
      * Field related parameters
      */
     public static class FIELD_PARAMETER {
-        public FIELD_PARAMETER() {
+        public static void INIT_FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
-            BIG_APRIL_TAG_ID.add(1);
-            BIG_APRIL_TAG_ID.add(2);
+            BIG_APRIL_TAG_ID.add(7);
+            BIG_APRIL_TAG_ID.add(10);
         }
 
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
@@ -163,7 +165,7 @@ public class Constants {
      */
     public static class INIT_VALUE {
         //TODO: tune
-        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
+        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
@@ -180,4 +182,5 @@ public class Constants {
                 "RedTeamProp",
         };
     }
+    public static final Vector2d robotToCamera = new Vector2d(-1,2);
 }

@@ -30,7 +30,9 @@ import java.util.List;
 public class TestUniversal extends LinearOpMode {
     // Total run time
     private final ElapsedTime runtime = new ElapsedTime();
-    /** @noinspection FieldCanBeLocal*/
+    /**
+     * @noinspection FieldCanBeLocal
+     */
     private final double maxMotorSpeed = 0.6;
 
     @Override
@@ -54,8 +56,13 @@ public class TestUniversal extends LinearOpMode {
         gyro.init();
 
         // Init drivebase
-        Drivebase drivebase = new Drivebase(this, gyro);
-        drivebase.init();
+        Drivebase drivebase;
+        try {
+            drivebase = new Drivebase(this, gyro);
+            drivebase.init();
+        } catch (Exception e) {
+            drivebase = null;
+        }
 
         //Init all DCMotor and Servo
         DcMotorEx motor1 = hardwareMap.tryGet(DcMotorEx.class, "motor1");
@@ -73,7 +80,8 @@ public class TestUniversal extends LinearOpMode {
         CRServo crServo3 = hardwareMap.tryGet(CRServo.class, "servo3");
         CRServo crServo4 = hardwareMap.tryGet(CRServo.class, "servo4");
         // Load last pose from auto mode
-        drivebase.setCurrentPose(PoseStorage.getPose());
+        if (drivebase != null)
+            drivebase.setCurrentPose(PoseStorage.getPose());
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -97,26 +105,50 @@ public class TestUniversal extends LinearOpMode {
 
             // Drive
             // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            if (drivebase != null)
+                drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             //Motor and Servo control
             int invert = gamepad1.left_bumper ? -1 : 1;
             int servoInvert = gamepad1.left_bumper ? 0 : 1;
 
-            if (gamepad1.triangle && motor1 != null) motor1.setPower(maxMotorSpeed * invert);
-            if (gamepad1.square && motor2 != null) motor2.setPower(maxMotorSpeed * invert);
-            if (gamepad1.cross && motor3 != null) motor3.setPower(maxMotorSpeed * invert);
-            if (gamepad1.circle && motor4 != null) motor4.setPower(maxMotorSpeed * invert);
+            if (motor1 != null)
+                if (gamepad1.triangle) motor1.setPower(maxMotorSpeed * invert);
+                else motor1.setPower(0);
+            if (motor2 != null) {
+                if (gamepad1.square) motor2.setPower(maxMotorSpeed * invert);
+                else motor2.setPower(0);
+            }
+            if (motor3 != null) {
+                if (gamepad1.cross) motor3.setPower(maxMotorSpeed * invert);
+                else motor3.setPower(0);
+            }
+            if (motor4 != null) {
+                if (gamepad1.circle) motor4.setPower(maxMotorSpeed * invert);
+                else motor4.setPower(0);
+            }
 
             if (gamepad1.dpad_up && servo1 != null) servo1.setPosition(servoInvert);
             if (gamepad1.dpad_left && servo2 != null) servo2.setPosition(servoInvert);
             if (gamepad1.dpad_down && servo3 != null) servo3.setPosition(servoInvert);
             if (gamepad1.dpad_right && servo4 != null) servo4.setPosition(servoInvert);
 
-            if (gamepad1.dpad_up && crServo1 != null) crServo1.setPower(invert);
-            if (gamepad1.dpad_left && crServo2 != null) crServo2.setPower(invert);
-            if (gamepad1.dpad_down && crServo3 != null) crServo3.setPower(invert);
-            if (gamepad1.dpad_right && crServo4 != null) crServo4.setPower(invert);
+            if (crServo1 != null) {
+                if (gamepad1.dpad_up) crServo1.setPower(invert);
+                else crServo1.setPower(0);
+            }
+            if (crServo2 != null) {
+                if (gamepad1.dpad_left) crServo2.setPower(invert);
+                else crServo2.setPower(0);
+            }
+            if (crServo3 != null) {
+                if (gamepad1.dpad_down) crServo3.setPower(invert);
+                else crServo3.setPower(0);
+            }
+            if (crServo4 != null) {
+                if (gamepad1.dpad_right) crServo4.setPower(invert);
+                else crServo4.setPower(0);
+            }
             telemetry.addData("Motor Power",
                     NullableMotorGetPower(motor1) + " " + NullableMotorGetPower(motor2) + " " +
                             NullableMotorGetPower(motor3) + " " + NullableMotorGetPower(motor4));
@@ -125,7 +157,7 @@ public class TestUniversal extends LinearOpMode {
                     NullableServoGet(servo3, crServo3), NullableServoGet(servo4, crServo4));
             telemetry.update();
             // Show elapsed run time
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + runtime);
         }
     }
 

@@ -21,6 +21,7 @@ public class TestServo extends LinearOpMode {
     public void runOpMode() {
         // Init servo
         servo = hardwareMap.get(Servo.class, "servo");
+        servo.setDirection(Servo.Direction.REVERSE);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -44,7 +45,8 @@ public class TestServo extends LinearOpMode {
             telemetry.update();
 
             // Set angle
-            servo.setPosition(angle/300.0);
+//            servo.setPosition(angle/300.0);
+            servo.setPosition(0);
 
             // Overflow
             if (angle >= 300) {
