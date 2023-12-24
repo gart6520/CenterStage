@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
-import static org.firstinspires.ftc.team24751.Constants.*;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -83,6 +83,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
                 telemetry.addData("Pose X-Y-Theta",
                         "No detection, " + gyro.getYawDeg());
             }
+            telemetry.update();
             if (robotPos == null) robotPos = new Vector2d(0, 0);
 
             //Auto aim april tag
