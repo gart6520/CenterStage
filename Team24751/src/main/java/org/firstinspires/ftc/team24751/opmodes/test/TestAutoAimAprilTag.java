@@ -76,10 +76,18 @@ public class TestAutoAimAprilTag extends LinearOpMode {
 
             //Pose estimation
             Vector2d robotPos = apriltagProcessor.getCurrentPoseFromApriltag(gyro.getYawDeg() + autoServo.getServo().getAngle());
+            if (robotPos != null) {
+                telemetry.addData("Pose X-Y-Theta",
+                        "\n" + robotPos.x + "\n" + robotPos.y + "\n" + gyro.getYawDeg());
+            } else {
+                telemetry.addData("Pose X-Y-Theta",
+                        "No detection, " + gyro.getYawDeg());
+            }
             if (robotPos == null) robotPos = new Vector2d(0, 0);
 
             //Auto aim april tag
             autoServo.loop(robotPos.plus(BOT_PARAMETERS.robotToCamera), gyro.getYawDeg());
+
         }
     }
 }

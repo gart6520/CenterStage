@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.commands;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.*;
@@ -84,8 +85,6 @@ public class AutoLockApriltagServo {
         //Angle to set position
         double servoAngle = wrapAngle(globalTargetAngle - botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         linearOpMode.telemetry.addData("Servo Angle", servoAngle);
-        linearOpMode.telemetry.addData("Bot Angle", botAngle);
-
         servo.setAngle(servoAngle);
         linearOpMode.telemetry.addData("Servo PWM", servo.getServo().getPosition());
     }
