@@ -16,10 +16,20 @@ import java.util.Comparator;
 
 import static org.firstinspires.ftc.team24751.Utility.*;
 
+import android.util.Pair;
+
 public class AutoLockApriltagServo {
     LinearOpMode linearOpMode;
     AngleServo servo;
     ArrayList<Vector2d> aprilTagPos = new ArrayList<>();
+
+    public AngleServo getServo() {
+        return servo;
+    }
+
+    private final double ANGLE_WEIGHT = 1;
+    private final double DISTANCE_WEIGHT = 90;
+
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, 300, linearOpMode);
@@ -39,7 +49,7 @@ public class AutoLockApriltagServo {
 
     public void loop(Vector2d cameraPos, double botAngle) {
         //Raw angle from positive Ox
-        ArrayList<Double> globalTargetAngles = new ArrayList<>();
+        ArrayList<Pair<Double, Double>> globalTargetAngles_Distances = new ArrayList<>();
         botAngle = wrapAngle(botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         //Supposed camera angle from last set command (should be close to actual
         //camera angle if the the servo is fast enough) from the perspective of the robot
@@ -48,22 +58,26 @@ public class AutoLockApriltagServo {
         double globalCameraAngle = wrapAngle(cameraAngle + botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         //Get all potential target angles to turn to
         for (Vector2d apPos : aprilTagPos) {
-            globalTargetAngles.add(angleToTurn(apPos, cameraPos));
+            Pair<Double, Double> t = new Pair<>(angleToTurn(apPos, cameraPos), distanceToTarget(apPos, cameraPos));
+            globalTargetAngles_Distances.add(t);
         }
 
-        //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        double globalTargetAngle = selectAngle(globalTargetAngles, globalCameraAngle);
+        double globalTargetAngle = selectAngle(globalTargetAngles_Distances, globalCameraAngle);
         //Actually turn the servo
         linearOpMode.telemetry.addData("Global target angle", globalTargetAngle);
         turnToAngle(globalTargetAngle, botAngle);
     }
 
     /**
-     * @param globalTargetAngles list of potential target angle
-     * @param globalCameraAngle  Other param are for additional information that the compare algo might need
+     * @param globalTargetAngles_Distances list of potential target angle and distance
+     * @param globalCameraAngle            Other param are for additional information that the compare algo might need
      */
-    private double selectAngle(ArrayList<Double> globalTargetAngles, double globalCameraAngle) {
-        return globalTargetAngles.stream().min(Comparator.comparingDouble(a -> Math.abs(a - globalCameraAngle))).get();
+    private double selectAngle(ArrayList<Pair<Double, Double>> globalTargetAngles_Distances, double globalCameraAngle) {
+        //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
+        return globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
+                ANGLE_WEIGHT * wrapAngle(a.first - globalCameraAngle, WRAP_ANGLE_TYPE.zeroTo360) +
+                        DISTANCE_WEIGHT * a.second
+        )).get().first;
     }
 
     private void turnToAngle(double globalTargetAngle, double botAngle) {
@@ -79,5 +93,10 @@ public class AutoLockApriltagServo {
     private double angleToTurn(Vector2d apriltagPos, Vector2d cameraPos) {
         Vector2d cameraToApriltag = apriltagPos.minus(cameraPos);
         return wrapAngle(Math.toDegrees(Math.atan2(cameraToApriltag.y, cameraToApriltag.x)), WRAP_ANGLE_TYPE.zeroTo360);
+    }
+
+    private double distanceToTarget(Vector2d apriltagPos, Vector2d cameraPos) {
+        Vector2d cameraToApriltag = apriltagPos.minus(cameraPos);
+        return cameraToApriltag.norm();
     }
 }

@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_FIELD_PARAMETER;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 import static org.firstinspires.ftc.team24751.Constants.*;
 
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,36 +15,42 @@ import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
+import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagProcessor;
 
 import java.util.List;
+
 @TeleOp(name = "Test Auto Aim April Tag", group = "test")
 public class TestAutoAimAprilTag extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        AutoLockApriltagServo autoServo = new AutoLockApriltagServo("servo", this);
-        autoServo.initServo();
-
-        telemetry.addData("Status", "Initializing");
-        telemetry.update();
-        Camera cam = new Camera("fieldCamera", this);
-        cam.buildCamera();
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        telemetry.addData("Status", "Initializing");
+        telemetry.update();
 
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        // Wait for the driver to press PLAY
-        waitForStart();
 
-        // Init gyro
+        AutoLockApriltagServo autoServo = new AutoLockApriltagServo("servo", this);
+        autoServo.initServo();
+
+        Camera cam = new Camera("fieldCamera", this);
+        PoseEstimatorApriltagProcessor apriltagProcessor = new PoseEstimatorApriltagProcessor(cam, this);
+        apriltagProcessor.initAprilTagProcessor();
+        cam.buildCamera();
+
         Gyro gyro = new Gyro(this);
-        gyro.init();
 
         // Init drivebase
         Drivebase drivebase = new Drivebase(this, gyro);
         drivebase.init();
+        // Wait for the driver to press PLAY
+        waitForStart();
+
+        // Init gyro (declaration above)
+        gyro.init();
 
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
@@ -57,8 +62,6 @@ public class TestAutoAimAprilTag extends LinearOpMode {
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
             // Control drivebase manually
-            // Get speed
-
             double speed = gamepad1.right_trigger > 0.15 ? 1 : 0.5;
 
             // Get joystick axis values
@@ -71,7 +74,12 @@ public class TestAutoAimAprilTag extends LinearOpMode {
             // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
             drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
-            autoServo.loop(robotToCamera, gyro.getYawDeg());
+            //Pose estimation
+            Vector2d robotPos = apriltagProcessor.getCurrentPoseFromApriltag(gyro.getYawDeg() + autoServo.getServo().getAngle());
+            if (robotPos == null) robotPos = new Vector2d(0, 0);
+
+            //Auto aim april tag
+            autoServo.loop(robotPos.plus(BOT_PARAMETERS.robotToCamera), gyro.getYawDeg());
         }
     }
 }

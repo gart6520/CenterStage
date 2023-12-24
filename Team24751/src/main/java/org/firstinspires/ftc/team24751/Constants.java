@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class Constants {
     // Some general constants
@@ -182,5 +181,11 @@ public class Constants {
                 "RedTeamProp",
         };
     }
-    public static final Vector2d robotToCamera = new Vector2d(-1,2);
+    /**
+     * Bot physical parameters
+     * */
+    public static class BOT_PARAMETERS
+    {
+        public static final Vector2d robotToCamera = new Vector2d(-1,2);
+    }
 }

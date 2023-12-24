@@ -29,7 +29,7 @@ public class PoseEstimatorApriltagProcessor {
     }
 
     //Null if no result or result too unreliable
-    public Vector2d getCurrentPoseFromApriltag(double botAngleDeg) {
+    public Vector2d getCurrentPoseFromApriltag(double camAngleDeg) {
         //Get april tag detection
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         if (currentDetections.isEmpty()) return null;
@@ -39,7 +39,7 @@ public class PoseEstimatorApriltagProcessor {
             if (detection.metadata == null) continue;
             decisionMarginSum += detection.decisionMargin;
             //Storing the pose from the detection and its decision margin
-            robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection, botAngleDeg), detection.decisionMargin));
+            robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection, camAngleDeg), detection.decisionMargin));
         }
         if (decisionMarginSum < MARGIN_DECISION_THRESHOLD) return null;
         Vector2d currentPose = new Vector2d(0, 0);
