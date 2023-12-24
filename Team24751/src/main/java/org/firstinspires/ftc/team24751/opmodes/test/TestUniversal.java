@@ -33,7 +33,7 @@ public class TestUniversal extends LinearOpMode {
     /**
      * @noinspection FieldCanBeLocal
      */
-    private final double maxMotorSpeed = 0.6;
+    private final double maxMotorSpeed = 0.4;
 
     @Override
     public void runOpMode() {

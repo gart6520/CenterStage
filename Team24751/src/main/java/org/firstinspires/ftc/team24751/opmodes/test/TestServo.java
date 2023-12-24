@@ -12,7 +12,7 @@ import java.util.List;
  * You can disable this opmode anytime you would like
  */
 
-@TeleOp(name="TestServo", group="Linear OpMode")
+@TeleOp(name="TestServo", group="Test")
 public class TestServo extends LinearOpMode {
     // Servo object
     Servo servo = null;

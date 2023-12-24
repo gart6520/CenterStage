@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
 import java.util.List;
 
-@TeleOp(name="TestDrivebase", group="Linear OpMode")
+@TeleOp(name="TestDrivebase", group="Test")
 public class TestDrivebase extends LinearOpMode {
     // Total run time
     private ElapsedTime runtime = new ElapsedTime();

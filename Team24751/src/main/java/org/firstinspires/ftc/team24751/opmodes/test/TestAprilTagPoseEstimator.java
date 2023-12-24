@@ -14,7 +14,7 @@ import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Test April Tag Pose Estimator")
+@TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
 public class TestAprilTagPoseEstimator extends LinearOpMode {
 
     @Override
