@@ -363,7 +363,7 @@ public class Drivebase {
         //FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
 
         telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (degree)", pose.position.x, pose.position.y, pose.heading.toDouble()*180/Math.PI);
-        telemetry.update();
+        //telemetry.update();
 
         return twist.velocity().value();
     }

@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.commands.AutoLockApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
@@ -22,6 +23,7 @@ import java.util.List;
 @TeleOp(name = "Test Auto Aim April Tag", group = "test")
 public class TestAutoAimAprilTag extends LinearOpMode {
 
+    private ElapsedTime runtime = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         // Enable bulk reads in auto mode
@@ -35,6 +37,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
 
         AutoLockApriltagServo autoServo = new AutoLockApriltagServo("servo", this);
         autoServo.initServo();
+        autoServo.getServo().getServo().setPosition(0);
 
         Camera cam = new Camera("fieldCamera", this);
         PoseEstimatorApriltagProcessor apriltagProcessor = new PoseEstimatorApriltagProcessor(cam, this);
@@ -42,6 +45,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
         cam.buildCamera();
 
         Gyro gyro = new Gyro(this);
+        gyro.init();
 
         // Init drivebase
         Drivebase drivebase = new Drivebase(this, gyro);
@@ -49,9 +53,9 @@ public class TestAutoAimAprilTag extends LinearOpMode {
         // Wait for the driver to press PLAY
         waitForStart();
 
+        runtime.reset();
         // Init gyro (declaration above)
-        gyro.init();
-
+        gyro.reset();
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
 
@@ -75,20 +79,28 @@ public class TestAutoAimAprilTag extends LinearOpMode {
             drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             //Pose estimation
-            Vector2d robotPos = apriltagProcessor.getCurrentPoseFromApriltag(gyro.getYawDeg() + autoServo.getServo().getAngle());
-            if (robotPos != null) {
+            Vector2d camPos = apriltagProcessor.getCurrentPoseFromApriltag(getCamAngleDeg(autoServo, gyro));
+            if (camPos != null) {
                 telemetry.addData("Pose X-Y-Theta",
-                        "\n" + robotPos.x + "\n" + robotPos.y + "\n" + gyro.getYawDeg());
+                        "\n" + camPos.x + "\n" + camPos.y + "\n" + getCamAngleDeg(autoServo, gyro));
             } else {
                 telemetry.addData("Pose X-Y-Theta",
-                        "No detection, " + gyro.getYawDeg());
+                        "No detection, " + getCamAngleDeg(autoServo, gyro));
             }
+            telemetry.addData("Cam Angle", getCamAngleDeg(autoServo, gyro));
             telemetry.update();
-            if (robotPos == null) robotPos = new Vector2d(0, 0);
+            if (camPos == null || runtime.seconds() < 2)
+                camPos = new Vector2d(0, 0);
 
             //Auto aim april tag
-            autoServo.loop(robotPos.plus(BOT_PARAMETERS.robotToCamera), gyro.getYawDeg());
+            // TODO: Khiem
+            //drivebase.pose
+            //autoServo.loop(, gyro.getYawDeg());
 
         }
+    }
+
+    private static double getCamAngleDeg(AutoLockApriltagServo autoServo, Gyro gyro) {
+        return gyro.getYawDeg() + autoServo.getServo().getAngle();
     }
 }

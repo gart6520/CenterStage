@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -20,7 +22,7 @@ public class Gyro {
     private LinearOpMode opMode = null;
 
     // IMU instance
-    private IMU imu = null;
+    private AHRS navx_device = null;
     private double initialBotAngleDeg;
 
     /**
@@ -57,15 +59,11 @@ public class Gyro {
                 initialBotAngleDeg = INITIAL_BOT_ANGLE_DEG_TEST;
         }
 
-        // Get IMU from hardwareMap
-        imu = opMode.hardwareMap.get(IMU.class, IMU_NAME);
-
-        // Config IMU
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(HUB_LOGO_DIRECTION, HUB_USB_DIRECTION));
-        imu.initialize(parameters);
+        navx_device = AHRS.getInstance(opMode.hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+                AHRS.DeviceDataType.kProcessedData);
 
         // Reset yaw
-        imu.resetYaw();
+        navx_device.zeroYaw();
     }
 
     /**
@@ -74,20 +72,20 @@ public class Gyro {
      * @return Yaw angle, in radian
      */
     public double getYawRad() {
-        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.toRadians(initialBotAngleDeg), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
+        return wrapAngle(Math.toRadians(-navx_device.getYaw() + initialBotAngleDeg), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
     }/**
      * Get yaw from gyro
      *
      * @return Yaw angle, in degree
      */
     public double getYawDeg() {
-        return wrapAngle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + initialBotAngleDeg, Utility.WRAP_ANGLE_TYPE.minus180To180);
+        return wrapAngle(-navx_device.getYaw() + initialBotAngleDeg, Utility.WRAP_ANGLE_TYPE.minus180To180);
     }
 
     /**
      * Reset the yaw value
      */
     public void reset() {
-        imu.resetYaw();
+        navx_device.zeroYaw();
     }
 }

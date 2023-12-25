@@ -29,7 +29,7 @@ public class AutoLockApriltagServo {
     }
 
     private final double ANGLE_WEIGHT = 1;
-    private final double DISTANCE_WEIGHT = 90;
+    private final double DISTANCE_WEIGHT = 0;
 
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
@@ -75,10 +75,11 @@ public class AutoLockApriltagServo {
      */
     private double selectAngle(ArrayList<Pair<Double, Double>> globalTargetAngles_Distances, double globalCameraAngle) {
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        return globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
-                ANGLE_WEIGHT * wrapAngle(a.first - globalCameraAngle, WRAP_ANGLE_TYPE.zeroTo360) +
+        Double targetAngle = globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
+                ANGLE_WEIGHT * Math.abs(a.first - globalCameraAngle) +
                         DISTANCE_WEIGHT * a.second
         )).get().first;
+        return targetAngle;
     }
 
     private void turnToAngle(double globalTargetAngle, double botAngle) {

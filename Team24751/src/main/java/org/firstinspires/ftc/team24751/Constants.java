@@ -152,10 +152,14 @@ public class Constants {
     public static class FIELD_PARAMETER {
         public static void INIT_FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
-            BIG_APRIL_TAG_ID.add(7);
-            BIG_APRIL_TAG_ID.add(10);
+            if (!init)
+            {
+                BIG_APRIL_TAG_ID.add(7);
+                BIG_APRIL_TAG_ID.add(10);
+                init = true;
+            }
         }
-
+        private static boolean init = false;
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
     }
 

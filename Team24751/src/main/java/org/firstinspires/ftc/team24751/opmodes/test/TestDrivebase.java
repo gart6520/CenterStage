@@ -85,7 +85,10 @@ public class TestDrivebase extends LinearOpMode {
             // after finishing the trajectory
 
             // Show elapsed run time
+            telemetry.addData("Yaw", gyro.getYawDeg());
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
         }
     }
 }
