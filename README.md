@@ -15,5 +15,6 @@ The build should success. You can either deploy to Control Hub via `adb` and And
 # Additional libraries used
 - [RoadRunner](https://github.com/acmerobotics/road-runner) version 1.0 by [acmerobotics](https://github.com/acmerobotics)
 - [FtcDashboard](https://github.com/acmerobotics/ftc-dashboard) by [acmerobotics](https://github.com/acmerobotics). Should be disabled on official events.
+- [MeepMeep](https://github.com/NoahBres/MeepMeep) by [NoahBres](https://github.com/NoahBres/MeepMeep). Used for testing trajectory.
 - [homeostasis](https://github.com/Thermal-Equilibrium/homeostasis-FTC) by [Thermal-Equilibrium](https://github.com/Thermal-Equilibrium)
 - [navx_ftc](https://github.com/kauailabs/navxmxp/tree/master/android/navx_ftc) by [kauailabs](https://github.com/kauailabs)
