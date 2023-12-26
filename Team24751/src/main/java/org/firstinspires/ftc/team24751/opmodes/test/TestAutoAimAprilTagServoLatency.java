@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -20,10 +19,11 @@ import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagPr
 
 import java.util.List;
 
-@TeleOp(name = "Test Auto Aim April Tag", group = "test")
-public class TestAutoAimAprilTag extends LinearOpMode {
+@TeleOp(name = "Test Auto Aim April Tag Servo Latency", group = "test")
+public class TestAutoAimAprilTagServoLatency extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Enable bulk reads in auto mode
@@ -37,7 +37,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
 
         AutoLockApriltagServo autoServo = new AutoLockApriltagServo("servo", this);
         autoServo.initServo();
-        autoServo.getServo().getServo().setPosition(0);
+        //autoServo.getServo().getServo().setPosition(0);
 
         Camera cam = new Camera("fieldCamera", this);
         PoseEstimatorApriltagProcessor apriltagProcessor = new PoseEstimatorApriltagProcessor(cam, this);
@@ -62,9 +62,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        Vector2d prevPos = new Vector2d(0,0);
-
+        double servoPos = 0;
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
             // Control drivebase manually
@@ -93,14 +91,15 @@ public class TestAutoAimAprilTag extends LinearOpMode {
             telemetry.update();
             if (camPos == null || runtime.seconds() < 2)
                 camPos = new Vector2d(0, 0);
-            if (autoServo.getServo().isRotating())
-            {
-                camPos = prevPos;
+
+            //Manual servo control
+            if (gamepad1.dpad_right) {
+                servoPos += 0.01;
+                autoServo.getServo().getServo().setPosition(servoPos);
+            } else if (gamepad1.dpad_left) {
+                servoPos -= 0.01;
+                autoServo.getServo().getServo().setPosition(servoPos);
             }
-            //Auto aim april tag
-            // TODO: Khiem
-            autoServo.loop(camPos, gyro.getYawDeg());
-            prevPos = camPos;
         }
     }
 

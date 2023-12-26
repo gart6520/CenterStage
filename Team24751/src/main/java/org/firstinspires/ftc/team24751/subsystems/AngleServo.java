@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.SERVO_ANGLE_PWM_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.SERVO_PWM_SPEED;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Utility;
 
@@ -16,6 +19,8 @@ public class AngleServo {
     private final double initAngle;
     private final double range;
     private final LinearOpMode linearOpMode;
+    private ElapsedTime timer = new ElapsedTime();
+    private double rotateTime;
 
     /**
      * @param name      name of the servo
@@ -48,6 +53,17 @@ public class AngleServo {
             //Decide if 0 deg (360 deg) or 300 deg is closer
             to_angle = 360 - to_angle < to_angle - 300 ? 0 : 300;
         }
-        servo.setPosition((wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range);
+        double targetPWM = (wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range;
+        if (Math.abs(targetPWM-servo.getPosition()) > SERVO_ANGLE_PWM_THRESHOLD)
+        {
+            timer.reset();
+            rotateTime = Math.abs(targetPWM - servo.getPosition()) / SERVO_PWM_SPEED;
+        }
+        servo.setPosition(targetPWM);
+    }
+
+    public boolean isRotating ()
+    {
+        return timer.seconds() >= rotateTime;
     }
 }
