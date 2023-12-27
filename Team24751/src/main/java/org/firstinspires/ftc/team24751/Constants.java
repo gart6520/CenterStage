@@ -171,9 +171,13 @@ public class Constants {
      */
     public static class HARDWARE_CONSTANT {
         //TODO: tune
-        public static final double TICKS_AT_ZERO = 0;
+        public static final double MOTOR_POSITION_AT_ZERO = 0;
 
-        public static final double TICKS_AT_PERPENDICULAR = 90;
+        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 90;
+
+        public static final double SERVO_POSITION_AT_ZERO = 0;
+
+        public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
     }
 

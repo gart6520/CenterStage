@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static androidx.core.math.MathUtils.clamp;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;

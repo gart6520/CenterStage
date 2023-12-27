@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.team24751.commands;
 
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.BIG_APRIL_TAG_ID;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_FIELD_PARAMETER;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
+import static org.firstinspires.ftc.team24751.Utility.WRAP_ANGLE_TYPE;
+import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
+
+import android.util.Pair;
+
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.*;
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
@@ -13,10 +18,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-
-import static org.firstinspires.ftc.team24751.Utility.*;
-
-import android.util.Pair;
 
 public class AutoLockApriltagServo {
     LinearOpMode linearOpMode;
