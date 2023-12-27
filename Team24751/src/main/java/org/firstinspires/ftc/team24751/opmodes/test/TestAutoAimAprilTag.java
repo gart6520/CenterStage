@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -24,6 +23,7 @@ import java.util.List;
 public class TestAutoAimAprilTag extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Enable bulk reads in auto mode
@@ -37,7 +37,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
 
         AutoLockApriltagServo autoServo = new AutoLockApriltagServo("servo", this);
         autoServo.initServo();
-        autoServo.getServo().getServo().setPosition(0);
+        autoServo.getAngleServo().getServo().setPosition(0);
 
         Camera cam = new Camera("fieldCamera", this);
         PoseEstimatorApriltagProcessor apriltagProcessor = new PoseEstimatorApriltagProcessor(cam, this);
@@ -63,7 +63,7 @@ public class TestAutoAimAprilTag extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        Vector2d prevPos = new Vector2d(0,0);
+        Vector2d prevPos = new Vector2d(0, 0);
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
@@ -93,18 +93,23 @@ public class TestAutoAimAprilTag extends LinearOpMode {
             telemetry.update();
             if (camPos == null || runtime.seconds() < 2)
                 camPos = new Vector2d(0, 0);
-            if (autoServo.getServo().isRotating())
-            {
+            telemetry.addData("Is Servo Rotate", autoServo.getAngleServo().isRotating());
+            if (autoServo.getAngleServo().isRotating()) {
                 camPos = prevPos;
             }
             //Auto aim april tag
             // TODO: Khiem
             autoServo.loop(camPos, gyro.getYawDeg());
             prevPos = camPos;
+            if (!autoServo.getAngleServo().isRotating())
+            {
+                telemetry.addData("Target Angle", autoServo.getAngleServo().getAngle());
+                telemetry.update();
+            }
         }
     }
 
     private static double getCamAngleDeg(AutoLockApriltagServo autoServo, Gyro gyro) {
-        return gyro.getYawDeg() + autoServo.getServo().getAngle();
+        return gyro.getYawDeg() + autoServo.getAngleServo().getAngle();
     }
 }

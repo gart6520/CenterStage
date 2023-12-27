@@ -146,7 +146,7 @@ public class Constants {
         public static final double TEAM_PROP_CENTER_RIGHT = 200;
 
         public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0/30;
-        public static final double SERVO_PWM_SPEED = 4.0/3;
+        public static final double SERVO_PWM_SPEED = 0.1;
     }
 
     /**
