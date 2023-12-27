@@ -6,10 +6,10 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.INITIAL_BOT_ANGLE_DEG_BLUE;
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.INITIAL_BOT_ANGLE_DEG_RED;
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.INITIAL_BOT_ANGLE_DEG_TEST;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_BLUE;
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_RED;
-import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.INITIAL_BOT_ANGLE_DEG_TEST;
 import static org.firstinspires.ftc.team24751.Constants.ORIENTATIONS.*;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 

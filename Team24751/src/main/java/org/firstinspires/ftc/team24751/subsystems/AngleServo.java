@@ -64,6 +64,6 @@ public class AngleServo {
 
     public boolean isRotating ()
     {
-        return timer.seconds() >= rotateTime;
+        return timer.seconds() <= rotateTime;
     }
 }

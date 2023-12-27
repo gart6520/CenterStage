@@ -2,7 +2,6 @@ package org.firstinspires.ftc.team24751.commands;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.team24751.Constants.INIT_VALUE.*;
@@ -24,7 +23,7 @@ public class AutoLockApriltagServo {
     AngleServo servo;
     ArrayList<Vector2d> aprilTagPos = new ArrayList<>();
 
-    public AngleServo getServo() {
+    public AngleServo getAngleServo() {
         return servo;
     }
 
@@ -33,7 +32,8 @@ public class AutoLockApriltagServo {
 
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
-        servo = new AngleServo(servoName, INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, 300, linearOpMode);
+        servo = new AngleServo(servoName, INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
+                270, linearOpMode);
         this.linearOpMode = linearOpMode;
         INIT_FIELD_PARAMETER();
         for (int id : BIG_APRIL_TAG_ID) {

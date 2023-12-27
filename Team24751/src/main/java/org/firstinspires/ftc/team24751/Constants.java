@@ -169,13 +169,12 @@ public class Constants {
     /**
      * Initial values which doesn't fit above categories
      */
-    public static class INIT_VALUE {
+    public static class HARDWARE_CONSTANT {
         //TODO: tune
+        public static final double TICKS_AT_ZERO = 0;
+
+        public static final double TICKS_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
-        //TODO: Change based on starting location
-        public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
-        public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
-        public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
     }
 
     /**
@@ -194,5 +193,9 @@ public class Constants {
     public static class BOT_PARAMETERS
     {
         public static final Vector2d robotToCamera = new Vector2d(-1,2);
+        public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
+        //TODO: Change based on starting location
+        public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
+        public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
     }
 }

@@ -95,15 +95,15 @@ public class TestAutoAimAprilTagServoLatency extends LinearOpMode {
             //Manual servo control
             if (gamepad1.dpad_right) {
                 servoPos += 0.01;
-                autoServo.getServo().getServo().setPosition(servoPos);
+                autoServo.getAngleServo().getServo().setPosition(servoPos);
             } else if (gamepad1.dpad_left) {
                 servoPos -= 0.01;
-                autoServo.getServo().getServo().setPosition(servoPos);
+                autoServo.getAngleServo().getServo().setPosition(servoPos);
             }
         }
     }
 
     private static double getCamAngleDeg(AutoLockApriltagServo autoServo, Gyro gyro) {
-        return gyro.getYawDeg() + autoServo.getServo().getAngle();
+        return gyro.getYawDeg() + autoServo.getAngleServo().getAngle();
     }
 }
