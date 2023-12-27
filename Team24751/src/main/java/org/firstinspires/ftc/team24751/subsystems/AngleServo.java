@@ -49,9 +49,9 @@ public class AngleServo {
 
     public void setAngle(double angle) {
         double to_angle = wrapAngle(angle - initAngle, Utility.WRAP_ANGLE_TYPE.zeroTo360);
-        if (to_angle > 300) {
+        if (to_angle > 270) {
             //Decide if 0 deg (360 deg) or 300 deg is closer
-            to_angle = 360 - to_angle < to_angle - 300 ? 0 : 300;
+            to_angle = 360 - to_angle < to_angle - 270 ? 0 : 270;
         }
         double targetPWM = (wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range;
         if (Math.abs(targetPWM-servo.getPosition()) > SERVO_ANGLE_PWM_THRESHOLD)
