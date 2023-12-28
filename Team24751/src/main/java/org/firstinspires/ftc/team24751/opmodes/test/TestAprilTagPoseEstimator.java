@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 import static androidx.core.math.MathUtils.clamp;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_PWM_RANGE;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -39,7 +40,7 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
 
         AngleServo angleServo = new AngleServo("servo", INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, 270, this);
-        angleServo.init();
+        angleServo.init(REV_PWM_RANGE);
         angleServo.getServo().setDirection(Servo.Direction.REVERSE);
 
         //Init processor

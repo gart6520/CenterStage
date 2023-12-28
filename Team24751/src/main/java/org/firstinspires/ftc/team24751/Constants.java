@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751;
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.PwmControl;
 
 import java.util.ArrayList;
 
@@ -179,6 +180,9 @@ public class Constants {
 
         public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
+        public static final PwmControl.PwmRange REV_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
+        //TODO: Tune for gobilda one
+        public static final PwmControl.PwmRange GOBILDA_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
     }
 
     /**

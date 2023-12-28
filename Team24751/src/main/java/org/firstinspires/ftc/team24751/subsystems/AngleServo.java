@@ -5,7 +5,9 @@ import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.SERVO_PWM_SP
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Utility;
@@ -14,7 +16,7 @@ import org.firstinspires.ftc.team24751.Utility;
  * Servo wrapper that handle get/set angle instead of PWM
  */
 public class AngleServo {
-    private Servo servo;
+    private ServoImplEx servo;
     private final String name;
     private final double initAngle;
     private final double range;
@@ -39,8 +41,9 @@ public class AngleServo {
         return servo;
     }
 
-    public void init() {
-        servo = linearOpMode.hardwareMap.get(Servo.class, name);
+    public void init(PwmControl.PwmRange pwmRange) {
+        servo = linearOpMode.hardwareMap.get(ServoImplEx.class, name);
+        servo.setPwmRange(pwmRange);
     }
 
     public double getAngle() {
@@ -49,9 +52,9 @@ public class AngleServo {
 
     public void setAngle(double angle) {
         double to_angle = wrapAngle(angle - initAngle, Utility.WRAP_ANGLE_TYPE.zeroTo360);
-        if (to_angle > 270) {
-            //Decide if 0 deg (360 deg) or 300 deg is closer
-            to_angle = 360 - to_angle < to_angle - 270 ? 0 : 270;
+        if (to_angle > range) {
+            //Decide if 0 deg (360 deg) or max angle (range) is closer
+            to_angle = 360 - to_angle < to_angle - range ? 0 : range;
         }
         double targetPWM = (wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range;
         if (Math.abs(targetPWM-servo.getPosition()) > SERVO_ANGLE_PWM_THRESHOLD)
