@@ -45,7 +45,7 @@ public class AutoLockApriltagServo {
 
     //Must call
     public void initServo() {
-        servo.init(REV_PWM_RANGE);
+        servo.init(REV_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
 
