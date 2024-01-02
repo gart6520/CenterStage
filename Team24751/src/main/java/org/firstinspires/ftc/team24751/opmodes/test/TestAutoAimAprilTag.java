@@ -98,7 +98,6 @@ public class TestAutoAimAprilTag extends LinearOpMode {
                 camPos = prevPos;
             }
             //Auto aim april tag
-            // TODO: Khiem
             autoServo.loop(camPos, gyro.getYawDeg());
             prevPos = camPos;
             if (!autoServo.getAngleServo().isRotating())
