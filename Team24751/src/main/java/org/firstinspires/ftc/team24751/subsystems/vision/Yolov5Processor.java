@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import org.firstinspires.ftc.robotcore.external.tfod.CameraInformation;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -16,8 +17,11 @@ import org.opencv.core.Mat;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +29,15 @@ import java.util.Map;
 
 public class Yolov5Processor implements VisionProcessor {
     // Load native library to use function from C++ file
-    static {
-        System.loadLibrary("ftcrobotcontroller");
-    }
+    /*static {
+        try {
+            System.loadLibrary("ftcrobotcontroller");
+        }
+
+        catch (Exception e) {
+            Log.e("yolov5", e.getMessage());
+        }
+    }*/
 
     /*
      * Constants
@@ -55,7 +65,7 @@ public class Yolov5Processor implements VisionProcessor {
     private Map<Integer, Object> rawOutput;
     private final List<Recognition> recognitions = new ArrayList<>();
 
-    // Raw rnference result class
+    // Raw inference result class
     private class InferenceRawResult {
         public float[][][][] out1;
         public float[][][][] out2;
@@ -72,7 +82,7 @@ public class Yolov5Processor implements VisionProcessor {
 
     // This postprocess function comes from C++
     // https://github.com/lp6m/yolov5s_android/blob/master/app/tflite_yolov5_test/app/src/main/cpp/postprocess.cpp
-    private native float[][] postprocess(float[][][][] out1, float[][][][] out2, float[][][][] out3, int inputSize, float conf_thresh, float iou_thresh);
+    //private native float[][] postprocess(float[][][][] out1, float[][][][] out2, float[][][][] out3, int inputSize, float conf_thresh, float iou_thresh);
 
     /**
      * @param width       frame width
@@ -96,11 +106,18 @@ public class Yolov5Processor implements VisionProcessor {
         // Set options for interpreter
         Interpreter.Options options = new Interpreter.Options();
         options.setUseXNNPACK(true); // Use XNNPACK accel lib
-        options.setNumThreads(1);    // Number of threads to run. Currently any number > 1 will crash,
-        // but that might be just my device's problem/memory problem
 
         // Load .tflite model
-        this.interpreter = new Interpreter(new File(model_path), options);
+        try {
+            RandomAccessFile model_file = new RandomAccessFile(model_path, "r");
+            MappedByteBuffer model_data = model_file.getChannel()
+                    .map(FileChannel.MapMode.READ_ONLY, 0, 3618296);
+            this.interpreter = new Interpreter(model_data);
+        }
+
+        catch (Exception e) {
+            Log.e("yolov5", "model file not found");
+        }
 
         // Set paint attributes
         this.paint.setTextSize(16);
@@ -169,7 +186,7 @@ public class Yolov5Processor implements VisionProcessor {
 
         // Postprocess using C++ code from postprocess.cpp
         // This will filter out incorrect detections
-        float[][] bbox_arrs = postprocess(this.rawResult.out1,
+        /*float[][] bbox_arrs = postprocess(this.rawResult.out1,
                 this.rawResult.out2,
                 this.rawResult.out3,
                 this.model_input_size,
@@ -190,9 +207,9 @@ public class Yolov5Processor implements VisionProcessor {
                                     bbox_arr[1] * this.y_scale,
                                     bbox_arr[2] * this.x_scale,
                                     bbox_arr[3] * this.y_scale)));
-        }
+        }*/
 
-        return 1;
+        return recognitions;
     }
 
     /**
@@ -208,7 +225,7 @@ public class Yolov5Processor implements VisionProcessor {
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         // Draw bounding box for each recognised object
-        for (Recognition recognition : recognitions) {
+        /*for (Recognition recognition : recognitions) {
             // Set paint color for object's class
             paint.setColor(this.class_colors.get(recognition.getLabel()));
 
@@ -225,7 +242,7 @@ public class Yolov5Processor implements VisionProcessor {
 
             // Draw label
             canvas.drawText(label, recognition.getLeft(), recognition.getTop() - 16, paint);
-        }
+        }*/
     }
 
     /**
