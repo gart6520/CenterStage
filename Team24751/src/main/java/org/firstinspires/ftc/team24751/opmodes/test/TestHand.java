@@ -19,7 +19,7 @@ import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagPr
 
 import java.util.List;
 
-@TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
+@TeleOp(name = "Test Hand", group = "Test")
 public class TestHand extends LinearOpMode {
 
     @Override
