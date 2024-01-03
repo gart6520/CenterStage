@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.MOTOR_POSITION_AT_PERPENDICULAR;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.MOTOR_POSITION_AT_ZERO;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.SERVO_POSITION_AT_PERPENDICULAR;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.SERVO_POSITION_AT_ZERO;
 
@@ -19,16 +20,16 @@ public class TestAutoHitlerArm extends LinearOpMode {
     private DcMotor elevatorMotor = null;
     private ServoImplEx wristServo = null;
 
-    private double getMotorAngle(DcMotor motor) {
+    private double getMotorAngleDeg(DcMotor motor) {
         double a = (MOTOR_POSITION_AT_PERPENDICULAR - MOTOR_POSITION_AT_ZERO) / 90.0;
         double b = MOTOR_POSITION_AT_ZERO;
         double currentPosition = motor.getCurrentPosition();
         return a * currentPosition + b;
     }
-    private void setWristAngle() {
+    private void setWristAngleDeg() {
         double a = (SERVO_POSITION_AT_PERPENDICULAR - SERVO_POSITION_AT_ZERO) / 90.0;
         double b = SERVO_POSITION_AT_ZERO;
-        double targetAngle = 240.0 - getMotorAngle(leftArmMotor);
+        double targetAngle = 240.0 - getMotorAngleDeg(leftArmMotor);
         double ticks = (targetAngle - b) / a;
         wristServo.setPosition(ticks);
     }
@@ -51,12 +52,12 @@ public class TestAutoHitlerArm extends LinearOpMode {
         rightArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // TODO: Init servo position
-        wristServo.setPwmRange(new PwmControl.PwmRange(550, 2450));
+        wristServo.setPwmRange(REV_SERVO_PWM_RANGE);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            setWristAngle();
+            setWristAngleDeg();
             if (gamepad1.triangle) {
                 leftArmMotor.setPower(0.8);
                 rightArmMotor.setPower(0.8);

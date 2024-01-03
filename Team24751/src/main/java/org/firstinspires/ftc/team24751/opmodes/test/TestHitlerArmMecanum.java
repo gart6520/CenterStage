@@ -84,7 +84,7 @@ public class TestHitlerArmMecanum extends LinearOpMode {
 
             // Get joystick axis values
             // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
-            double left_y = gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
+            double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
             double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
