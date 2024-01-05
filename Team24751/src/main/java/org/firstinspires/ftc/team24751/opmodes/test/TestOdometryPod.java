@@ -8,20 +8,22 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
 
+import static org.firstinspires.ftc.team24751.Constants.OdometryPod.inPerTick;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
+import org.firstinspires.ftc.team24751.subsystems.OdometryPod;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
-import org.firstinspires.ftc.team24751.subsystems.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.team24751.subsystems.old_roadrunner.geometry.Pose2d;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class TestOdometryPod extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(hardwareMap);
+        OdometryPod localizer = new OdometryPod(this, inPerTick);
         // Wait for the driver to press PLAY
         waitForStart();
 
@@ -93,7 +95,7 @@ public class TestOdometryPod extends LinearOpMode {
             telemetry.addData("Yaw", gyro.getYawDeg());
 
             localizer.update();
-            Pose2d pose = localizer.getPoseEstimate();
+            Pose2d pose = localizer.getCurrentPose();
             telemetry.addData("X, Y, theta", pose.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
