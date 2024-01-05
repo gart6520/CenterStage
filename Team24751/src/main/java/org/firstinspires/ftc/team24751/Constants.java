@@ -172,9 +172,9 @@ public class Constants {
      */
     public static class HARDWARE_CONSTANT {
         //TODO: tune
-        public static final double MOTOR_POSITION_AT_ZERO = 0;
+        public static final double MOTOR_POSITION_AT_ZERO = 17;
 
-        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 182;
+        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 190;
 
         //public static final double SERVO_POSITION_AT_ZERO = 0;
 
