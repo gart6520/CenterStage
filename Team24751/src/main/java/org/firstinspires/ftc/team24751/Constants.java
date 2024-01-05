@@ -171,6 +171,11 @@ public class Constants {
      * Initial values which doesn't fit above categories
      */
     public static class HARDWARE_CONSTANT {
+        public static class Arm
+        {
+            public static final double MOTOR_DEG_PER_TICK = 360.0 / 288;
+            public static final double MOTOR_INIT_ANGLE_DEG = 0;
+        }
         //TODO: tune
         public static final double MOTOR_POSITION_AT_ZERO = 0;
 
