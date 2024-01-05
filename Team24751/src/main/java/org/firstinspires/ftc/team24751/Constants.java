@@ -174,12 +174,14 @@ public class Constants {
         //TODO: tune
         public static final double MOTOR_POSITION_AT_ZERO = 0;
 
-        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 90;
+        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 182;
 
-        public static final double SERVO_POSITION_AT_ZERO = 0;
+        //public static final double SERVO_POSITION_AT_ZERO = 0;
 
-        public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
+        //public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
+
+        public static final double INITAL_WRIST_SERVO_ANGLE = 0;
         public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
         public static final PwmControl.PwmRange REV_CRSERVO_PWM_RANGE = new PwmControl.PwmRange(900, 2100);
         //TODO: Tune for gobilda one
