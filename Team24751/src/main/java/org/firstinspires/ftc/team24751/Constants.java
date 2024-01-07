@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.team24751;
 
+import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
 import java.util.ArrayList;
@@ -13,11 +16,11 @@ public class Constants {
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
 
     //Really important constants
-    public enum AllianceColor
-    {
+    public enum AllianceColor {
         //Test for code usage in testing
         RED, BLUE, TEST
     }
+
     //TODO: All AutoOpMode should init this variable to the correct color
     public static AllianceColor allianceColor = AllianceColor.TEST;
 
@@ -89,7 +92,7 @@ public class Constants {
         // Inch traveled per tick/count
         // This can either be calculated using the formula, or by measuring
         // The choice is yours
-        public static final double IN_PER_TICK = WHEEL_D_IN*Math.PI / BASE_ENCODER_PPR;
+        public static final double IN_PER_TICK = WHEEL_D_IN * Math.PI / BASE_ENCODER_PPR;
         public static final double TICK_PER_IN = 1 / IN_PER_TICK;
 
         // Track width and wheelbase distance (in inch)
@@ -146,7 +149,7 @@ public class Constants {
         public static final double TEAM_PROP_LEFT_CENTER = 100;
         public static final double TEAM_PROP_CENTER_RIGHT = 200;
 
-        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0/30;
+        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
         public static final double SERVO_PWM_SPEED = 0.1;
     }
 
@@ -156,13 +159,13 @@ public class Constants {
     public static class FIELD_PARAMETER {
         public static void INIT_FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
-            if (!init)
-            {
+            if (!init) {
                 BIG_APRIL_TAG_ID.add(7);
                 BIG_APRIL_TAG_ID.add(10);
                 init = true;
             }
         }
+
         private static boolean init = false;
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
     }
@@ -171,10 +174,26 @@ public class Constants {
      * Initial values which doesn't fit above categories
      */
     public static class HARDWARE_CONSTANT {
-        //TODO: tune
-        public static final double MOTOR_POSITION_AT_ZERO = 17;
+        public static class Arm {
 
-        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 190;
+
+            /*
+             *                      / <- arm
+             *                    / arm angle
+             *                  /-------- 0 deg
+             *              |         |
+             *  base -> O-------------------------O  <- front
+             */
+            //TODO: tune/calculate
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 17;
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 190;
+            public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
+            public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
+            public static final PIDCoefficients ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficients(0.1, 0, 0);
+            public static final PIDFCoefficients ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new PIDFCoefficients(0.1, 0, 0, 0.1);
+            public static final double POSITION_THRESHOLD = 1;
+
+        }
 
         //public static final double SERVO_POSITION_AT_ZERO = 0;
 
@@ -201,12 +220,12 @@ public class Constants {
                 "RedTeamProp",
         };
     }
+
     /**
      * Bot physical parameters
-     * */
-    public static class BOT_PARAMETERS
-    {
-        public static final Vector2d robotToCamera = new Vector2d(-1,2);
+     */
+    public static class BOT_PARAMETERS {
+        public static final Vector2d robotToCamera = new Vector2d(-1, 2);
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;

@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITAL_WRIST_SERVO_ANGLE;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.MOTOR_POSITION_AT_PERPENDICULAR;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.MOTOR_POSITION_AT_ZERO;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_UPWARD_VERTICAL;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_FRONT_HORIZONTAL;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 //import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.SERVO_POSITION_AT_PERPENDICULAR;
 //import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.SERVO_POSITION_AT_ZERO;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 
@@ -26,8 +24,8 @@ public class TestParallel extends LinearOpMode {
     private AngleServo wristServo = null;
 
     private double getMotorAngleDeg() {
-        double a = (MOTOR_POSITION_AT_PERPENDICULAR - MOTOR_POSITION_AT_ZERO) / 90.0;
-        double b = MOTOR_POSITION_AT_ZERO;
+        double a = (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL) / 90.0;
+        double b = MOTOR_POSITION_AT_FRONT_HORIZONTAL;
         double currentPosition = leftArmMotor.getCurrentPosition();
         return a * currentPosition + b;
     }
