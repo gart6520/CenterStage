@@ -10,15 +10,21 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.BasicFeedforward;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.FeedforwardEx;
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Arm {
     DcMotorEx armMotor;
     LinearOpMode opMode;
-    BasicPID pid = new BasicPID(ARM_POSITION_PID_COEFFICIENTS);
+    PIDEx pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+    FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
 
     public Arm(LinearOpMode _opMode) {
@@ -46,8 +52,10 @@ public class Arm {
             armMotor.setVelocity(0);
             return;
         }
+        //Probably should switch to PositionVelocitySystem
         double vel = pid.calculate(degToTick(targetAngle), armMotor.getCurrentPosition());
-        armMotor.setVelocity(vel);
+        double power = feedforward.calculate(getAngle(), vel, 0);
+        armMotor.setPower(power);
     }
 
     public void setPower(double power) {
@@ -56,16 +64,11 @@ public class Arm {
 
     public void init() {
         armMotor = opMode.hardwareMap.get(DcMotorEx.class, "armMotor");
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        armMotor.setVelocityPIDFCoefficients(
-                ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS.p,
-                ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS.i,
-                ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS.d,
-                ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS.f);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void resetEncoder() {
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
