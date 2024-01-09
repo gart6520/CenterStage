@@ -10,8 +10,8 @@ public class Claw {
     private ServoImplEx rightClaw;
     private LinearOpMode opMode;
 
-    public ClawState leftClawState;
-    public ClawState rightClawState;
+    private ClawState leftClawState;
+    private ClawState rightClawState;
 
 
     public enum ClawState {
@@ -32,6 +32,7 @@ public class Claw {
         opMode = _opMode;
         updateClawState(ClawState.CLOSED, ClawSide.BOTH);
     }
+
     private double getClawStatePosition(ClawState state, ClawSide side) {
         switch (side) {
             case LEFT:

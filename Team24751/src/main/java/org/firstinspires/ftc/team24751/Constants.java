@@ -16,6 +16,8 @@ public class Constants {
     public static final double INCH_TO_MM = 25.4;
     public static final double MM_TO_INCH = 1 / INCH_TO_MM;
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
+    public static final double RAD_TO_DEG = 180.0 / Math.PI;
+    public static final double DEG_TO_RAD = Math.PI / 180.0;
 
     //Really important constants
     public enum AllianceColor {
