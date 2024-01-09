@@ -50,12 +50,14 @@ public class TestParallel extends LinearOpMode {
 
         leftClawServo = (ServoImplEx) hardwareMap.get(ServoImplEx.class, "leftClawServo");
         rightClawServo = (ServoImplEx) hardwareMap.get(ServoImplEx.class, "rightClawServo");
+        leftClawServo.setPwmRange(REV_SERVO_PWM_RANGE);
+        rightClawServo.setPwmRange(REV_SERVO_PWM_RANGE);
         claw = new Claw(leftClawServo, rightClawServo, this);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            // Update Claw Position
+            // Update Wrist Position
             if (getMotorAngleDeg() <= 30) {
                 wrist.setWristPosition(Wrist.WristState.STORED);
             } else if (getMotorAngleDeg() >= 90) {
@@ -96,6 +98,10 @@ public class TestParallel extends LinearOpMode {
                 } else {
                     claw.updateClawState(Claw.ClawState.CLOSED, Claw.ClawSide.RIGHT);
                 }
+            } else if (gamepad1.dpad_up) {
+                claw.updateClawState(Claw.ClawState.OPEN, Claw.ClawSide.BOTH);
+            } else if (gamepad1.dpad_down) {
+                claw.updateClawState(Claw.ClawState.CLOSED, Claw.ClawSide.BOTH);
             }
 
             telemetry.addData("Current Motor Degree", getMotorAngleDeg());
