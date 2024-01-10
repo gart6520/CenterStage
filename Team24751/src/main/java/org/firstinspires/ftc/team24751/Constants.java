@@ -168,7 +168,7 @@ public class Constants {
     }
 
     /**
-     * Initial values which doesn't fit above categories
+     * Constant used for general hardware
      */
     public static class HARDWARE_CONSTANT {
         //TODO: tune
@@ -207,5 +207,15 @@ public class Constants {
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
         public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
+    }
+
+    public static class OdometryPod
+    {
+        public static final double WHEEL_DIAMETER_IN = 48 * 0.03937;
+        public static final double TICKS_PER_REV = 2000;
+
+        public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+
+        public static double inPerTick = (WHEEL_DIAMETER_IN * Math.PI) / (TICKS_PER_REV * GEAR_RATIO);
     }
 }
