@@ -68,7 +68,7 @@ public class Drivebase {
     private final MecanumKinematics kinematics = new MecanumKinematics(TRACK_WIDTH, WHEELBASE_DISTANCE, LATERAL_MULTIPLER);
 
     // Localizer
-    private DriveLocalizer localizer = null;
+    private OdometryPod localizer = null;
 
     // Pose
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
@@ -87,13 +87,8 @@ public class Drivebase {
 
     /**
      * Drivebase class for driving mecanum drivebase
-     * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
      */
-    public Drivebase(LinearOpMode opMode, Gyro gyro) {
-        this.hardwareMap = opMode.hardwareMap;
-        this.telemetry = opMode.telemetry;
-        this.gyro = gyro;
-    }
+    public Drivebase() {}
 
     /**
      * Init method for Drivebase class
@@ -106,8 +101,16 @@ public class Drivebase {
      * - stop all motors on init
      * - init localizer
      * </p>
+     * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
+     * @param gyro gyro instance
+     * @param localizer OdometryPod localizer
      */
-    public void init() {
+    public void init(LinearOpMode opMode, Gyro gyro, OdometryPod localizer) {
+        // Get hardware map
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
+        this.gyro = gyro;
+
         // Get motor objects
         leftFront = hardwareMap.get(DcMotorEx.class, LEFT_FRONT);
         leftBack = hardwareMap.get(DcMotorEx.class, LEFT_BACK);
@@ -126,8 +129,8 @@ public class Drivebase {
         rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        // Reset encoders to manual mode
-        resetRunWithoutEncoder();
+        // Set localizer object
+        this.localizer = localizer;
 
         // Stop all motors
         leftFront.setPower(0);
@@ -135,8 +138,53 @@ public class Drivebase {
         rightFront.setPower(0);
         rightBack.setPower(0);
 
-        // Init localizer
-        localizer = new DriveLocalizer();
+        // Init voltage sensor
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+    }
+
+    /**
+     * Init method for Drivebase class
+     * <p>
+     * This method:
+     * - gets motor objects from provided hardwareMap variable
+     * - set drivebase motor direction
+     * - set brake mode for all motors
+     * - reset motor encoders
+     * - stop all motors on init
+     * - init localizer
+     * </p>
+     * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
+     * @param gyro gyro instance
+     */
+    public void init(LinearOpMode opMode, Gyro gyro) {
+        // Get hardware map
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
+        this.gyro = gyro;
+
+        // Get motor objects
+        leftFront = hardwareMap.get(DcMotorEx.class, LEFT_FRONT);
+        leftBack = hardwareMap.get(DcMotorEx.class, LEFT_BACK);
+        rightFront = hardwareMap.get(DcMotorEx.class, RIGHT_FRONT);
+        rightBack = hardwareMap.get(DcMotorEx.class, RIGHT_BACK);
+
+        // Set drivebase motor direction
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        // Set brake mode
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        // Stop all motors
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
 
         // Init voltage sensor
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -155,12 +203,6 @@ public class Drivebase {
         rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Reset encoder position in DriveLocalizer
-        if (localizer != null) {
-            // Only do this if localizer is initialized
-            localizer.resetEncoder();
-        }
     }
 
     /**
@@ -176,12 +218,6 @@ public class Drivebase {
         rightFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Reset encoder position in DriveLocalizer
-        if (localizer != null) {
-            // Only do this if localizer is initialized
-            localizer.resetEncoder();
-        }
     }
 
     /**
@@ -244,128 +280,31 @@ public class Drivebase {
     }
 
     /**
-     * Drivebase's drive localizer class
-     * This class provides methods for getting/updating/resetting the drivebase's pose, based on the drivebase's wheel encoders
-     */
-    public class DriveLocalizer {
-        private Encoder leftFrontEncoder, leftBackEncoder, rightFrontEncoder, rightBackEncoder;
-        private int lastLeftFrontPos, lastLeftBackPos, lastRightFrontPos, lastRightBackPos;
-        private Rotation2d lastHeading;
-
-        /**
-         * DriveLocalizer's constructor
-         * This constructor:
-         * - Init encoder objects
-         * - Get last encoder position
-         */
-        public DriveLocalizer() {
-            // Init encoders
-            leftFrontEncoder = new OverflowEncoder(new RawEncoder(leftFront));
-            leftBackEncoder = new OverflowEncoder(new RawEncoder(leftBack));
-            rightFrontEncoder = new OverflowEncoder(new RawEncoder(rightFront));
-            rightBackEncoder = new OverflowEncoder(new RawEncoder(rightBack));
-
-            // Reset encoders
-            resetEncoder();
-
-            // Get last heading
-            lastHeading = Rotation2d.exp(gyro.getYawRad());
-        }
-
-        /**
-         * Reset encoder positions
-         * This method is called whenever the drivebase motor is switched between
-         * RUN_WITH_ENCODER and RUN_WITHOUT_ENCODER
-         */
-        public void resetEncoder() {
-            // Get last encoder position
-            lastLeftFrontPos = leftFrontEncoder.getPositionAndVelocity().position;
-            lastLeftBackPos = leftBackEncoder.getPositionAndVelocity().position;
-            lastRightFrontPos = rightFrontEncoder.getPositionAndVelocity().position;
-            lastRightBackPos = rightBackEncoder.getPositionAndVelocity().position;
-        }
-
-        /**
-         * Update localizer
-         * @return twist (delta pose/pose different)
-         */
-        public Twist2dDual<Time> update() {
-            // Get position and velocity of each wheel
-            PositionVelocityPair leftFrontPosVel = leftFrontEncoder.getPositionAndVelocity();
-            PositionVelocityPair leftBackPosVel = leftBackEncoder.getPositionAndVelocity();
-            PositionVelocityPair rightFrontPosVel = rightFrontEncoder.getPositionAndVelocity();
-            PositionVelocityPair rightBackPosVel = rightBackEncoder.getPositionAndVelocity();
-
-            // Get heading delta
-            Rotation2d heading = Rotation2d.exp(gyro.getYawRad());
-            double headingDelta = heading.minus(lastHeading);
-
-            // Compute twist
-            Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<Time>(new double[]{
-                            (leftFrontPosVel.position - lastLeftFrontPos),
-                            leftFrontPosVel.velocity,
-                    }).times(IN_PER_TICK),
-                    new DualNum<Time>(new double[]{
-                            (leftBackPosVel.position - lastLeftBackPos),
-                            leftBackPosVel.velocity,
-                    }).times(IN_PER_TICK),
-                    new DualNum<Time>(new double[]{
-                            (rightBackPosVel.position - lastRightBackPos),
-                            rightBackPosVel.velocity,
-                    }).times(IN_PER_TICK),
-                    new DualNum<Time>(new double[]{
-                            (rightFrontPosVel.position - lastRightFrontPos),
-                            rightFrontPosVel.velocity,
-                    }).times(IN_PER_TICK)
-            ));
-
-            // TODO: reverse encoders if needed
-            rightFrontEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-            // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-
-            // Update last position and heading
-            lastLeftFrontPos = leftFrontPosVel.position;
-            lastLeftBackPos = leftBackPosVel.position;
-            lastRightBackPos = rightBackPosVel.position;
-            lastRightFrontPos = rightFrontPosVel.position;
-            lastHeading = heading;
-
-            telemetry.addData("lastLeftFrontPos", lastLeftFrontPos);
-            telemetry.addData("lastLeftBackPos", lastLeftBackPos);
-            telemetry.addData("lastRightFrontPos", lastRightFrontPos);
-            telemetry.addData("lastRightBackPos", lastRightBackPos);
-            //telemetry.update();
-
-            // Return
-            return new Twist2dDual<>(
-                    twist.line,
-                    DualNum.cons(headingDelta, twist.angle.drop(1))
-            );
-        }
-    }
-
-    /**
      * Update pose estimation
      * This should be called frequently whenever the drivebase is moving
      * @return 2D velocity
      */
     public PoseVelocity2d updatePoseEstimate() {
-        Twist2dDual<Time> twist = localizer.update();
-        pose = pose.plus(twist.value());
+        // If localizer is enabled
+        if (localizer != null) {
+            Twist2dDual<Time> twist = localizer.update();
+            pose = pose.plus(twist.value());
 
-        poseHistory.add(pose);
-        while (poseHistory.size() > 100) {
-            poseHistory.removeFirst();
+            poseHistory.add(pose);
+            while (poseHistory.size() > 100) {
+                poseHistory.removeFirst();
+            }
+
+            //FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+
+            telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (degree)", pose.position.x, pose.position.y, pose.heading.toDouble()*180/Math.PI);
+            //telemetry.update();
+
+            return twist.velocity().value();
+        } else {
+            // No localizer
+            return new PoseVelocity2d(new Vector2d(0, 0), 0);
         }
-
-        //FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
-
-        telemetry.addData("Pose2d", "X: %5.2f (in); Y: %5.2f (in); Z: %4.2f (degree)", pose.position.x, pose.position.y, pose.heading.toDouble()*180/Math.PI);
-        //telemetry.update();
-
-        return twist.velocity().value();
     }
 
     /**

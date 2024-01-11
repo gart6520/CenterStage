@@ -28,12 +28,8 @@ public class Gyro {
     /**
      * Gyro class for getting data from IMU
      * (Sorry it's just my convention to call it gyro)
-     *
-     * @param opMode opMode instance. If you are init this from linearOpMode, just pass `this`
      */
-    public Gyro(LinearOpMode opMode) {
-        this.opMode = opMode;
-    }
+    public Gyro() {}
 
     /**
      * Init method for Gyro class
@@ -43,8 +39,11 @@ public class Gyro {
      * - Init IMU
      * - Reset yaw
      * </p>
+     * @param opMode current opmode
      */
-    public void init() {
+    public void init(LinearOpMode opMode) {
+        // Set current opmode
+        this.opMode = opMode;
 
         //Set correct initial bot angle
         switch(Constants.allianceColor)
@@ -59,11 +58,11 @@ public class Gyro {
                 initialBotAngleDeg = INITIAL_BOT_ANGLE_DEG_TEST;
         }
 
-        navx_device = AHRS.getInstance(opMode.hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
-                AHRS.DeviceDataType.kProcessedData);
+        //navx_device = AHRS.getInstance(opMode.hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+                //AHRS.DeviceDataType.kProcessedData);
 
         // Reset yaw
-        navx_device.zeroYaw();
+        //navx_device.zeroYaw();
     }
 
     /**
@@ -72,20 +71,22 @@ public class Gyro {
      * @return Yaw angle, in radian
      */
     public double getYawRad() {
-        return wrapAngle(Math.toRadians(-navx_device.getYaw() + initialBotAngleDeg), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
+        //return wrapAngle(Math.toRadians(-navx_device.getYaw() + initialBotAngleDeg), Utility.WRAP_ANGLE_TYPE.minusPiToPi);
+        return 0;
     }/**
      * Get yaw from gyro
      *
      * @return Yaw angle, in degree
      */
     public double getYawDeg() {
-        return wrapAngle(-navx_device.getYaw() + initialBotAngleDeg, Utility.WRAP_ANGLE_TYPE.minus180To180);
+        //return wrapAngle(-navx_device.getYaw() + initialBotAngleDeg, Utility.WRAP_ANGLE_TYPE.minus180To180);
+        return 0;
     }
 
     /**
      * Reset the yaw value
      */
     public void reset() {
-        navx_device.zeroYaw();
+        //navx_device.zeroYaw();
     }
 }

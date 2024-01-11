@@ -33,6 +33,16 @@ public class Constants {
         public static final String RIGHT_FRONT = "rightFront";
         public static final String RIGHT_BACK = "rightBack";
 
+        // Arm motors
+        public static final String LEFT_ARM_MOTOR = "leftArmMotor";
+        public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
+        public static final String ELEVATOR_MOTOR = "elevatorMotor";
+
+        // Hand servos
+        public static final String WRIST_SERVO = "wristServo";
+        public static final String LEFT_CLAW = "leftClawServo";
+        public static final String RIGHT_CLAW = "rightClawServo";
+
         // Sensors
         public static final String IMU_NAME = "imu";
 
@@ -124,8 +134,8 @@ public class Constants {
         // Drivebase motor feedforward constants
         // TODO: Tune this to work in real life
         public static final double kS = 0.02;
-        public static final double kV = -0.0049;
-        public static final double kA = 0;
+        public static final double kV = 0.0049;
+        public static final double kA = 0.00003;
     }
 
     /**
@@ -211,7 +221,7 @@ public class Constants {
 
     public static class OdometryPod
     {
-        public static final double WHEEL_DIAMETER_IN = 48 * 0.03937;
+        public static final double WHEEL_DIAMETER_IN = 48 * MM_TO_INCH;
         public static final double TICKS_PER_REV = 2000;
 
         public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed

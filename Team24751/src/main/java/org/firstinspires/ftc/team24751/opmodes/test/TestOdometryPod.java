@@ -32,6 +32,9 @@ public class TestOdometryPod extends LinearOpMode {
     // Total run time
     private ElapsedTime runtime = new ElapsedTime();
 
+    Gyro gyro = new Gyro();
+    Drivebase drivebase = new Drivebase();
+
     @Override
     public void runOpMode() {
         // Update status
@@ -46,16 +49,15 @@ public class TestOdometryPod extends LinearOpMode {
         }
 
         OdometryPod localizer = new OdometryPod(this, inPerTick);
+
         // Wait for the driver to press PLAY
         waitForStart();
 
         // Init gyro
-        Gyro gyro = new Gyro(this);
-        gyro.init();
+        gyro.init(this);
 
         // Init drivebase
-        Drivebase drivebase = new Drivebase(this, gyro);
-        drivebase.init();
+        drivebase.init(this, gyro, localizer);
 
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
@@ -81,8 +83,8 @@ public class TestOdometryPod extends LinearOpMode {
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
             // Drive
-            // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
+            //drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
             // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
@@ -96,7 +98,7 @@ public class TestOdometryPod extends LinearOpMode {
 
             localizer.update();
             Pose2d pose = localizer.getCurrentPose();
-            telemetry.addData("X, Y, theta", pose.toString());
+            telemetry.addData("X, Y, theta", pose.position.x + " " + pose.position.y + " " + Math.toDegrees(pose.heading.toDouble()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
