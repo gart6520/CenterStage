@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751;
 
+import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -181,10 +183,34 @@ public class Constants {
      * Constant used for general hardware
      */
     public static class HARDWARE_CONSTANT {
-        public static class Arm
+        public static class Arm {
+
+
+            /*
+             *                      / <- arm
+             *                    / arm angle
+             *                  /-------- 0 deg
+             *              |         |
+             *  base -> O-------------------------O  <- front
+             */
+            //TODO: tune/calculate
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 17; //tick
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 190; //tick
+            public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
+            public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
+            public static final PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(0.1, 0, 0,
+                    0.5, 30, 0.9);
+            public static final FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
+                    0.1, 0.1, 0,
+                    0, 0.1);
+            public static final double POSITION_THRESHOLD = 1;
+
+        }
+
+        //Constant for wrist and grabber
+        public static class Hand
         {
-            public static final double MOTOR_DEG_PER_TICK = 360.0 / 288;
-            public static final double MOTOR_INIT_ANGLE_DEG = 0;
+            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
         }
         //TODO: tune
         public static final double MOTOR_POSITION_AT_ZERO = 0;

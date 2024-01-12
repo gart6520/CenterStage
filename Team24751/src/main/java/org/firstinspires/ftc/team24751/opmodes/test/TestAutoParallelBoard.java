@@ -7,33 +7,31 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
+import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
+import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
+import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 
 import java.util.List;
 
-@TeleOp(name="TestAllManual", group="Test")
-public class TestAllManual extends LinearOpMode {
+@TeleOp(name = "Test Auto // Board", group = "Test")
+public class TestAutoParallelBoard extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     Gyro gyro = new Gyro();
     Drivebase drivebase = new Drivebase();
+    Arm arm = new Arm(this);
+    Wrist wrist = new Wrist(this);
+    Grabber grabber = new Grabber(this);
+    Elevator elevator = new Elevator(this);
 
-    private DcMotor leftArmMotor = null;
-    private DcMotor rightArmMotor = null;
-    private DcMotor elevatorMotor = null;
-    private CRServo wrist = null;
-    private Servo leftClaw = null;
 
     @Override
     public void runOpMode() {
@@ -41,21 +39,13 @@ public class TestAllManual extends LinearOpMode {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        leftArmMotor = hardwareMap.get(DcMotor.class, "leftArmMotor");
-        rightArmMotor = hardwareMap.get(DcMotor.class, "rightArmMotor");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-        wrist = hardwareMap.get(CRServo.class, "wristServo");
-        leftClaw = hardwareMap.get(Servo.class, "leftClawServo");
+        //Init all subsystems
+        arm.init();
+        arm.resetEncoder();
 
-        leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wrist.init();
+        grabber.init();
+        elevator.init();
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -109,44 +99,35 @@ public class TestAllManual extends LinearOpMode {
 
             // Hitler Arm gogo
             if (gamepad1.triangle) {
-                leftArmMotor.setPower(0.9);
-                rightArmMotor.setPower(0.9);
+                arm.setPower(0.9);
             } else if (gamepad1.cross) {
-                leftArmMotor.setPower(-0.8);
-                rightArmMotor.setPower(-0.8);
+                arm.setPower(0.8);
             } else {
-                leftArmMotor.setPower(0);
-                rightArmMotor.setPower(0);
+                arm.setPower(0);
             }
 
             if (gamepad1.circle) {
-                elevatorMotor.setPower(0.6);
+                elevator.setPower(0.6);
             } else if (gamepad1.square) {
-                elevatorMotor.setPower(-0.6);
+                elevator.setPower(-0.6);
             } else {
-                elevatorMotor.setPower(0);
+                elevator.setPower(0);
             }
 
 
-            if (gamepad2.triangle) {
-                wrist.setDirection(CRServo.Direction.FORWARD);
-                wrist.setPower(0.3);
-            } else if (gamepad2.cross) {
-                wrist.setDirection(CRServo.Direction.REVERSE);
-                wrist.setPower(0.3);
-            } else {
-                wrist.setPower(0);
-            }
+            wrist.autoParallel(arm.getAngle());
 
             if (gamepad2.square) {
-                leftClaw.setPosition(1);
+                grabber.setPosition(1, 1);
             } else if (gamepad2.circle) {
-                leftClaw.setPosition(0);
+                grabber.setPosition(0, 0);
             }
 
             // Show elapsed run time
             telemetry.addData("Yaw", gyro.getYawDeg());
-            telemetry.addData("Current Arm Position", leftArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Position (L-R)",
+                    arm.leftArmMotor.getCurrentPosition() + " - " +
+                            arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
