@@ -1,55 +1,45 @@
+/*
+ * Main manual drive OpMode for GART 24751's FTC code
+ * Written by gvl610
+ * Date created: 9/11/2023
+ */
+
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+// Import modules
+
+import static org.firstinspires.ftc.team24751.Constants.OdometryPod.inPerTick;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.roadrunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
+import org.firstinspires.ftc.team24751.subsystems.OdometryPod;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
 import java.util.List;
 
-@TeleOp(name="TestHitlerArmMecanum", group="Test")
-public class TestHitlerArmMecanum extends LinearOpMode {
-    // Subsystems
+@TeleOp(name="Test Odo Pod", group="Test")
+public class TestOdometryPod extends LinearOpMode {
+    // Total run time
+    private ElapsedTime runtime = new ElapsedTime();
+
     Gyro gyro = new Gyro();
     Drivebase drivebase = new Drivebase();
-
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftArmMotor = null;
-    private DcMotor rightArmMotor = null;
-    private DcMotor elevatorMotor = null;
 
     @Override
     public void runOpMode() {
         // Update status
         telemetry.addData("Status", "Initializing");
         telemetry.update();
-
-        leftArmMotor = hardwareMap.get(DcMotor.class, "leftArmMotor");
-        rightArmMotor = hardwareMap.get(DcMotor.class, "rightArmMotor");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-
-        leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -58,11 +48,16 @@ public class TestHitlerArmMecanum extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        OdometryPod localizer = new OdometryPod(this, inPerTick);
+
+        // Wait for the driver to press PLAY
+        waitForStart();
+
         // Init gyro
         gyro.init(this);
 
         // Init drivebase
-        drivebase.init(this, gyro);
+        drivebase.init(this, gyro, localizer);
 
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
@@ -70,9 +65,6 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        // Wait for the driver to press PLAY
-        waitForStart();
 
         // Reset runtime
         runtime.reset();
@@ -91,8 +83,8 @@ public class TestHitlerArmMecanum extends LinearOpMode {
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
             // Drive
-            // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
+            //drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
             // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
@@ -101,29 +93,12 @@ public class TestHitlerArmMecanum extends LinearOpMode {
             // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
             // after finishing the trajectory
 
-            // Hitler Arm gogo
-            if (gamepad1.triangle) {
-                leftArmMotor.setPower(1);
-                rightArmMotor.setPower(1);
-            } else if (gamepad1.cross) {
-                leftArmMotor.setPower(-0.8);
-                rightArmMotor.setPower(-0.8);
-            } else {
-                leftArmMotor.setPower(0);
-                rightArmMotor.setPower(0);
-            }
-
-            if (gamepad1.circle) {
-                elevatorMotor.setPower(0.6);
-            } else if (gamepad1.square) {
-                elevatorMotor.setPower(-0.6);
-            } else {
-                elevatorMotor.setPower(0);
-            }
-
             // Show elapsed run time
             telemetry.addData("Yaw", gyro.getYawDeg());
-            telemetry.addData("Current Arm Position", leftArmMotor.getCurrentPosition());
+
+            localizer.update();
+            Pose2d pose = localizer.getCurrentPose();
+            telemetry.addData("X, Y, theta", pose.position.x + " " + pose.position.y + " " + Math.toDegrees(pose.heading.toDouble()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

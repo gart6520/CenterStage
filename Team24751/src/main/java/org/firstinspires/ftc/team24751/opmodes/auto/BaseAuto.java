@@ -18,8 +18,9 @@ public abstract class BaseAuto extends LinearOpMode {
     protected final ElapsedTime runtime = new ElapsedTime();
 
     // Subsystem objects
-    protected final Gyro gyro = new Gyro(this);
-    protected final Drivebase drivebase = new Drivebase(this, gyro);
+    protected final Gyro gyro = new Gyro();
+    protected final Drivebase drivebase = new Drivebase();
+
     /**
      * Extends this function and set the allianceColor to appropriate color
      * */
@@ -40,8 +41,8 @@ public abstract class BaseAuto extends LinearOpMode {
         }
 
         // Init subsystems
-        gyro.init();
-        drivebase.init();
+        gyro.init(this);
+        drivebase.init(this, gyro);
 
         // Update status
         telemetry.addData("Status", "Initialized");

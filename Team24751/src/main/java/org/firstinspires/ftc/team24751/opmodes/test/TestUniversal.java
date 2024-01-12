@@ -40,6 +40,8 @@ public class TestUniversal extends LinearOpMode {
      */
     private final double maxMotorSpeed = 0.4;
 
+    private Gyro gyro = new Gyro();
+
     @Override
     public void runOpMode() {
         // Update status
@@ -57,14 +59,13 @@ public class TestUniversal extends LinearOpMode {
         waitForStart();
 
         // Init gyro
-        Gyro gyro = new Gyro(this);
-        gyro.init();
+        gyro.init(this);
 
         // Init drivebase
         Drivebase drivebase;
         try {
-            drivebase = new Drivebase(this, gyro);
-            drivebase.init();
+            drivebase = new Drivebase();
+            drivebase.init(this, gyro);
         } catch (Exception e) {
             drivebase = null;
         }

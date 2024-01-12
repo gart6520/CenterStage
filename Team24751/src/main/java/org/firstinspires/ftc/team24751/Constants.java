@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.team24751;
 
-import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
 import java.util.ArrayList;
@@ -16,15 +13,13 @@ public class Constants {
     public static final double INCH_TO_MM = 25.4;
     public static final double MM_TO_INCH = 1 / INCH_TO_MM;
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
-    public static final double RAD_TO_DEG = 180.0 / Math.PI;
-    public static final double DEG_TO_RAD = Math.PI / 180.0;
 
     //Really important constants
-    public enum AllianceColor {
+    public enum AllianceColor
+    {
         //Test for code usage in testing
         RED, BLUE, TEST
     }
-
     //TODO: All AutoOpMode should init this variable to the correct color
     public static AllianceColor allianceColor = AllianceColor.TEST;
 
@@ -39,6 +34,16 @@ public class Constants {
         public static final String LEFT_BACK = "leftBack";
         public static final String RIGHT_FRONT = "rightFront";
         public static final String RIGHT_BACK = "rightBack";
+
+        // Arm motors
+        public static final String LEFT_ARM_MOTOR = "leftArmMotor";
+        public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
+        public static final String ELEVATOR_MOTOR = "elevatorMotor";
+
+        // Hand servos
+        public static final String WRIST_SERVO = "wristServo";
+        public static final String LEFT_CLAW = "leftClawServo";
+        public static final String RIGHT_CLAW = "rightClawServo";
 
         // Sensors
         public static final String IMU_NAME = "imu";
@@ -96,7 +101,7 @@ public class Constants {
         // Inch traveled per tick/count
         // This can either be calculated using the formula, or by measuring
         // The choice is yours
-        public static final double IN_PER_TICK = WHEEL_D_IN * Math.PI / BASE_ENCODER_PPR;
+        public static final double IN_PER_TICK = WHEEL_D_IN*Math.PI / BASE_ENCODER_PPR;
         public static final double TICK_PER_IN = 1 / IN_PER_TICK;
 
         // Track width and wheelbase distance (in inch)
@@ -131,8 +136,8 @@ public class Constants {
         // Drivebase motor feedforward constants
         // TODO: Tune this to work in real life
         public static final double kS = 0.02;
-        public static final double kV = -0.0049;
-        public static final double kA = 0;
+        public static final double kV = 0.0049;
+        public static final double kA = 0.00003;
     }
 
     /**
@@ -153,7 +158,7 @@ public class Constants {
         public static final double TEAM_PROP_LEFT_CENTER = 100;
         public static final double TEAM_PROP_CENTER_RIGHT = 200;
 
-        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
+        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0/30;
         public static final double SERVO_PWM_SPEED = 0.1;
     }
 
@@ -163,19 +168,19 @@ public class Constants {
     public static class FIELD_PARAMETER {
         public static void INIT_FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
-            if (!init) {
+            if (!init)
+            {
                 BIG_APRIL_TAG_ID.add(7);
                 BIG_APRIL_TAG_ID.add(10);
                 init = true;
             }
         }
-
         private static boolean init = false;
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
     }
 
     /**
-     * Initial values which doesn't fit above categories
+     * Constant used for general hardware
      */
     public static class HARDWARE_CONSTANT {
         public static class Arm {
@@ -202,17 +207,23 @@ public class Constants {
 
         }
 
-        //public static final double SERVO_POSITION_AT_ZERO = 0;
+        //Constant for wrist and grabber
+        public static class Hand
+        {
+            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
+        }
+        //TODO: tune
+        public static final double MOTOR_POSITION_AT_ZERO = 0;
 
-        //public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
+        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 90;
+
+        public static final double SERVO_POSITION_AT_ZERO = 0;
+
+        public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
-
-        public static final double INITAL_WRIST_SERVO_ANGLE = 0;
         public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
-        public static final PwmControl.PwmRange REV_CRSERVO_PWM_RANGE = new PwmControl.PwmRange(900, 2100);
         //TODO: Tune for gobilda one
         public static final PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
-        public static final PwmControl.PwmRange GOBILDA_FAST_CRSERVO_PWM_RANGE = new PwmControl.PwmRange(900, 2100);
         public static final double REV_SERVO_ANGLE_RANGE = 270;
         public static final double GOBILDA_SERVO_ANGLE_RANGE = 300;
     }
@@ -227,15 +238,25 @@ public class Constants {
                 "RedTeamProp",
         };
     }
-
     /**
      * Bot physical parameters
-     */
-    public static class BOT_PARAMETERS {
-        public static final Vector2d robotToCamera = new Vector2d(-1, 2);
+     * */
+    public static class BOT_PARAMETERS
+    {
+        public static final Vector2d robotToCamera = new Vector2d(-1,2);
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
         public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
+    }
+
+    public static class OdometryPod
+    {
+        public static final double WHEEL_DIAMETER_IN = 48 * MM_TO_INCH;
+        public static final double TICKS_PER_REV = 2000;
+
+        public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+
+        public static double inPerTick = (WHEEL_DIAMETER_IN * Math.PI) / (TICKS_PER_REV * GEAR_RATIO);
     }
 }

@@ -31,6 +31,10 @@ public class TestIntakeDrivebase extends LinearOpMode {
     // Total run time
     private ElapsedTime runtime = new ElapsedTime();
 
+    // Subsystems
+    private Gyro gyro = new Gyro();
+    private Drivebase drivebase = new Drivebase();
+
     DcMotor intake;
 
     @Override
@@ -47,12 +51,10 @@ public class TestIntakeDrivebase extends LinearOpMode {
         }
 
         // Init gyro
-        Gyro gyro = new Gyro(this);
-        gyro.init();
+        gyro.init(this);
 
         // Init drivebase
-        Drivebase drivebase = new Drivebase(this, gyro);
-        drivebase.init();
+        drivebase.init(this, gyro);
 
         // Init intake
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -60,12 +62,12 @@ public class TestIntakeDrivebase extends LinearOpMode {
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
 
-        // Wait for the driver to press PLAY
-        waitForStart();
-
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        // Wait for the driver to press PLAY
+        waitForStart();
 
         // Reset runtime
         runtime.reset();

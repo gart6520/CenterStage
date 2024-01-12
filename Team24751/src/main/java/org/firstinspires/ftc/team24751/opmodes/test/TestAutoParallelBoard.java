@@ -1,35 +1,37 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
+import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
+import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
+import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 
 import java.util.List;
 
-@TeleOp(name="TestHitlerArmMecanum", group="Test")
-public class TestHitlerArmMecanum extends LinearOpMode {
-    // Subsystems
+@TeleOp(name = "Test Auto // Board", group = "Test")
+public class TestAutoParallelBoard extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
+
     Gyro gyro = new Gyro();
     Drivebase drivebase = new Drivebase();
+    Arm arm = new Arm(this);
+    Wrist wrist = new Wrist(this);
+    Grabber grabber = new Grabber(this);
+    Elevator elevator = new Elevator(this);
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftArmMotor = null;
-    private DcMotor rightArmMotor = null;
-    private DcMotor elevatorMotor = null;
 
     @Override
     public void runOpMode() {
@@ -37,19 +39,13 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        leftArmMotor = hardwareMap.get(DcMotor.class, "leftArmMotor");
-        rightArmMotor = hardwareMap.get(DcMotor.class, "rightArmMotor");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        //Init all subsystems
+        arm.init();
+        arm.resetEncoder();
 
-        leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wrist.init();
+        grabber.init();
+        elevator.init();
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -57,6 +53,9 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        // Wait for the driver to press PLAY
+        waitForStart();
 
         // Init gyro
         gyro.init(this);
@@ -71,9 +70,6 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Wait for the driver to press PLAY
-        waitForStart();
-
         // Reset runtime
         runtime.reset();
 
@@ -86,7 +82,7 @@ public class TestHitlerArmMecanum extends LinearOpMode {
 
             // Get joystick axis values
             // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
-            double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
+            double left_y = gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
             double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
@@ -103,27 +99,35 @@ public class TestHitlerArmMecanum extends LinearOpMode {
 
             // Hitler Arm gogo
             if (gamepad1.triangle) {
-                leftArmMotor.setPower(1);
-                rightArmMotor.setPower(1);
+                arm.setPower(0.9);
             } else if (gamepad1.cross) {
-                leftArmMotor.setPower(-0.8);
-                rightArmMotor.setPower(-0.8);
+                arm.setPower(0.8);
             } else {
-                leftArmMotor.setPower(0);
-                rightArmMotor.setPower(0);
+                arm.setPower(0);
             }
 
             if (gamepad1.circle) {
-                elevatorMotor.setPower(0.6);
+                elevator.setPower(0.6);
             } else if (gamepad1.square) {
-                elevatorMotor.setPower(-0.6);
+                elevator.setPower(-0.6);
             } else {
-                elevatorMotor.setPower(0);
+                elevator.setPower(0);
+            }
+
+
+            wrist.autoParallel(arm.getAngle());
+
+            if (gamepad2.square) {
+                grabber.setPosition(1, 1);
+            } else if (gamepad2.circle) {
+                grabber.setPosition(0, 0);
             }
 
             // Show elapsed run time
             telemetry.addData("Yaw", gyro.getYawDeg());
-            telemetry.addData("Current Arm Position", leftArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Position (L-R)",
+                    arm.leftArmMotor.getCurrentPosition() + " - " +
+                            arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
