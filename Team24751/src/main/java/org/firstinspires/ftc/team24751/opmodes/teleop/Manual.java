@@ -28,8 +28,8 @@ public class Manual extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Subsystem objects
-    private Gyro gyro = new Gyro(this);
-    private Drivebase drivebase = new Drivebase(this, gyro);
+    private Gyro gyro = new Gyro();
+    private Drivebase drivebase = new Drivebase();
 
     // Gamepad helper object
     GamepadHelper gp1 = new GamepadHelper(gamepad1);
@@ -54,8 +54,8 @@ public class Manual extends LinearOpMode {
         // Init subsystems
         gp1.init();
         gp2.init();
-        gyro.init();
-        drivebase.init();
+        gyro.init(this);
+        drivebase.init(this, gyro);
 
         // Update gamepad values
         gp1.update();

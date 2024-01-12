@@ -21,6 +21,7 @@ import java.util.List;
 
 @TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
 public class TestAprilTagPoseEstimator extends LinearOpMode {
+    Gyro gyro = new Gyro();
 
     @Override
     public void runOpMode() {
@@ -57,8 +58,7 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         waitForStart();
 
         //Init gyro
-        Gyro gyro = new Gyro(this);
-        gyro.init();
+        gyro.init(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -9,8 +9,10 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,16 +22,18 @@ import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
 import java.util.List;
 
-@TeleOp(name="TestHitlerArmMecanum", group="Test")
-public class TestHitlerArmMecanum extends LinearOpMode {
-    // Subsystems
+@TeleOp(name="TestAllManual", group="Test")
+public class TestAllManual extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
+
     Gyro gyro = new Gyro();
     Drivebase drivebase = new Drivebase();
 
-    private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftArmMotor = null;
     private DcMotor rightArmMotor = null;
     private DcMotor elevatorMotor = null;
+    private CRServo wrist = null;
+    private Servo leftClaw = null;
 
     @Override
     public void runOpMode() {
@@ -40,6 +44,8 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         leftArmMotor = hardwareMap.get(DcMotor.class, "leftArmMotor");
         rightArmMotor = hardwareMap.get(DcMotor.class, "rightArmMotor");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        wrist = hardwareMap.get(CRServo.class, "wristServo");
+        leftClaw = hardwareMap.get(Servo.class, "leftClawServo");
 
         leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,6 +64,9 @@ public class TestHitlerArmMecanum extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        // Wait for the driver to press PLAY
+        waitForStart();
+
         // Init gyro
         gyro.init(this);
 
@@ -70,9 +79,6 @@ public class TestHitlerArmMecanum extends LinearOpMode {
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        // Wait for the driver to press PLAY
-        waitForStart();
 
         // Reset runtime
         runtime.reset();
@@ -103,8 +109,8 @@ public class TestHitlerArmMecanum extends LinearOpMode {
 
             // Hitler Arm gogo
             if (gamepad1.triangle) {
-                leftArmMotor.setPower(1);
-                rightArmMotor.setPower(1);
+                leftArmMotor.setPower(0.9);
+                rightArmMotor.setPower(0.9);
             } else if (gamepad1.cross) {
                 leftArmMotor.setPower(-0.8);
                 rightArmMotor.setPower(-0.8);
@@ -119,6 +125,23 @@ public class TestHitlerArmMecanum extends LinearOpMode {
                 elevatorMotor.setPower(-0.6);
             } else {
                 elevatorMotor.setPower(0);
+            }
+
+
+            if (gamepad2.triangle) {
+                wrist.setDirection(CRServo.Direction.FORWARD);
+                wrist.setPower(0.3);
+            } else if (gamepad2.cross) {
+                wrist.setDirection(CRServo.Direction.REVERSE);
+                wrist.setPower(0.3);
+            } else {
+                wrist.setPower(0);
+            }
+
+            if (gamepad2.square) {
+                leftClaw.setPosition(1);
+            } else if (gamepad2.circle) {
+                leftClaw.setPosition(0);
             }
 
             // Show elapsed run time

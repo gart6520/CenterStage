@@ -21,6 +21,7 @@ import java.util.List;
 
 @TeleOp(name = "Test Hand", group = "Test")
 public class TestHand extends LinearOpMode {
+    Gyro gyro = new Gyro();
 
     @Override
     public void runOpMode() {
@@ -47,8 +48,7 @@ public class TestHand extends LinearOpMode {
         waitForStart();
 
         //Init gyro
-        Gyro gyro = new Gyro(this);
-        gyro.init();
+        gyro.init(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
