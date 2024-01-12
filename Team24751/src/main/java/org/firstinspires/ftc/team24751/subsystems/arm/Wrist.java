@@ -30,5 +30,6 @@ public class Wrist {
     public void autoParallel(double armAngleDeg) {
         double targetAngle = 240 - armAngleDeg;
         wristServo.setAngle(targetAngle);
+        opMode.telemetry.addData("Wrist Angle", wristServo.getServo().getPosition());
     }
 }
