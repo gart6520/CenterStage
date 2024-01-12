@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.opmodes.teleop;
+package org.firstinspires.ftc.team24751.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,8 +21,8 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 
 import java.util.List;
 
-@TeleOp(name = "Manual Hitler Arm", group = "!")
-public class Manual extends LinearOpMode {
+@TeleOp(name = "Test Auto // Board", group = "Test")
+public class TestAutoParallelBoard extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     Gyro gyro = new Gyro();
@@ -115,11 +115,7 @@ public class Manual extends LinearOpMode {
             }
 
 
-            if (gamepad2.triangle) {
-                wrist.setSpeed(0.01);
-            } else if (gamepad2.cross) {
-                wrist.setSpeed(-0.01);
-            }
+            wrist.autoParallel(arm.getAngle());
 
             if (gamepad2.square) {
                 grabber.setPosition(1, 1);
