@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.ActiveIntake;
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
@@ -35,7 +36,7 @@ public class TestIntakeDrivebase extends LinearOpMode {
     private Gyro gyro = new Gyro();
     private Drivebase drivebase = new Drivebase();
 
-    DcMotor intake;
+    private ActiveIntake intake = new ActiveIntake(this);
 
     @Override
     public void runOpMode() {
@@ -57,7 +58,7 @@ public class TestIntakeDrivebase extends LinearOpMode {
         drivebase.init(this, gyro);
 
         // Init intake
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        intake.init();
 
         // Load last pose from auto mode
         drivebase.setCurrentPose(PoseStorage.getPose());
@@ -96,14 +97,12 @@ public class TestIntakeDrivebase extends LinearOpMode {
             // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
             // after finishing the trajectory
 
-            if (gamepad1.left_bumper) {
-                intake.setDirection(DcMotorSimple.Direction.FORWARD);
-                intake.setPower(0.9);
-            } else if (gamepad1.right_bumper) {
-                intake.setDirection(DcMotorSimple.Direction.REVERSE);
-                intake.setPower(0.9);
+            if (gamepad1.dpad_up) {
+                intake.run(ActiveIntake.IntakeDirection.FORWARD);
+            } else if (gamepad1.dpad_down) {
+                intake.run(ActiveIntake.IntakeDirection.REVERSE);
             } else {
-                intake.setPower(0);
+                intake.run(ActiveIntake.IntakeDirection.STATIONARY);
             }
 
             // Show elapsed run time

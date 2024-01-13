@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_FRONT_HORIZONTAL;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_UPWARD_VERTICAL;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,8 +51,8 @@ public class TestParallel extends LinearOpMode {
 
         leftClawServo = (ServoImplEx) hardwareMap.get(ServoImplEx.class, "leftClawServo");
         rightClawServo = (ServoImplEx) hardwareMap.get(ServoImplEx.class, "rightClawServo");
-        leftClawServo.setPwmRange(REV_SERVO_PWM_RANGE);
-        rightClawServo.setPwmRange(REV_SERVO_PWM_RANGE);
+        leftClawServo.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
+        rightClawServo.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
         claw = new Claw(leftClawServo, rightClawServo, this);
 
         waitForStart();

@@ -38,6 +38,7 @@ public class Wrist {
 
     public void setWristPosition(WristState _wristState) {
         double pos = overallTargetPosition;
+        //double pos = wrist.getPosition();
         if (_wristState == WristState.SCORING) {
             double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 5 : 13) * Math.PI) / 18));
             setTargetPosition(clamp(map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93), 0.03, 0.97));
