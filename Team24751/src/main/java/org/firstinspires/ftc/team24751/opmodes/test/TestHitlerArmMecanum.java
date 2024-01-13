@@ -103,8 +103,8 @@ public class TestHitlerArmMecanum extends LinearOpMode {
 
             // Hitler Arm gogo
             if (gamepad1.triangle) {
-                leftArmMotor.setPower(1);
-                rightArmMotor.setPower(1);
+                leftArmMotor.setPower(0.9);
+                rightArmMotor.setPower(0.9);
             } else if (gamepad1.cross) {
                 leftArmMotor.setPower(-0.8);
                 rightArmMotor.setPower(-0.8);

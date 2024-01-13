@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class Grabber {
     LinearOpMode opMode;
-    ServoImplEx leftClaw;
-    ServoImplEx rightClaw;
+    public ServoImplEx leftClaw;
+    public ServoImplEx rightClaw;
 
     public Grabber(LinearOpMode _opMode) {
         opMode = _opMode;

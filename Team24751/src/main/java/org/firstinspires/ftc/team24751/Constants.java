@@ -41,7 +41,8 @@ public class Constants {
         public static final String ELEVATOR_MOTOR = "elevatorMotor";
 
         // Hand servos
-        public static final String WRIST_SERVO = "wristServo";
+        public static final String LEFT_WRIST = "leftWristServo";
+        public static final String RIGHT_WRIST = "rightWristServo";
         public static final String LEFT_CLAW = "leftClawServo";
         public static final String RIGHT_CLAW = "rightClawServo";
 
@@ -197,8 +198,8 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 6; //tick
-            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 186; //tick
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; //tick
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 181; //tick
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static final PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(0.1, 0, 0,
