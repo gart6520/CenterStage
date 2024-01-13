@@ -42,7 +42,7 @@ public class AngleServo {
     }
 
     public void init(PwmControl.PwmRange pwmRange) {
-        servo = linearOpMode.hardwareMap.get(ServoImplEx.class, name);
+        servo = (ServoImplEx)linearOpMode.hardwareMap.get(name);
         servo.setPwmRange(pwmRange);
     }
 

@@ -59,6 +59,7 @@ public class Arm {
     public void init() {
         leftArmMotor = opMode.hardwareMap.get(DcMotorEx.class, LEFT_ARM_MOTOR);
         rightArmMotor = opMode.hardwareMap.get(DcMotorEx.class, RIGHT_ARM_MOTOR);
+        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 

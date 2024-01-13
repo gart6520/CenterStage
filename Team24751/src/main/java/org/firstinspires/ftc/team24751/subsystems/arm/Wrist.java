@@ -4,8 +4,10 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.WRIST_SERVO;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GOBILDA_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.INIT_WRIST_SERVO_ANGLE_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 
@@ -19,7 +21,8 @@ public class Wrist {
     }
 
     public void init() {
-        wristServo.init(GOBILDA_SERVO_PWM_RANGE);
+        wristServo.init(REV_SERVO_PWM_RANGE);
+        wristServo.getServo().setDirection(Servo.Direction.FORWARD);
     }
 
     public void setSpeed(double speed) {
@@ -28,8 +31,17 @@ public class Wrist {
 
     //Rotate the wrist parallel to the board (60 deg to the horizontal)
     public void autoParallel(double armAngleDeg) {
-        double targetAngle = 240 - armAngleDeg;
+        double targetAngle = 0;
+        if (armAngleDeg > 90) {
+            // Backdrop
+            targetAngle = armAngleDeg + 120;
+        } else {
+            // Ground
+            targetAngle = armAngleDeg + 60;
+        }
+
         wristServo.setAngle(targetAngle);
-        opMode.telemetry.addData("Wrist Angle", wristServo.getServo().getPosition());
+        opMode.telemetry.addData("Wrist Target Angle", targetAngle);
+        opMode.telemetry.addData("Wrist Pos", wristServo.getServo().getPosition());
     }
 }

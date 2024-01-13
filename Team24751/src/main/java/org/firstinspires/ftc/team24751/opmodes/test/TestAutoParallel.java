@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
@@ -21,8 +20,8 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 
 import java.util.List;
 
-@TeleOp(name = "Test Auto // Board", group = "Test")
-public class TestAutoParallelBoard extends LinearOpMode {
+@TeleOp(name = "Test Auto //", group = "Test")
+public class TestAutoParallel extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     Gyro gyro = new Gyro();
@@ -125,9 +124,8 @@ public class TestAutoParallelBoard extends LinearOpMode {
 
             // Show elapsed run time
             telemetry.addData("Yaw", gyro.getYawDeg());
-            telemetry.addData("Current Arm Position (L-R)",
-                    arm.leftArmMotor.getCurrentPosition() + " - " +
-                            arm.rightArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

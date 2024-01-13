@@ -194,8 +194,8 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 17; //tick
-            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 190; //tick
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 6; //tick
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 186; //tick
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static final PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(0.1, 0, 0,
