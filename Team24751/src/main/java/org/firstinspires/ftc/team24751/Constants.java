@@ -45,6 +45,9 @@ public class Constants {
         public static final String LEFT_CLAW = "leftClawServo";
         public static final String RIGHT_CLAW = "rightClawServo";
 
+        // Active intake servo
+        public static final String ACTIVE_INTAKE_SERVO = "activeIntakeServo";
+
         // Sensors
         public static final String IMU_NAME = "imu";
 

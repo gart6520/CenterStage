@@ -8,6 +8,9 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GOBILDA_FAST_CRSERVO_PWM_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GOBILDA_SERVO_PWM_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -16,8 +19,10 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Drivebase;
@@ -71,15 +76,23 @@ public class TestUniversal extends LinearOpMode {
         DcMotorEx motor3 = hardwareMap.tryGet(DcMotorEx.class, "motor3");
         DcMotorEx motor4 = hardwareMap.tryGet(DcMotorEx.class, "motor4");
 
-        Servo servo1 = hardwareMap.tryGet(Servo.class, "servo1");
-        Servo servo2 = hardwareMap.tryGet(Servo.class, "servo2");
-        Servo servo3 = hardwareMap.tryGet(Servo.class, "servo3");
-        Servo servo4 = hardwareMap.tryGet(Servo.class, "servo4");
+        ServoImplEx servo1 = hardwareMap.tryGet(ServoImplEx.class, "servo1");
+        if (servo1 != null) servo1.setPwmRange(REV_SERVO_PWM_RANGE);
+        ServoImplEx servo2 = hardwareMap.tryGet(ServoImplEx.class, "servo2");
+        if (servo2 != null) servo2.setPwmRange(REV_SERVO_PWM_RANGE);
+        ServoImplEx servo3 = hardwareMap.tryGet(ServoImplEx.class, "servo3");
+        if (servo3 != null) servo3.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
+        ServoImplEx servo4 = hardwareMap.tryGet(ServoImplEx.class, "servo4");
+        if (servo4 != null) servo4.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
 
-        CRServo crServo1 = hardwareMap.tryGet(CRServo.class, "servo1");
-        CRServo crServo2 = hardwareMap.tryGet(CRServo.class, "servo2");
-        CRServo crServo3 = hardwareMap.tryGet(CRServo.class, "servo3");
-        CRServo crServo4 = hardwareMap.tryGet(CRServo.class, "servo4");
+        CRServoImplEx crServo1 = hardwareMap.tryGet(CRServoImplEx.class, "servo1");
+        if (crServo1 != null) crServo1.setPwmRange(GOBILDA_FAST_CRSERVO_PWM_RANGE);
+        CRServoImplEx crServo2 = hardwareMap.tryGet(CRServoImplEx.class, "servo2");
+        if (crServo2 != null) crServo2.setPwmRange(GOBILDA_FAST_CRSERVO_PWM_RANGE);
+        CRServoImplEx crServo3 = hardwareMap.tryGet(CRServoImplEx.class, "servo3");
+        if (crServo3 != null) crServo3.setPwmRange(GOBILDA_FAST_CRSERVO_PWM_RANGE);
+        CRServoImplEx crServo4 = hardwareMap.tryGet(CRServoImplEx.class, "servo4");
+        if (crServo4 != null) crServo4.setPwmRange(GOBILDA_FAST_CRSERVO_PWM_RANGE);
         // Load last pose from auto mode
         if (drivebase != null)
             drivebase.setCurrentPose(PoseStorage.getPose());
