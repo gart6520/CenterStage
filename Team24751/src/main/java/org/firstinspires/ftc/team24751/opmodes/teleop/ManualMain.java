@@ -123,10 +123,15 @@ public class ManualMain extends LinearOpMode {
             // after finishing the trajectory
 
             // Hitler Arm gogo
+            double slow = 1;
+            if (arm.getAngle() > 90)
+            {
+                slow = 0.5;
+            }
             if (gamepad2.triangle) {
-                arm.setPower(0.8);
+                arm.setPower(0.8 * slow);
             } else if (gamepad2.cross) {
-                arm.setPower(-0.7);
+                arm.setPower(-0.7 * slow);
             } else {
                 arm.setPower(0);
             }
