@@ -33,6 +33,7 @@ public class TestOdometryPod extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     Gyro gyro = new Gyro();
+    OdometryPod localizer = new OdometryPod();
     Drivebase drivebase = new Drivebase();
 
     @Override
@@ -48,13 +49,11 @@ public class TestOdometryPod extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        OdometryPod localizer = new OdometryPod(this, inPerTick);
-
-        // Wait for the driver to press PLAY
-        waitForStart();
-
         // Init gyro
         gyro.init(this);
+
+        // Init localizer
+        localizer.init(this, inPerTick, gyro);
 
         // Init drivebase
         drivebase.init(this, gyro, localizer);
@@ -65,6 +64,9 @@ public class TestOdometryPod extends LinearOpMode {
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        // Wait for the driver to press PLAY
+        waitForStart();
 
         // Reset runtime
         runtime.reset();

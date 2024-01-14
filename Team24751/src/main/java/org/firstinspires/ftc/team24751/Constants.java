@@ -112,8 +112,8 @@ public class Constants {
         // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
         // For https://www.gobilda.com/strafer-chassis-kit-96mm-mecanum-wheels/ kit,
         // track width should be [PLACEHOLDER] and wheelbase distance should be 336mm
-        public static final double TRACK_WIDTH = 413.2 * MM_TO_INCH;
-        public static final double WHEELBASE_DISTANCE = 336 * MM_TO_INCH;
+        public static final double TRACK_WIDTH = 380 * MM_TO_INCH;
+        public static final double WHEELBASE_DISTANCE = 340 * MM_TO_INCH;
 
         // Lateral multipler
         // factor that multiplies strafe velocity to compensate for slip;

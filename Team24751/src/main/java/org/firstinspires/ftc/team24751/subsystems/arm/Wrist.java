@@ -13,6 +13,7 @@ public class Wrist {
     LinearOpMode opMode;
     AngleServo leftWristServo;
     AngleServo rightWristServo;
+    public boolean isAuto = true;
 
     public Wrist(LinearOpMode _opMode) {
         opMode = _opMode;
@@ -34,15 +35,19 @@ public class Wrist {
     //Rotate the wrist parallel to the board (60 deg to the horizontal)
     public void autoParallel(double armAngleDeg) {
         double targetAngle = 0;
-        if (armAngleDeg >= 120) {
-            // Backdrop
-            targetAngle = 342 - armAngleDeg;
-        } else if (armAngleDeg <= 54) {
-            // Ground
-            targetAngle = 54 - armAngleDeg;
+        if (isAuto) {
+            if (armAngleDeg >= 120) {
+                // Backdrop
+                targetAngle = 342 - armAngleDeg;
+            } else if (armAngleDeg <= 52) {
+                // Ground
+                targetAngle = 52 - armAngleDeg;
+            } else {
+                // Same as arm
+                targetAngle = 60;
+            }
         } else {
-            // Same as arm
-            targetAngle = 60;
+            targetAngle = 150;
         }
 
         leftWristServo.setAngle(targetAngle);
