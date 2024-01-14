@@ -3,10 +3,10 @@ package org.firstinspires.ftc.team24751.subsystems;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.ACTIVE_INTAKE_SERVO;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class ActiveIntake {
-    private CRServoImplEx activeIntakeServo;
+    private DcMotor activeIntakeServo;
     private LinearOpMode opMode;
 
     public enum IntakeDirection {
@@ -20,16 +20,16 @@ public class ActiveIntake {
     }
 
     public void init() {
-        activeIntakeServo = opMode.hardwareMap.get(CRServoImplEx.class, ACTIVE_INTAKE_SERVO);
+        activeIntakeServo = opMode.hardwareMap.get(DcMotor.class, ACTIVE_INTAKE_SERVO);
     }
 
     public void run(IntakeDirection direction) {
         if (direction == IntakeDirection.REVERSE) {
-            activeIntakeServo.setDirection(CRServoImplEx.Direction.REVERSE);
+            activeIntakeServo.setDirection(DcMotor.Direction.REVERSE);
             activeIntakeServo.setPower(1);
         }
         if (direction == IntakeDirection.FORWARD) {
-            activeIntakeServo.setDirection(CRServoImplEx.Direction.FORWARD);
+            activeIntakeServo.setDirection(DcMotor.Direction.FORWARD);
             activeIntakeServo.setPower(1);
         }
         if (direction == IntakeDirection.STATIONARY) {
