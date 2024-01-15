@@ -11,9 +11,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class TestEncoder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotorEx encoder1 = hardwareMap.get(DcMotorEx.class, RIGHT_FRONT);
+        DcMotorEx encoder1 = hardwareMap.get(DcMotorEx.class, LEFT_FRONT);
         DcMotorEx encoder2 = hardwareMap.get(DcMotorEx.class, RIGHT_BACK);
-        DcMotorEx encoder3 = hardwareMap.get(DcMotorEx.class, LEFT_FRONT);
+        DcMotorEx encoder3 = hardwareMap.get(DcMotorEx.class, RIGHT_FRONT);
+
+        encoder1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        encoder2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        encoder3.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        encoder1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        encoder2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        encoder3.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
         encoder1.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()) {

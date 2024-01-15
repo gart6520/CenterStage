@@ -23,9 +23,9 @@ import org.firstinspires.ftc.team24751.Constants;
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
         //TODO: Tune
-        public double par0YTicks = -5.5 / Constants.OdometryPod.inPerTick; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 5.5 / Constants.OdometryPod.inPerTick; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = 5 / Constants.OdometryPod.inPerTick; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks = -5.355 / Constants.OdometryPod.inPerTick; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 5.355 / Constants.OdometryPod.inPerTick; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks = 4.642 / Constants.OdometryPod.inPerTick; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -42,7 +42,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, LEFT_FRONT)));     // Control Hub port 0
         par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, RIGHT_BACK)));     // Control Hub port 3
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, LEFT_ARM_MOTOR))); // Expansion Hub port 0
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, RIGHT_FRONT))); // Expansion Hub port 0
 
         par0.setDirection(DcMotorSimple.Direction.REVERSE);
         perp.setDirection(DcMotorSimple.Direction.REVERSE);

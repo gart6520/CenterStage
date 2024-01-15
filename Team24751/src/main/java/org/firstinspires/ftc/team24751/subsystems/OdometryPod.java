@@ -11,8 +11,10 @@ public class OdometryPod {
     ThreeDeadWheelLocalizer localizer;
     LinearOpMode opMode;
     Gyro gyro = null;
-    Pose2d currentPose = new Pose2d(0,0,0);
-    public OdometryPod() {}
+    Pose2d currentPose = new Pose2d(0, 0, 0);
+
+    public OdometryPod() {
+    }
 
     public void init(LinearOpMode _opMode, double inPerTick, Gyro gyro) {
         opMode = _opMode;
@@ -20,15 +22,14 @@ public class OdometryPod {
         this.gyro = gyro;
     }
 
-    public Twist2dDual<Time> update()
-    {
-        Twist2dDual<Time> twist = localizer.update();
+    public Twist2dDual<Time> update() {
+        final Twist2dDual<Time> twist = localizer.update();
         currentPose = currentPose.plus(twist.value());
         gyro.currentAngle = currentPose.heading.toDouble();
         return twist;
     }
-    public Pose2d getCurrentPose()
-    {
+
+    public Pose2d getCurrentPose() {
         return currentPose;
     }
 }

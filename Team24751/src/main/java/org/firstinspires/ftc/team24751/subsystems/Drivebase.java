@@ -277,6 +277,20 @@ public class Drivebase {
 
         // Drive
         drive(rotX, rotY, zSpeed);
+    }/**
+     * Drive field-oriented - Mecanum drive
+     * @param xSpeed horizontal speed. Negative is to the left
+     * @param ySpeed vertical speed. Positive is forward
+     * @param zSpeed rotate speed. Negative is rotate counterclockwise
+     * @param rot current heading of the bot
+     */
+    public void driveFieldOriented(double xSpeed, double ySpeed, double zSpeed, double botHeading) {
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = xSpeed * Math.cos(-botHeading) - ySpeed * Math.sin(-botHeading);
+        double rotY = xSpeed * Math.sin(-botHeading) + ySpeed * Math.cos(-botHeading);
+
+        // Drive
+        drive(rotX, rotY, zSpeed);
     }
 
     /**

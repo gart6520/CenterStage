@@ -261,6 +261,7 @@ public class Constants {
 
         public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-        public static double inPerTick = (WHEEL_DIAMETER_IN * Math.PI) / (TICKS_PER_REV * GEAR_RATIO);
+//        public static double inPerTick = (WHEEL_DIAMETER_IN * Math.PI) / (TICKS_PER_REV * GEAR_RATIO);
+        public static double inPerTick = 1.0/336.87810184;
     }
 }

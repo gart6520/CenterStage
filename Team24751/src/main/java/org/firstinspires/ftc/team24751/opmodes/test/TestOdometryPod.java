@@ -84,9 +84,11 @@ public class TestOdometryPod extends LinearOpMode {
             double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
+            localizer.update();
+            Pose2d pose = localizer.getCurrentPose();
             // Drive
-            drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            //drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            //drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
+            drivebase.driveFieldOriented(left_x, left_y, right_x, pose.heading.log()); // Drive field-oriented
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
             // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
@@ -98,8 +100,7 @@ public class TestOdometryPod extends LinearOpMode {
             // Show elapsed run time
             telemetry.addData("Yaw", gyro.getYawDeg());
 
-            localizer.update();
-            Pose2d pose = localizer.getCurrentPose();
+
             telemetry.addData("X, Y, theta", pose.position.x + " " + pose.position.y + " " + Math.toDegrees(pose.heading.toDouble()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
