@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -70,6 +70,6 @@ public class TeamPropProcessor implements VisionProcessor {
                 prevPoint = point;
             }
         }
-        canvas.drawCircle((float) centDetection.x * scaleBmpPxToCanvasPx, (float) centDetection.y * scaleBmpPxToCanvasPx, 5, paint);
+        canvas.drawCircle((float) centDetection.getX() * scaleBmpPxToCanvasPx, (float) centDetection.getY() * scaleBmpPxToCanvasPx, 5, paint);
     }
 }

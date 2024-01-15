@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.team24751.subsystems.vision;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.sun.tools.javac.util.Pair;
-
-import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -69,8 +68,8 @@ public class PoseEstimatorApriltagProcessor {
         //Rotate cameraToApriltag vector from the robot perspective (robot based) to
         //global perspective (field based)
         Vector2d cameraToAprilTagWorld = new Vector2d(
-                cameraToApriltag.x * cos - cameraToApriltag.y * sin,
-                cameraToApriltag.x * sin + cameraToApriltag.y * cos
+                cameraToApriltag.getX() * cos - cameraToApriltag.getY() * sin,
+                cameraToApriltag.getX() * sin + cameraToApriltag.getY() * cos
         );
         return aprilTagPos.minus(cameraToAprilTagWorld);
     }

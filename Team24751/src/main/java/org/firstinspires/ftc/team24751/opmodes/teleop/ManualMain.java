@@ -4,20 +4,20 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 import java.util.List;
 
@@ -25,8 +25,7 @@ import java.util.List;
 public class ManualMain extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
-    Gyro gyro = new Gyro();
-    Drivebase drivebase = new Drivebase();
+    Drivebase drivebase = null;
     Arm arm = new Arm(this);
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
@@ -69,14 +68,11 @@ public class ManualMain extends LinearOpMode {
         prev2.copy(gamepad2);
         curr2 = new Gamepad();
 
-        // Init gyro
-        gyro.init(this);
-
         // Init drivebase
-        drivebase.init(this, gyro);
+        drivebase = new Drivebase(hardwareMap);
 
         // Load last pose from auto mode
-        drivebase.setCurrentPose(PoseStorage.getPose());
+        drivebase.setPoseEstimate(PoseStorage.getPose());
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -154,8 +150,8 @@ public class ManualMain extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 botVel.plus(new Vector2d(-1, 0));
             }
-            if (botVel.x != 0 || botVel.y != 0)
-                drivebase.drive(botVel.x, botVel.y, 0);
+            if (botVel.getX() != 0 || botVel.getY() != 0)
+                drivebase.drive(botVel.getX(), botVel.getY(), 0);
 
             wrist.autoParallel(arm.getAngle());
 
@@ -177,8 +173,12 @@ public class ManualMain extends LinearOpMode {
             prev2.copy(curr2);
 
 
-            // Show elapsed run time
-            telemetry.addData("Yaw", gyro.getYawDeg());
+            // Show pose estimation
+            Pose2d pose = drivebase.getPoseEstimate();
+            telemetry.addData("X", pose.getX());
+            telemetry.addData("Y", pose.getY());
+            telemetry.addData("Heading", pose.getHeading());
+
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Status", "Run Time: " + runtime.toString());

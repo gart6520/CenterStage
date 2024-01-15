@@ -6,20 +6,17 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.Constants;
-import org.firstinspires.ftc.team24751.subsystems.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 import java.util.List;
 
 public abstract class BaseAuto extends LinearOpMode {
     // Total run time
-    protected final ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     // Subsystem objects
-    protected final Gyro gyro = new Gyro();
-    protected final Drivebase drivebase = new Drivebase();
+    private Drivebase drivebase = null;
 
     /**
      * Extends this function and set the allianceColor to appropriate color
@@ -41,8 +38,7 @@ public abstract class BaseAuto extends LinearOpMode {
         }
 
         // Init subsystems
-        gyro.init(this);
-        drivebase.init(this, gyro);
+        drivebase = new Drivebase(hardwareMap);
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -60,6 +56,6 @@ public abstract class BaseAuto extends LinearOpMode {
                 .build());*/
 
         // Save the last Pose2d estimated in auto mode, for using in manual mode
-        PoseStorage.setPose(drivebase.pose);
+        PoseStorage.setPose(drivebase.getPoseEstimate());
     }
 }

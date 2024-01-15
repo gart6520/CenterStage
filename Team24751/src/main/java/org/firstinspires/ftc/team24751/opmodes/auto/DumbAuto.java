@@ -3,23 +3,19 @@ package org.firstinspires.ftc.team24751.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 public abstract class DumbAuto extends LinearOpMode {
 
     protected ElapsedTime timing = new ElapsedTime();
-    Drivebase drivebase = new Drivebase();
-    Gyro gyro = new Gyro();
+    Drivebase drivebase = null;
 
     //right = true, left = false
     protected void baseRun(double sec, boolean right) {
         timing.reset();
-        gyro.init(this);
-        drivebase.init(this, gyro);
+        drivebase = new Drivebase(hardwareMap);
 
         waitForStart();
-        gyro.reset();
         timing.reset();
         int sign = right ? 1 : -1;
         drivebase.drive(sign * 0.5, 0, 0);

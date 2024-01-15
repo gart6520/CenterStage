@@ -7,15 +7,14 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
@@ -27,8 +26,7 @@ public class TestDrivebase extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Subsystems
-    private Gyro gyro = new Gyro();
-    private Drivebase drivebase = new Drivebase();
+    private Drivebase drivebase = null;
 
     @Override
     public void runOpMode() {
@@ -43,14 +41,11 @@ public class TestDrivebase extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // Init gyro
-        gyro.init(this);
-
         // Init drivebase
-        drivebase.init(this, gyro);
+        drivebase = new Drivebase(hardwareMap);
 
         // Load last pose from auto mode
-        drivebase.setCurrentPose(PoseStorage.getPose());
+        drivebase.setPoseEstimate(PoseStorage.getPose());
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -86,8 +81,11 @@ public class TestDrivebase extends LinearOpMode {
             // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
             // after finishing the trajectory
 
-            // Show elapsed run time
-            telemetry.addData("Yaw", gyro.getYawDeg());
+            // Show pose estimation
+            Pose2d pose = drivebase.getPoseEstimate();
+            telemetry.addData("X", pose.getX());
+            telemetry.addData("Y", pose.getY());
+            telemetry.addData("Heading", pose.getHeading());
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();

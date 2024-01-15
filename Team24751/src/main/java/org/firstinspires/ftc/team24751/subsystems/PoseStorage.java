@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class PoseStorage {
     // This variable should be preserved between opmodes
     // The init value is just 0. I tried to just use new Pose2d() but it causes error
-    public static Pose2d pose = new Pose2d(new Vector2d(0, 0), Rotation2d.exp(0));
+    public static Pose2d pose = new Pose2d(new Vector2d(0, 0), 0);
 
     /**
      * Store the pose

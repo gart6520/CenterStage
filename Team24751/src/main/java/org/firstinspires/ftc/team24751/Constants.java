@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team24751;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
@@ -20,6 +20,7 @@ public class Constants {
         //Test for code usage in testing
         RED, BLUE, TEST
     }
+
     //TODO: All AutoOpMode should init this variable to the correct color
     public static AllianceColor allianceColor = AllianceColor.TEST;
 
@@ -252,16 +253,5 @@ public class Constants {
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
         public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
-    }
-
-    public static class OdometryPod
-    {
-        public static final double WHEEL_DIAMETER_IN = 48 * MM_TO_INCH;
-        public static final double TICKS_PER_REV = 2000;
-
-        public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
-
-//        public static double inPerTick = (WHEEL_DIAMETER_IN * Math.PI) / (TICKS_PER_REV * GEAR_RATIO);
-        public static double inPerTick = 1.0/336.87810184;
     }
 }

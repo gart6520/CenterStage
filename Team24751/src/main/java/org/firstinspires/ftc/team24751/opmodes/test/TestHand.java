@@ -6,22 +6,18 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITIA
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
-import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorApriltagProcessor;
 
 import java.util.List;
 
 @TeleOp(name = "Test Hand", group = "Test")
 public class TestHand extends LinearOpMode {
-    Gyro gyro = new Gyro();
 
     @Override
     public void runOpMode() {
@@ -46,9 +42,6 @@ public class TestHand extends LinearOpMode {
 
         // Wait for the driver to press PLAY
         waitForStart();
-
-        //Init gyro
-        gyro.init(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

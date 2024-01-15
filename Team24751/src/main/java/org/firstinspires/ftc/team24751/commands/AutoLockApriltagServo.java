@@ -8,7 +8,7 @@ import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import android.util.Pair;
 
-import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -93,7 +93,7 @@ public class AutoLockApriltagServo {
 
     private double angleToTurn(Vector2d apriltagPos, Vector2d cameraPos) {
         Vector2d cameraToApriltag = apriltagPos.minus(cameraPos);
-        return wrapAngle(Math.toDegrees(Math.atan2(cameraToApriltag.y, cameraToApriltag.x)), WRAP_ANGLE_TYPE.zeroTo360);
+        return wrapAngle(Math.toDegrees(Math.atan2(cameraToApriltag.getY(), cameraToApriltag.getX())), WRAP_ANGLE_TYPE.zeroTo360);
     }
 
     private double distanceToTarget(Vector2d apriltagPos, Vector2d cameraPos) {

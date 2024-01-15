@@ -11,13 +11,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.Gyro;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 import java.util.List;
 
@@ -25,8 +24,7 @@ import java.util.List;
 public class TestAutoParallel extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
-    Gyro gyro = new Gyro();
-    Drivebase drivebase = new Drivebase();
+    Drivebase drivebase = null;
     Arm arm = new Arm(this);
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
@@ -45,6 +43,7 @@ public class TestAutoParallel extends LinearOpMode {
         telemetry.update();
 
         //Init all subsystems
+        drivebase = new Drivebase(hardwareMap);
         arm.init();
         arm.resetEncoder();
 
@@ -63,14 +62,8 @@ public class TestAutoParallel extends LinearOpMode {
         prev.copy(gamepad2);
         curr = new Gamepad();
 
-        // Init gyro
-        gyro.init(this);
-
-        // Init drivebase
-        drivebase.init(this, gyro);
-
         // Load last pose from auto mode
-        drivebase.setCurrentPose(PoseStorage.getPose());
+        drivebase.setPoseEstimate(PoseStorage.getPose());
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -141,7 +134,6 @@ public class TestAutoParallel extends LinearOpMode {
             prev.copy(curr);
 
             // Show elapsed run time
-            telemetry.addData("Yaw", gyro.getYawDeg());
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
