@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
+import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -27,9 +28,9 @@ public class LocalizationTest extends LinearOpMode {
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y / 2,
+                            -gamepad1.left_stick_x * DRIVEBASE_SPEED_X / 2,
+                            -gamepad1.right_stick_x * DRIVEBASE_SPEED_Z / 2
                     )
             );
 

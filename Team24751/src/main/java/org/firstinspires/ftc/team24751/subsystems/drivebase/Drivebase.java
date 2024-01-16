@@ -45,8 +45,8 @@ import static org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstant
  */
 @Config
 public class Drivebase extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.5, 0, 1.3);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.88, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -88,8 +88,8 @@ public class Drivebase extends MecanumDrive {
 
         leftFront = hardwareMap.get(DcMotorEx.class, LEFT_FRONT);
         leftBack = hardwareMap.get(DcMotorEx.class, LEFT_BACK);
-        rightBack = hardwareMap.get(DcMotorEx.class, RIGHT_FRONT);
-        rightFront = hardwareMap.get(DcMotorEx.class, RIGHT_BACK);
+        rightBack = hardwareMap.get(DcMotorEx.class, RIGHT_BACK);
+        rightFront = hardwareMap.get(DcMotorEx.class, RIGHT_FRONT);
 
         motors = Arrays.asList(leftFront, leftBack, rightBack, rightFront);
 

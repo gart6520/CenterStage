@@ -85,67 +85,6 @@ public class Constants {
     }
 
     /**
-     * Some drivebase constants (for auto and semi-auto)
-     */
-    public static class DRIVEBASE {
-        // You don't need to worry about a bunch of constants, a good Java compiler will optimize this
-
-        // Pulse per revolution
-        public static final double BASE_ENCODER_PPR = ((((1 + (46.0 / 17))) * (1 + (46.0 / 11))) * 28);
-
-        // Counts per pulse
-        //public static final double BASE_ENCODER_CPP = 4;
-
-        // Count per revolution
-        //public static final double BASE_CPR = BASE_ENCODER_PPR * BASE_ENCODER_CPP;
-
-        // Wheel diameter (in inch)
-        // For goBilda's mecanum wheel, the diameter is 96mm
-        public static final double WHEEL_D_IN = 96 * MM_TO_INCH;
-
-        // Inch traveled per tick/count
-        // This can either be calculated using the formula, or by measuring
-        // The choice is yours
-        public static final double IN_PER_TICK = WHEEL_D_IN*Math.PI / BASE_ENCODER_PPR;
-        public static final double TICK_PER_IN = 1 / IN_PER_TICK;
-
-        // Track width and wheelbase distance (in inch)
-        // See https://upload.wikimedia.org/wikipedia/commons/5/52/Wheelbase_and_Track.
-        // For https://www.gobilda.com/strafer-chassis-kit-96mm-mecanum-wheels/ kit,
-        // track width should be [PLACEHOLDER] and wheelbase distance should be 336mm
-        public static final double TRACK_WIDTH = 380 * MM_TO_INCH;
-        public static final double WHEELBASE_DISTANCE = 340 * MM_TO_INCH;
-
-        // Lateral multipler
-        // factor that multiplies strafe velocity to compensate for slip;
-        // increase it to boost the distance traveled in the strafe direction
-        public static final double LATERAL_MULTIPLER = 1;
-
-        // Gain constants
-        public static final double AXIAL_GAIN = 30;
-        public static final double LATERAL_GAIN = 20;
-        public static final double HEADING_GAIN = Math.PI / 2;
-        public static final double AXIAL_VEL_GAIN = 20;
-        public static final double LATERAL_VEL_GAIN = 50;
-        public static final double HEADING_VEL_GAIN = Math.PI / 2;
-
-        // Constrain
-        public static final double MAX_WHEEL_VEL = 40;
-        public static final double MIN_PROFILE_ACCEL = -40;
-        public static final double MAX_PROFILE_ACCEL = 40;
-
-        // Turn profile parameters (in radians)
-        public static final double MAX_ANG_VEL = Math.PI; // shared with path
-        public static final double MAX_ANG_ACCEL = Math.PI;
-
-        // Drivebase motor feedforward constants
-        // TODO: Tune this to work in real life
-        public static final double kS = 0.02;
-        public static final double kV = 0.0049;
-        public static final double kA = 0.00003;
-    }
-
-    /**
      * Sensitivity / Threshold
      */
     public static class SENSITIVITY {

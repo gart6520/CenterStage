@@ -59,6 +59,8 @@ public class TestDrivebase extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
+            drivebase.update();
+
             // Control drivebase manually
             // Get speed
 
