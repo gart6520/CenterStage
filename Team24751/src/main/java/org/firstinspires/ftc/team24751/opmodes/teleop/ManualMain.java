@@ -69,7 +69,7 @@ public class ManualMain extends LinearOpMode {
         curr2 = new Gamepad();
 
         // Init drivebase
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
 
         // Load last pose from auto mode
         drivebase.setPoseEstimate(PoseStorage.getPose());

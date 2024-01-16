@@ -19,6 +19,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -71,10 +72,12 @@ public class Drivebase extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
     private Localizer localizer;
+    private LinearOpMode opMode;
 
-    public Drivebase(HardwareMap hardwareMap) {
+    public Drivebase(LinearOpMode _opMode) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
+        opMode = _opMode;
+        HardwareMap hardwareMap = opMode.hardwareMap;
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -181,7 +184,12 @@ public class Drivebase extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        Pose2d currentPose = getPoseEstimate();
+        DriveSignal signal = trajectorySequenceRunner.update(currentPose, getPoseVelocity());
+        opMode.telemetry.addData("Current Pose", currentPose.toString());
+        Pose2d targetPose = trajectorySequenceRunner.getLastPoseError();
+        opMode.telemetry.addData("Last Pose Error", targetPose.toString());
+        opMode.telemetry.update();
         if (signal != null) setDriveSignal(signal);
     }
 
@@ -295,6 +303,7 @@ public class Drivebase extends MecanumDrive {
 
     /**
      * Drive method for Drivebase class - Mecanum drive
+     *
      * @param xSpeed horizontal speed. Negative is to the left
      * @param ySpeed vertical speed. Positive is forward
      * @param zSpeed rotate speed. Negative is rotate counterclockwise
@@ -305,6 +314,7 @@ public class Drivebase extends MecanumDrive {
 
     /**
      * Field-oriented drive method for Drivebase class - Mecanum drive
+     *
      * @param xSpeed horizontal speed. Negative is to the left
      * @param ySpeed vertical speed. Positive is forward
      * @param zSpeed rotate speed. Negative is rotate counterclockwise

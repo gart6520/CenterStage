@@ -43,7 +43,7 @@ public class TestAutoParallel extends LinearOpMode {
         telemetry.update();
 
         //Init all subsystems
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
         arm.init();
         arm.resetEncoder();
 

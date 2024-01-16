@@ -14,7 +14,7 @@ public class DriveBack extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         timing.reset();
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
 
         waitForStart();
         timing.reset();

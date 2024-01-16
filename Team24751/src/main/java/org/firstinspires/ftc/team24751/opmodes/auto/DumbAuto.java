@@ -13,7 +13,7 @@ public abstract class DumbAuto extends LinearOpMode {
     //right = true, left = false
     protected void baseRun(double sec, boolean right) {
         timing.reset();
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
 
         waitForStart();
         timing.reset();

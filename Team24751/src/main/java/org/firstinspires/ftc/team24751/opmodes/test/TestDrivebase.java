@@ -42,7 +42,7 @@ public class TestDrivebase extends LinearOpMode {
         }
 
         // Init drivebase
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
 
         // Load last pose from auto mode
         drivebase.setPoseEstimate(PoseStorage.getPose());

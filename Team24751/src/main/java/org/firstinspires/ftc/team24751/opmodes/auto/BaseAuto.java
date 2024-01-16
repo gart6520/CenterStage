@@ -38,7 +38,7 @@ public abstract class BaseAuto extends LinearOpMode {
         }
 
         // Init subsystems
-        drivebase = new Drivebase(hardwareMap);
+        drivebase = new Drivebase(this);
 
         // Update status
         telemetry.addData("Status", "Initialized");
