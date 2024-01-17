@@ -35,7 +35,7 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(odoPose.getHeading());
             telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
             //telemetryAprilTag(aprilTag.getCurrentDetections());
-            drive.manualControl();
+            drive.manualControl(true);
         }
     }
 
