@@ -36,6 +36,11 @@ public class Constants {
         public static final String RIGHT_FRONT = "rightFront";
         public static final String RIGHT_BACK = "rightBack";
 
+        //Odo pod encoder (the same name as other motors)
+        public static final String LEFT_ODO = LEFT_FRONT;
+        public static final String RIGHT_ODO = RIGHT_BACK;
+        public static final String FRONT_ODO = RIGHT_FRONT;
+
         // Arm motors
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";

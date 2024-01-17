@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 import static org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstants.*;
@@ -133,6 +134,22 @@ public class Drivebase extends MecanumDrive {
         );
     }
 
+    public void manualControl() {
+        // Control drivebase manually
+        // Get speed
+
+        double speed = gamepad1.right_trigger > 0.15 ? 1 : 0.5;
+
+        // Get joystick axis values
+        // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
+        double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
+        double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
+        double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
+
+        // Drive
+        // drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
+        this.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+    }
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }

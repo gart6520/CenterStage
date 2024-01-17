@@ -16,22 +16,25 @@ import static org.firstinspires.ftc.team24751.Constants.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PoseEstimatorApriltagProcessor {
+public class PoseEstimatorAprilTagProcessor {
 
     AprilTagProcessor aprilTag;
     Camera camera;
     LinearOpMode linearOpMode;
+    List<AprilTagDetection> currentDetections;
 
-    public PoseEstimatorApriltagProcessor(Camera camera, AprilTagProcessor aprilTag, LinearOpMode linearOpMode) {
+    public PoseEstimatorAprilTagProcessor(Camera camera, LinearOpMode linearOpMode) {
         this.camera = camera;
         this.linearOpMode = linearOpMode;
-        this.aprilTag = aprilTag;
     }
 
-    //Null if no result or result too unreliable
-    public Vector2d getCurrentPoseFromApriltag(double camAngleDeg) {
+    /**
+     * Also update currentDetections
+     * @return  Null if no result or result too unreliable
+     * */
+    public Vector2d getCurrentPosFromAprilTag(double camAngleDeg) {
         //Get april tag detection
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        currentDetections = aprilTag.getDetections();
         if (currentDetections.isEmpty()) return null;
         float decisionMarginSum = 0;
         ArrayList<Pair<Vector2d, Float>> robotPoseResult = new ArrayList<>();
@@ -39,7 +42,7 @@ public class PoseEstimatorApriltagProcessor {
             if (detection.metadata == null) continue;
             decisionMarginSum += detection.decisionMargin;
             //Storing the pose from the detection and its decision margin
-            robotPoseResult.add(new Pair<>(getCameraPoseFromApriltagDetection(detection, camAngleDeg), detection.decisionMargin));
+            robotPoseResult.add(new Pair<>(getCameraPoseFromAprilTagDetection(detection, camAngleDeg), detection.decisionMargin));
         }
         if (decisionMarginSum < MARGIN_DECISION_THRESHOLD) return null;
         Vector2d currentPose = new Vector2d(0, 0);
@@ -50,7 +53,7 @@ public class PoseEstimatorApriltagProcessor {
         return currentPose;
     }
 
-    private Vector2d getCameraPoseFromApriltagDetection(AprilTagDetection detection, double botAngleDeg) {
+    private Vector2d getCameraPoseFromAprilTagDetection(AprilTagDetection detection, double botAngleDeg) {
         VectorF _pos = detection.metadata.fieldPosition;
 
         //Global Position of apriltag
@@ -86,5 +89,9 @@ public class PoseEstimatorApriltagProcessor {
 
         // Create the vision portal inside wrapper class
         camera.addProcessorToQueue(aprilTag);
+    }
+    public List<AprilTagDetection> getCurrentDetections()
+    {
+        return currentDetections;
     }
 }
