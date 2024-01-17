@@ -134,7 +134,6 @@ public class Drivebase extends MecanumDrive {
         );
     }
 
-
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
@@ -198,10 +197,10 @@ public class Drivebase extends MecanumDrive {
         updatePoseEstimate();
         Pose2d currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(currentPose, getPoseVelocity());
-        //opMode.telemetry.addData("Current Pose", currentPose.toString());
+        opMode.telemetry.addData("Current Pose", currentPose.toString());
         Pose2d targetPose = trajectorySequenceRunner.getLastPoseError();
-        //opMode.telemetry.addData("Last Pose Error", targetPose.toString());
-        //opMode.telemetry.update();
+        opMode.telemetry.addData("Last Pose Error", targetPose.toString());
+        opMode.telemetry.update();
         if (signal != null) setDriveSignal(signal);
     }
 
@@ -315,17 +314,23 @@ public class Drivebase extends MecanumDrive {
 
     /**
      * Drive method for Drivebase class - Mecanum drive
+     * Note: this method already include pose update, so you don't have to manually call update()
      *
      * @param xSpeed horizontal speed. Negative is to the left
      * @param ySpeed vertical speed. Positive is forward
      * @param zSpeed rotate speed. Negative is rotate counterclockwise
      */
     public void drive(double xSpeed, double ySpeed, double zSpeed) {
+        // Drive
         this.setWeightedDrivePower(new Pose2d(ySpeed, -xSpeed, -zSpeed));
+
+        // Update pose
+        this.update();
     }
 
     /**
      * Field-oriented drive method for Drivebase class - Mecanum drive
+     * Note: this method already include pose update, so you don't have to manually call update()
      *
      * @param xSpeed horizontal speed. Negative is to the left
      * @param ySpeed vertical speed. Positive is forward
@@ -333,6 +338,7 @@ public class Drivebase extends MecanumDrive {
      */
     public void driveFieldOriented(double xSpeed, double ySpeed, double zSpeed) {
         // Get bot heading (from odometry pods)
+        update(); //Update before get pose
         double botHeading = this.getPoseEstimate().getHeading();
 
         // Get the rotated velocity
@@ -340,16 +346,20 @@ public class Drivebase extends MecanumDrive {
         double rotY = xSpeed * Math.sin(-botHeading) + ySpeed * Math.cos(-botHeading);
 
         // Drive
+        // Call update() twice, could cause problem
         this.drive(rotX, rotY, zSpeed);
     }
 
     /**
-     * @param fieldOriented whether drive is field oriented (false is bot oriented)
+     * Call this method in the while loop in your opMode to enable drive using joystick
+     * Note: this method already includes pose update from drive/driveFieldOriented, so
+     * you don't need to call the update() function.
+     *
+     * @param fieldOriented whether the drive is field oriented (false is bot oriented)
      */
     public void manualControl(boolean fieldOriented) {
-        // Control drivebase manually
-        // Get speed
-
+        // Control drivebase manually, using gamepad1's joystick
+        // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
         double speed = gamepad1.right_trigger > 0.15 ? 1 : 0.5;
 
         // Get joystick axis values
@@ -359,10 +369,11 @@ public class Drivebase extends MecanumDrive {
         double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
         // Drive
+        // Hopefully we will never have to switch back to drive bot-oriented
         if (fieldOriented) {
             this.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
         } else {
-            drive(left_x, left_y, right_x); // Drive bot-oriented
+            this.drive(left_x, left_y, right_x); // Drive bot-oriented
         }
     }
 }
