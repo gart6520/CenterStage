@@ -22,9 +22,10 @@ public class PoseEstimatorApriltagProcessor {
     Camera camera;
     LinearOpMode linearOpMode;
 
-    public PoseEstimatorApriltagProcessor(Camera camera, LinearOpMode linearOpMode) {
+    public PoseEstimatorApriltagProcessor(Camera camera, AprilTagProcessor aprilTag, LinearOpMode linearOpMode) {
         this.camera = camera;
         this.linearOpMode = linearOpMode;
+        this.aprilTag = aprilTag;
     }
 
     //Null if no result or result too unreliable
