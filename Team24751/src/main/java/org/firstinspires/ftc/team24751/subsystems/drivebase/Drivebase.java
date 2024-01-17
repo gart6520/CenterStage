@@ -213,10 +213,10 @@ public class Drivebase extends MecanumDrive {
         updatePoseEstimate();
         Pose2d currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(currentPose, getPoseVelocity());
-        opMode.telemetry.addData("Current Pose", currentPose.toString());
+        //opMode.telemetry.addData("Current Pose", currentPose.toString());
         Pose2d targetPose = trajectorySequenceRunner.getLastPoseError();
-        opMode.telemetry.addData("Last Pose Error", targetPose.toString());
-        opMode.telemetry.update();
+        //opMode.telemetry.addData("Last Pose Error", targetPose.toString());
+        //opMode.telemetry.update();
         if (signal != null) setDriveSignal(signal);
     }
 

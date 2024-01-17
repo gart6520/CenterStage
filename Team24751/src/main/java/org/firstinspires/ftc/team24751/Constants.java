@@ -15,8 +15,7 @@ public class Constants {
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
 
     //Really important constants
-    public enum AllianceColor
-    {
+    public enum AllianceColor {
         //Test for code usage in testing
         RED, BLUE, TEST
     }
@@ -36,15 +35,16 @@ public class Constants {
         public static final String RIGHT_FRONT = "rightFront";
         public static final String RIGHT_BACK = "rightBack";
 
-        //Odo pod encoder (the same name as other motors)
-        public static final String LEFT_ODO = LEFT_FRONT;
-        public static final String RIGHT_ODO = RIGHT_BACK;
-        public static final String FRONT_ODO = RIGHT_FRONT;
-
         // Arm motors
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
-        public static final String ELEVATOR_MOTOR = "elevatorMotor";
+        public static final String LEFT_ELEVATOR_MOTOR = "leftElevatorMotor";
+        public static final String RIGHT_ELEVATOR_MOTOR = "rightElevatorMotor";
+
+        //Odo pod encoder (could be the same name as other motors)
+        public static final String LEFT_ODO = LEFT_FRONT;
+        public static final String RIGHT_ODO = LEFT_BACK;
+        public static final String FRONT_ODO = LEFT_ELEVATOR_MOTOR;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";
@@ -107,7 +107,7 @@ public class Constants {
         public static final double TEAM_PROP_LEFT_CENTER = 100;
         public static final double TEAM_PROP_CENTER_RIGHT = 200;
 
-        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0/30;
+        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
         public static final double SERVO_PWM_SPEED = 0.1;
     }
 
@@ -117,13 +117,13 @@ public class Constants {
     public static class FIELD_PARAMETER {
         public static void INIT_FIELD_PARAMETER() {
             // TODO: Add Appropriate April Tag ID
-            if (!init)
-            {
+            if (!init) {
                 BIG_APRIL_TAG_ID.add(7);
                 BIG_APRIL_TAG_ID.add(10);
                 init = true;
             }
         }
+
         private static boolean init = false;
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
     }
@@ -157,10 +157,10 @@ public class Constants {
         }
 
         //Constant for wrist and grabber
-        public static class Hand
-        {
+        public static class Hand {
             public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
         }
+
         //TODO: tune
         public static final double MOTOR_POSITION_AT_ZERO = 0;
 
@@ -187,12 +187,12 @@ public class Constants {
                 "RedTeamProp",
         };
     }
+
     /**
      * Bot physical parameters
-     * */
-    public static class BOT_PARAMETERS
-    {
-        public static final Vector2d robotToCamera = new Vector2d(-1,2);
+     */
+    public static class BOT_PARAMETERS {
+        public static final Vector2d robotToCamera = new Vector2d(-1, 2);
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
