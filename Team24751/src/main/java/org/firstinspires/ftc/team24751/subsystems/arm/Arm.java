@@ -35,17 +35,23 @@ public class Arm {
         targetAngle = angle;
     }
 
+    public void resetPID()
+    {
+        pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+    }
+
     public void loop() {
         if (targetAngle == null) {
+            pid.calculate(0, rightArmMotor.getCurrentPosition());
             return;
         }
+        double vel = pid.calculate(degToTick(targetAngle), rightArmMotor.getCurrentPosition());
         if (Math.abs(getAngle() - targetAngle) < POSITION_THRESHOLD) {
             leftArmMotor.setPower(0);
             rightArmMotor.setPower(0);
             return;
         }
         //Probably should switch to PositionVelocitySystem
-        double vel = pid.calculate(degToTick(targetAngle), rightArmMotor.getCurrentPosition());
         double power = feedforward.calculate(getAngle(), vel, 0);
         leftArmMotor.setPower(power);
         rightArmMotor.setPower(power);
