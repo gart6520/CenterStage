@@ -38,13 +38,13 @@ public class Constants {
         // Arm motors
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
-        public static final String LEFT_ELEVATOR_MOTOR = "leftElevatorMotor";
-        public static final String RIGHT_ELEVATOR_MOTOR = "rightElevatorMotor";
+        public static final String ELEVATOR_MOTOR = "elevatorMotor";
+
 
         //Odo pod encoder (could be the same name as other motors)
         public static final String LEFT_ODO = LEFT_FRONT;
         public static final String RIGHT_ODO = LEFT_BACK;
-        public static final String FRONT_ODO = LEFT_ELEVATOR_MOTOR;
+        public static final String FRONT_ODO = RIGHT_FRONT;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";
@@ -57,6 +57,7 @@ public class Constants {
 
         // Sensors
         public static final String IMU_NAME = "imu";
+        public static final String DISTANCE_SENSOR = "distanceSensor";
 
         // Camera
         public static final String FIELD_CAMERA_NAME = "fieldCamera";

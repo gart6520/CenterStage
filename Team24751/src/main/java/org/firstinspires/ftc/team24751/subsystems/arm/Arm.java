@@ -33,6 +33,7 @@ public class Arm {
 
     public void setTargetAngle(double angle) {
         targetAngle = angle;
+        pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
     }
 
     public void resetPID()
