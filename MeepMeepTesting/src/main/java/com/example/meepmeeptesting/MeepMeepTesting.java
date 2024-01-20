@@ -5,7 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
-import static com.example.meepmeeptesting.Constants.DRIVEBASE.*;
+
+import static com.example.meepmeeptesting.Constants.*;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -14,11 +15,17 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(MAX_WHEEL_VEL, MAX_PROFILE_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
-                                // Add your trajectory building commands here
-                                .splineTo(new Vector2d(48, 48), Math.PI / 2)
+                        drive.trajectorySequenceBuilder(new Pose2d(-36.2, -62.21, Math.toRadians(90.00)))
+                                .lineTo(new Vector2d(-36.2, -38.93))
+                                .turn(Math.toRadians(90))
+                                .lineTo(new Vector2d(-57.00, -38.93))
+                                .lineTo(new Vector2d(49.00, -38.93))
+                                .setReversed(true)
+                                .lineTo(new Vector2d(-57.00, -38.93))
+                                .lineTo(new Vector2d(49.00, -38.93))
+                                .setReversed(true)
                                 .build()
                 );
 
