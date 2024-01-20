@@ -45,7 +45,6 @@ public class TestAutoParallel extends LinearOpMode {
         //Init all subsystems
         drivebase = new Drivebase(this);
         arm.init();
-        arm.resetEncoder();
 
         wrist.init();
         grabber.init();
@@ -104,10 +103,23 @@ public class TestAutoParallel extends LinearOpMode {
             // Hitler Arm gogo
             if (gamepad1.triangle) {
                 arm.setPower(0.9);
+                arm.setTargetAngle(null);
             } else if (gamepad1.cross) {
                 arm.setPower(-0.8);
+                arm.setTargetAngle(null);
             } else {
                 arm.setPower(0);
+            }
+
+            if (gamepad1.dpad_down)
+            {
+                arm.setTargetAngle(20.0);
+                arm.resetPID();
+            }
+            else if (gamepad1.dpad_up)
+            {
+                arm.setTargetAngle(100.0);
+                arm.resetPID();
             }
 
             if (gamepad1.circle) {
@@ -119,6 +131,7 @@ public class TestAutoParallel extends LinearOpMode {
             }
 
             wrist.autoParallel(arm.getAngle());
+            arm.anglePIDLoop();
 
             if (curr.square && curr.square != prev.square) {
                 grablt = !grablt;

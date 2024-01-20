@@ -22,7 +22,7 @@ import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 import java.util.List;
 
-@TeleOp(name = "Main", group = "Manual")
+@TeleOp(name = "Test distance sensor", group = "Manual")
 public class TestDistanceSensor extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

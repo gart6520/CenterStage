@@ -47,7 +47,6 @@ public class ManualMain extends LinearOpMode {
 
         //Init all subsystems
         arm.init();
-        arm.resetEncoder();
 
         wrist.init();
         grabber.init();

@@ -14,7 +14,8 @@ public class Arm {
     public DcMotorEx leftArmMotor;
     public DcMotorEx rightArmMotor;
     LinearOpMode opMode;
-    PIDEx pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+    PIDEx positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+    PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
 
@@ -31,22 +32,26 @@ public class Arm {
         return rightArmMotor.getCurrentPosition() * MOTOR_DEG_PER_TICK + MOTOR_DEG_AT_ZERO_TICK;
     }
 
-    public void setTargetAngle(double angle) {
+    /**
+     * @param angle angle to be rotated to by PID, null to disable PID
+     * */
+    public void setTargetAngle(Double angle) {
         targetAngle = angle;
-        pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+        positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
     }
 
     public void resetPID()
     {
-        pid = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+        positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+        distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
-    public void loop() {
+    public void anglePIDLoop() {
         if (targetAngle == null) {
-            pid.calculate(0, rightArmMotor.getCurrentPosition());
+            positionPID.calculate(0, rightArmMotor.getCurrentPosition());
             return;
         }
-        double vel = pid.calculate(degToTick(targetAngle), rightArmMotor.getCurrentPosition());
+        double vel = positionPID.calculate(degToTick(targetAngle), rightArmMotor.getCurrentPosition());
         if (Math.abs(getAngle() - targetAngle) < POSITION_THRESHOLD) {
             leftArmMotor.setPower(0);
             rightArmMotor.setPower(0);
@@ -54,6 +59,14 @@ public class Arm {
         }
         //Probably should switch to PositionVelocitySystem
         double power = feedforward.calculate(getAngle(), vel, 0);
+        leftArmMotor.setPower(power);
+        rightArmMotor.setPower(power);
+    }
+
+    public void distancePIDLoop(double currentDistance, double targetDistance)
+    {
+        double vel = distancePID.calculate(currentDistance, targetDistance);
+        double power = feedforward.calculate(currentDistance, vel, 0);
         leftArmMotor.setPower(power);
         rightArmMotor.setPower(power);
     }
@@ -66,7 +79,6 @@ public class Arm {
     public void init() {
         leftArmMotor = opMode.hardwareMap.get(DcMotorEx.class, LEFT_ARM_MOTOR);
         rightArmMotor = opMode.hardwareMap.get(DcMotorEx.class, RIGHT_ARM_MOTOR);
-        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -76,10 +88,11 @@ public class Arm {
     }
 
     public void resetEncoder() {
-        leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        throw new RuntimeException("Reset encoder cai dit me may a");
     }
 }

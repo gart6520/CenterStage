@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LEFT_ELEVATOR_MOTOR;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.RIGHT_ELEVATOR_MOTOR;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,8 +16,8 @@ public class Lift {
     }
     public void init()
     {
-        leftLift = opMode.hardwareMap.get(DcMotorEx.class, LEFT_ELEVATOR_MOTOR);
-        rightLift = opMode.hardwareMap.get(DcMotorEx.class, RIGHT_ELEVATOR_MOTOR);
+        leftLift = opMode.hardwareMap.get(DcMotorEx.class, LEFT_LIFT_MOTOR);
+        rightLift = opMode.hardwareMap.get(DcMotorEx.class, RIGHT_LIFT_MOTOR);
     }
     public void setPower(double left, double right)
     {
