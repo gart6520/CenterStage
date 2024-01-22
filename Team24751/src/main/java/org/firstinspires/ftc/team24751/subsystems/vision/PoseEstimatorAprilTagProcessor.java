@@ -21,7 +21,7 @@ public class PoseEstimatorAprilTagProcessor {
     AprilTagProcessor aprilTag;
     Camera camera;
     LinearOpMode linearOpMode;
-    List<AprilTagDetection> currentDetections;
+    List<AprilTagDetection> currentDetections = new ArrayList<>();
 
     public PoseEstimatorAprilTagProcessor(Camera camera, LinearOpMode linearOpMode) {
         this.camera = camera;

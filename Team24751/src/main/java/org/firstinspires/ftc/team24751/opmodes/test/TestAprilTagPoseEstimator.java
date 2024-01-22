@@ -21,21 +21,24 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
 
     Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
-    Drivebase drive = new Drivebase(this);
+    Drivebase drive = null;
 
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
+        drive = new Drivebase(this);
         waitForStart();
         while (opModeIsActive()) {
             drive.update();
             Pose2d odoPose = drive.getPoseEstimate();
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(odoPose.getHeading());
-            telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
-            //telemetryAprilTag(aprilTag.getCurrentDetections());
+            if (aprilTagPos != null)
+                telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
+            telemetryAprilTag(aprilTag.getCurrentDetections());
             drive.manualControl(true);
+            telemetry.update();
         }
     }
 

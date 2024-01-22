@@ -360,13 +360,13 @@ public class Drivebase extends MecanumDrive {
     public void manualControl(boolean fieldOriented) {
         // Control drivebase manually, using gamepad1's joystick
         // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
-        double speed = gamepad1.right_trigger > 0.15 ? 1 : 0.5;
+        double speed = opMode.gamepad1.right_trigger > 0.15 ? 1 : 0.5;
 
         // Get joystick axis values
         // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
-        double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
-        double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
-        double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
+        double left_y = -opMode.gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
+        double left_x = opMode.gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
+        double right_x = opMode.gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
 
         // Drive
         // Hopefully we will never have to switch back to drive bot-oriented

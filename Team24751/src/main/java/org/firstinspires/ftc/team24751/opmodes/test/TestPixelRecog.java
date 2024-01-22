@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Rect;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class TestPixelRecog extends LinearOpMode {
         pixelProcessor = new PixelProcessor();
 
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(CameraName.class, "fieldCamera"))
+                .setCamera(hardwareMap.get(CameraName.class, FOOT_CAMERA_NAME))
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
@@ -35,7 +36,8 @@ public class TestPixelRecog extends LinearOpMode {
             List<Rect> recognitions = pixelProcessor.getRecognitions();
 
             for (Rect obj : recognitions) {
-                telemetry.addData(""," ");
+                if (obj == null) continue;
+                telemetry.addData("", " ");
                 telemetry.addData("- Position", "%d / %d", obj.x, obj.y);
                 telemetry.addData("- Size", "%d x %d", obj.width, obj.height);
             }
