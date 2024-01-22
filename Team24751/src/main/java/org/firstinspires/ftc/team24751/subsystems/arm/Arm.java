@@ -23,6 +23,8 @@ public class Arm {
         opMode = _opMode;
     }
 
+    public DcMotorEx getArm() {return rightArmMotor;}
+
 
     private double degToTick(double deg) {
         return (deg - MOTOR_DEG_AT_ZERO_TICK) / MOTOR_DEG_PER_TICK;
@@ -66,9 +68,15 @@ public class Arm {
     public void distancePIDLoop(double currentDistance, double targetDistance)
     {
         double vel = distancePID.calculate(currentDistance, targetDistance);
-        double power = feedforward.calculate(currentDistance, vel, 0);
-        leftArmMotor.setPower(power);
-        rightArmMotor.setPower(power);
+        if (Math.abs(currentDistance-targetDistance) < DISTANCE_THRESHOLD)
+        {
+            leftArmMotor.setPower(0);
+            rightArmMotor.setPower(0);
+            return;
+        }
+        opMode.telemetry.addLine("Distance PID output: " + vel);
+        leftArmMotor.setPower(vel);
+        rightArmMotor.setPower(vel);
     }
 
     public void setPower(double power) {
@@ -88,11 +96,10 @@ public class Arm {
     }
 
     public void resetEncoder() {
-//        leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        throw new RuntimeException("Reset encoder cai dit me may a");
+        leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

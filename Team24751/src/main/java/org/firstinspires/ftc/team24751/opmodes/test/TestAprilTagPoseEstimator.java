@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.FIELD_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import android.annotation.SuppressLint;
 
@@ -18,30 +18,33 @@ import java.util.List;
 
 @TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
 public class TestAprilTagPoseEstimator extends LinearOpMode {
-
     Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
-    Drivebase drive = new Drivebase(this);
+    Drivebase drive = null;
 
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
+        drive = new Drivebase(this);
         waitForStart();
         while (opModeIsActive()) {
-            drive.update();
             Pose2d odoPose = drive.getPoseEstimate();
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(odoPose.getHeading());
-            telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
-            //telemetryAprilTag(aprilTag.getCurrentDetections());
+            if (aprilTagPos == null) {
+                telemetry.addLine("No April Tag");
+            } else
+                telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
+            telemetryAprilTag();
             drive.manualControl(true);
+            telemetry.update();
         }
     }
 
     @SuppressLint("DefaultLocale")
-    private void telemetryAprilTag(List<AprilTagDetection> currentDetections) {
-
+    private void telemetryAprilTag() {
+        List<AprilTagDetection> currentDetections = aprilTag.getCurrentDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
