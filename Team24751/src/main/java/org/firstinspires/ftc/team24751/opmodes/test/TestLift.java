@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team24751.subsystems.Lift;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
 @TeleOp(name = "Test Lift", group = "Test")
 public class TestLift extends LinearOpMode {
@@ -12,6 +13,7 @@ public class TestLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         lift.init();
+        Drivebase drive = new Drivebase(this);
         waitForStart();
         while (opModeIsActive()) {
             double left = 0, right = 0;
@@ -20,6 +22,7 @@ public class TestLift extends LinearOpMode {
             if (gamepad1.dpad_down) right = -1;
             if (gamepad1.dpad_up) right = 1;
             lift.setPower(left, right);
+            drive.manualControl(true);
         }
     }
 }
