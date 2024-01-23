@@ -104,6 +104,8 @@ public class TestFullPoseEstimation extends LinearOpMode {
             double x = poseXFuse.update(odoPose.getX(), xAprilTag);
             double y = poseYFuse.update(odoPose.getY(), yAprilTag);
 
+            drivebase.setPoseEstimate(new Pose2d(x, y, odoPose.getHeading()));
+
             telemetry.addData("X", x);
             telemetry.addData("Y", y);
             telemetry.addData("Heading", odoPose.getHeading());
