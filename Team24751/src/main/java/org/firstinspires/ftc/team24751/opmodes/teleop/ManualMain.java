@@ -127,7 +127,7 @@ public class ManualMain extends LinearOpMode {
             if (gamepad2.triangle) {
                 arm.setPower(0.8 * slow);
             } else if (gamepad2.cross) {
-                arm.setPower(-0.7 * slow);
+                arm.setPower(-0.7);
             } else {
                 arm.setPower(0);
             }

@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 import static org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstants.*;
