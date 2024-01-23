@@ -130,6 +130,7 @@ public class TestAutoArm extends LinearOpMode {
                     wrist.autoParallel(arm.getAngle());
                     // Grabber into intake position
                     if (grabberButton.getAsBoolean()) {
+                        wrist.isAuto = true;
                         state = ArmState.intaking;
                     }
                     // Arm up for outaking
