@@ -8,6 +8,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.robotToCamera;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
@@ -97,6 +98,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
             // Show odoPose estimation
             Pose2d odoPose = drivebase.getPoseEstimate();
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(odoPose.getHeading());
+            if (aprilTagPos != null) aprilTagPos = aprilTagPos.minus(robotToCamera);
             Double xAprilTag = aprilTagPos == null ? null : aprilTagPos.getX();
             Double yAprilTag = aprilTagPos == null ? null : aprilTagPos.getY();
             double x = poseXFuse.update(odoPose.getX(), xAprilTag);
