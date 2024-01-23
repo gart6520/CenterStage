@@ -132,7 +132,7 @@ public class TestAutoArm extends LinearOpMode {
                     if (grabberButton.getAsBoolean()) {
                         state = ArmState.intaking;
                     }
-                    //Arm up for outaking
+                    // Arm up for outaking
                     else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
                         arm.setTargetAngle(100.0);
@@ -140,25 +140,32 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_up:
+                    // Get grabber out of the way
                     wrist.setAngle(90);
+                    // PID
                     if (arm.anglePIDLoop()) {
                         state = ArmState.outaking;
                     }
                     break;
                 case intaking:
+                    // Reset grabber when misaligned
                     if (quickResetButton.getAsBoolean()) {
                         armMoveDownTimer.reset();
                         state = ArmState.quick_reset;
-                    } else if (grabberButton.getAsBoolean()) {
+                    } // Get grabber out of the way
+                    else if (grabberButton.getAsBoolean()) {
                         state = ArmState.base_moving;
-                    } else if (armButton.getAsBoolean()) {
+                    } // Arm up for outaking
+                    else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
                         arm.setTargetAngle(100.0);
                         arm.resetPID();
                     }
                     break;
                 case outaking:
+                    // Grabber auto parallel board
                     wrist.autoParallel(arm.getAngle());
+                    // Move arm down
                     if (armButton.getAsBoolean()) {
                         armMoveDownTimer.reset();
                         state = ArmState.arm_moving_down;
