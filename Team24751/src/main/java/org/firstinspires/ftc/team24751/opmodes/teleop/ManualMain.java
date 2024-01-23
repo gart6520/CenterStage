@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Distance;
+import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
@@ -34,6 +35,8 @@ public class ManualMain extends LinearOpMode {
     Grabber grabber = new Grabber(this);
     Elevator elevator = new Elevator(this);
     Distance distance = new Distance(this);
+
+    Lift lift = new Lift(this);
 
     private AHRS navx_device;
 
@@ -58,6 +61,7 @@ public class ManualMain extends LinearOpMode {
         grabber.init();
         elevator.init();
         distance.init();
+        lift.init();
 
         navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
                 AHRS.DeviceDataType.kProcessedData);
@@ -118,8 +122,7 @@ public class ManualMain extends LinearOpMode {
 
             // Drive
 //            drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            drivebase.update();
-            drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
+            drivebase.drive(left_x, left_y, right_x); // Drive field-oriented
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
             // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
@@ -141,6 +144,12 @@ public class ManualMain extends LinearOpMode {
             } else {
                 arm.setPower(0);
             }
+
+            double left = 0;
+            if (gamepad1.dpad_left) left = -1;
+            if (gamepad1.dpad_right) left = 1;
+
+            lift.setPower(left);
 
             if (gamepad2.dpad_down) {
                 elevator.setPower(0.6);
@@ -187,7 +196,7 @@ public class ManualMain extends LinearOpMode {
             Pose2d pose = drivebase.getPoseEstimate();
             telemetry.addData("X", pose.getX());
             telemetry.addData("Y", pose.getY());
-            telemetry.addData("Heading", pose.getHeading());
+            telemetry.addData("Heading", Math.toDegrees(pose.getHeading()));
 
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());

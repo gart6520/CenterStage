@@ -16,12 +16,11 @@ public class TestLift extends LinearOpMode {
         Drivebase drive = new Drivebase(this);
         waitForStart();
         while (opModeIsActive()) {
-            double left = 0, right = 0;
+            double left = 0;
             if (gamepad1.dpad_left) left = -1;
             if (gamepad1.dpad_right) left = 1;
-            if (gamepad1.dpad_down) right = -1;
-            if (gamepad1.dpad_up) right = 1;
-            lift.setPower(left, right);
+
+            lift.setPower(left);
             drive.manualControl(true);
         }
     }

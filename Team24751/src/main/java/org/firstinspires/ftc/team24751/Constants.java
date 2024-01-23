@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
+import com.ThermalEquilibrium.homeostasis.Utils.WPILibMotionProfile;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -40,14 +41,13 @@ public class Constants {
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
         public static final String ELEVATOR_MOTOR = "elevatorMotor";
-        public static final String LEFT_LIFT_MOTOR = "leftLiftMotor";
-        public static final String RIGHT_LIFT_MOTOR = "rightLiftMotor";
+        public static final String LIFT_MOTOR = "liftMotor";
 
 
         //Odo pod encoder (could be the same name as other motors)
-        public static final String LEFT_ODO = LEFT_FRONT;
-        public static final String RIGHT_ODO = LEFT_BACK;
-        public static final String FRONT_ODO = RIGHT_FRONT;
+        public static final String LEFT_ODO = LIFT_MOTOR;
+        public static final String RIGHT_ODO = LEFT_FRONT;
+        public static final String FRONT_ODO = LEFT_ARM_MOTOR;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";
@@ -157,13 +157,13 @@ public class Constants {
                     0.5, 30, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.05, 0, 0.05,
-                    2,5, 0.1);
+                    2, 5, 0.1);
             public static final FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
                     0.1, 0.1, 0,
                     0, 0.1);
             public static final double POSITION_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
-
+            public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT = new WPILibMotionProfile.Constraints(5, 5);
 
         }
 
@@ -172,14 +172,6 @@ public class Constants {
             public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
         }
 
-        //TODO: tune
-        public static final double MOTOR_POSITION_AT_ZERO = 0;
-
-        public static final double MOTOR_POSITION_AT_PERPENDICULAR = 90;
-
-        public static final double SERVO_POSITION_AT_ZERO = 0;
-
-        public static final double SERVO_POSITION_AT_PERPENDICULAR = 90;
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
         public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
         //TODO: Tune for gobilda one

@@ -31,7 +31,11 @@ public class Wrist {
     public void setSpeed(double speed) {
         leftWristServo.getServo().setPosition(leftWristServo.getServo().getPosition() + speed);
     }
-
+    public void setAngle (double angle)
+    {
+        leftWristServo.setAngle(angle);
+        rightWristServo.setAngle(angle);
+    }
     //Rotate the wrist parallel to the board (60 deg to the horizontal)
     public void autoParallel(double armAngleDeg) {
         double targetAngle = 0;
@@ -50,8 +54,7 @@ public class Wrist {
             targetAngle = 150;
         }
 
-        leftWristServo.setAngle(targetAngle);
-        rightWristServo.setAngle(targetAngle);
+        setAngle(targetAngle);
         opMode.telemetry.addData("Wrist Target Angle", targetAngle);
         opMode.telemetry.addData("Wrist Pos", leftWristServo.getServo().getPosition());
     }

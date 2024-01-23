@@ -4,11 +4,9 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 
 public class Lift {
     DcMotorEx leftLift = null;
-    DcMotorEx rightLift = null;
     LinearOpMode opMode;
     public Lift(LinearOpMode _opMode)
     {
@@ -16,12 +14,10 @@ public class Lift {
     }
     public void init()
     {
-        leftLift = opMode.hardwareMap.get(DcMotorEx.class, LEFT_LIFT_MOTOR);
-        rightLift = opMode.hardwareMap.get(DcMotorEx.class, RIGHT_LIFT_MOTOR);
+        leftLift = opMode.hardwareMap.get(DcMotorEx.class, LIFT_MOTOR);
     }
-    public void setPower(double left, double right)
+    public void setPower(double left)
     {
         leftLift.setPower(left);
-        rightLift.setPower(right);
     }
 }
