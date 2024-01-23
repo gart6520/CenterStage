@@ -6,12 +6,15 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
@@ -30,6 +33,9 @@ public class ManualMain extends LinearOpMode {
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
     Elevator elevator = new Elevator(this);
+    Distance distance = new Distance(this);
+
+    private AHRS navx_device;
 
     // Gamepad
     Gamepad prev1 = null;
@@ -51,6 +57,10 @@ public class ManualMain extends LinearOpMode {
         wrist.init();
         grabber.init();
         elevator.init();
+        distance.init();
+
+        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+                AHRS.DeviceDataType.kProcessedData);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -181,6 +191,10 @@ public class ManualMain extends LinearOpMode {
 
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
+            telemetry.addData("Arm roll", navx_device.getRoll());
+
+            telemetry.addData("Distance", distance.getDistanceCM());
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

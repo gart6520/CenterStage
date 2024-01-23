@@ -38,10 +38,10 @@ public class Wrist {
         if (isAuto) {
             if (armAngleDeg >= 90) {
                 // Backdrop
-                targetAngle = 342 - armAngleDeg;
+                targetAngle = 348 - armAngleDeg;
             } else if (armAngleDeg <= 52) {
                 // Ground
-                targetAngle = 52 - armAngleDeg;
+                targetAngle = 43;
             } else {
                 // Same as arm
                 targetAngle = 60;

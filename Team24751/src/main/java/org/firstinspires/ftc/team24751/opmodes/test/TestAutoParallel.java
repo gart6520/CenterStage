@@ -53,7 +53,6 @@ public class TestAutoParallel extends LinearOpMode {
         wrist.init();
         grabber.init();
         elevator.init();
-
         distance.init();
 
         // Enable bulk reads in auto mode
@@ -128,13 +127,13 @@ public class TestAutoParallel extends LinearOpMode {
                 arm.resetPID();
             }*/
 
-//            if (gamepad2.circle) {
-//                elevator.setPower(0.9);
-//            } else if (gamepad2.square) {
-//                elevator.setPower(-0.9);
-//            } else {
-//                elevator.setPower(0);
-//            }
+            if (gamepad2.dpad_left) {
+                elevator.setPower(0.9);
+            } else if (gamepad2.dpad_right) {
+                elevator.setPower(-0.9);
+            } else {
+                elevator.setPower(0);
+            }
 
             if (curr.dpad_up) {
                 arm.distancePIDLoop(distance.getDistanceCM(), 3);
