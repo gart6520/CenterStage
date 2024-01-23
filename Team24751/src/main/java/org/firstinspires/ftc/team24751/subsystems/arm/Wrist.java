@@ -36,7 +36,7 @@ public class Wrist {
     public void autoParallel(double armAngleDeg) {
         double targetAngle = 0;
         if (isAuto) {
-            if (armAngleDeg >= 120) {
+            if (armAngleDeg >= 90) {
                 // Backdrop
                 targetAngle = 342 - armAngleDeg;
             } else if (armAngleDeg <= 52) {

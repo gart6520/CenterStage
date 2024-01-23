@@ -2,6 +2,8 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_FRONT_HORIZONTAL;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.MOTOR_POSITION_AT_UPWARD_VERTICAL;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
@@ -29,6 +32,7 @@ public class TestAutoParallel extends LinearOpMode {
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
     Elevator elevator = new Elevator(this);
+    Distance distance = new Distance(this);
 
     // Gamepad
     Gamepad prev = null;
@@ -49,6 +53,8 @@ public class TestAutoParallel extends LinearOpMode {
         wrist.init();
         grabber.init();
         elevator.init();
+
+        distance.init();
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -101,17 +107,17 @@ public class TestAutoParallel extends LinearOpMode {
             // after finishing the trajectory
 
             // Hitler Arm gogo
-            if (gamepad1.triangle) {
-                arm.setPower(0.9);
+            if (gamepad2.triangle) {
+                arm.setPower(0.6);
                 arm.setTargetAngle(null);
-            } else if (gamepad1.cross) {
-                arm.setPower(-0.8);
+            } else if (gamepad2.cross) {
+                arm.setPower(-0.6);
                 arm.setTargetAngle(null);
             } else {
                 arm.setPower(0);
             }
 
-            if (gamepad1.dpad_down)
+            /*if (gamepad1.dpad_down)
             {
                 arm.setTargetAngle(20.0);
                 arm.resetPID();
@@ -120,19 +126,30 @@ public class TestAutoParallel extends LinearOpMode {
             {
                 arm.setTargetAngle(100.0);
                 arm.resetPID();
+            }*/
+
+//            if (gamepad2.circle) {
+//                elevator.setPower(0.9);
+//            } else if (gamepad2.square) {
+//                elevator.setPower(-0.9);
+//            } else {
+//                elevator.setPower(0);
+//            }
+
+            if (curr.dpad_up) {
+                arm.distancePIDLoop(distance.getDistanceCM(), 3);
+            }
+            else {
+                arm.resetPID();
             }
 
-            if (gamepad1.circle) {
-                elevator.setPower(0.6);
-            } else if (gamepad1.square) {
-                elevator.setPower(-0.6);
-            } else {
-                elevator.setPower(0);
+            if (curr.right_bumper)
+            {
+                wrist.setSpeed(0.01);
+            }else if (curr.left_bumper)
+            {
+                wrist.setSpeed(-0.01);
             }
-
-            wrist.autoParallel(arm.getAngle());
-            arm.anglePIDLoop();
-
             if (curr.square && curr.square != prev.square) {
                 grablt = !grablt;
                 grabber.leftClaw.setPosition(grablt ? 1 : 0);
@@ -149,6 +166,7 @@ public class TestAutoParallel extends LinearOpMode {
             // Show elapsed run time
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
+            telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

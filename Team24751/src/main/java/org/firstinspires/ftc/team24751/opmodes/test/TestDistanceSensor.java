@@ -50,7 +50,7 @@ public class TestDistanceSensor extends LinearOpMode {
 
         //Init all subsystems
         arm.init();
-        arm.resetEncoder();
+
 
         wrist.init();
         grabber.init();
@@ -86,12 +86,10 @@ public class TestDistanceSensor extends LinearOpMode {
 
         ElapsedTime timing = new ElapsedTime();
         timing.reset();
-        arm.resetEncoder();
         while (timing.seconds() < 0.8) {
             arm.setPower(-0.5);
         }
         arm.setPower(0);
-        arm.resetEncoder();
         // Reset runtime
         runtime.reset();
 
