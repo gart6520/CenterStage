@@ -32,10 +32,12 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         while (opModeIsActive()) {
             Pose2d odoPose = drive.getPoseEstimate();
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(odoPose.getHeading());
+
             if (aprilTagPos == null) {
                 telemetry.addLine("No April Tag");
             } else
                 telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
+            
             telemetryAprilTag();
             drive.manualControl(true);
             telemetry.update();

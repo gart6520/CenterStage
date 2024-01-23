@@ -20,8 +20,17 @@ public class PixelProcessor implements VisionProcessor {
     /**
      * Constants
      */
-    public Scalar lower_hsv = new Scalar(0, 69.4, 109.1);
-    public Scalar higher_hsv = new Scalar(72.3, 255, 255);
+    // Green pixel
+    //public Scalar lower_hsv = new Scalar(0, 69.4, 109.1);
+    //public Scalar higher_hsv = new Scalar(72.3, 255, 255);
+
+    // Purple pixel
+    public Scalar lower_hsv = new Scalar(153.0, 17.0, 106.3);
+    public Scalar higher_hsv = new Scalar(255.0, 255.0, 212.5);
+
+    // White pixel
+    //public Scalar lower_hsv = new Scalar(0, 0, 222.4);
+    //public Scalar higher_hsv = new Scalar(96.3, 24.1, 255.0);
 
     /**
      * Frame
@@ -84,8 +93,8 @@ public class PixelProcessor implements VisionProcessor {
 
         // If no object found
         if (contours.size() == 0) {
-            recognitions.clear();
-            return null;
+            recognitions = new ArrayList<>();
+            return recognitions;
         }
 
         // Find object with largest contour area
@@ -100,7 +109,7 @@ public class PixelProcessor implements VisionProcessor {
         }
 
         // Get bounding box location
-        recognitions.clear();
+        recognitions = new ArrayList<>();
         recognitions.add(Imgproc.boundingRect(obj));
         return recognitions;
     }
