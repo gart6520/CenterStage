@@ -122,7 +122,7 @@ public class TestAutoArm extends LinearOpMode {
             // Finite state machine
             switch (state) {
                 case none:
-                    //WTF how did u even get here
+                    // Impossible state
                     break;
                 case base_moving:
                     // Ensure grabber is not in the way

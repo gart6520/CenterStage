@@ -61,13 +61,6 @@ public class TestDrivebase extends LinearOpMode {
         while (opModeIsActive()) {
             drivebase.manualControl(true);
 
-            // TODO: Implement buttons for mechanisms and semi-auto drive
-            // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset
-            // RUN_USING_ENCODER mode (using drivebase.resetRunUsingEncoder())
-            // before following any trajectory, and MUST be reset back to
-            // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
-            // after finishing the trajectory
-
             // Show pose estimation
             Pose2d pose = drivebase.getPoseEstimate();
             telemetry.addData("X", pose.getX());
