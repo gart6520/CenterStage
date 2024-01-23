@@ -102,7 +102,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
             Double xAprilTag = aprilTagPos == null ? null : aprilTagPos.getX();
             Double yAprilTag = aprilTagPos == null ? null : aprilTagPos.getY();
             double x = poseXFuse.update(odoPose.getX(), xAprilTag);
-            double y = poseXFuse.update(odoPose.getY(), yAprilTag);
+            double y = poseYFuse.update(odoPose.getY(), yAprilTag);
 
             telemetry.addData("X", x);
             telemetry.addData("Y", y);
