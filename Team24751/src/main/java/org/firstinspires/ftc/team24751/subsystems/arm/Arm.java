@@ -81,7 +81,8 @@ public class Arm {
         //Probably should switch to PositionVelocitySystem
         double ffPow = feedforward.calculate(
                 Math.toRadians(targetState.position - getAngle()),
-                targetState.velocity - angularVelocity,
+//                targetState.velocity,
+                0,
                 0);
         opMode.telemetry.addData("Target State", targetState.position + " " + targetState.velocity);
         opMode.telemetry.addData("FF Pow", ffPow);
