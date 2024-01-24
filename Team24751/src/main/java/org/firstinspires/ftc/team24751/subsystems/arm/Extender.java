@@ -5,22 +5,21 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class Elevator {
-    DcMotorEx elevatorMotor;
+public class Extender {
+    DcMotorEx extenderMotor;
     LinearOpMode opMode;
 
-    public Elevator(LinearOpMode _opMode) {
+    public Extender(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
     public void init() {
-        elevatorMotor = opMode.hardwareMap.get(DcMotorEx.class, ELEVATOR_MOTOR);
-        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extenderMotor = opMode.hardwareMap.get(DcMotorEx.class, EXTENDER_MOTOR);
+        extenderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void setPower(double power) {
-        elevatorMotor.setPower(power);
+        extenderMotor.setPower(power);
     }
 }

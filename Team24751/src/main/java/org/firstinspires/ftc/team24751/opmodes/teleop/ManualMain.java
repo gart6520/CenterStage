@@ -6,8 +6,6 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.kauailabs.navx.ftc.AHRS;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,7 +16,7 @@ import org.firstinspires.ftc.team24751.subsystems.Distance;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
-import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
+import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
@@ -33,7 +31,7 @@ public class ManualMain extends LinearOpMode {
     Arm arm = new Arm(this);
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
-    Elevator elevator = new Elevator(this);
+    Extender extender = new Extender(this);
     Distance distance = new Distance(this);
 
     Lift lift = new Lift(this);
@@ -59,7 +57,7 @@ public class ManualMain extends LinearOpMode {
 
         wrist.init();
         grabber.init();
-        elevator.init();
+        extender.init();
         distance.init();
         lift.init();
 
@@ -152,11 +150,11 @@ public class ManualMain extends LinearOpMode {
             lift.setPower(left);
 
             if (gamepad2.dpad_down) {
-                elevator.setPower(0.6);
+                extender.setPower(0.6);
             } else if (gamepad2.dpad_up) {
-                elevator.setPower(-0.6);
+                extender.setPower(-0.6);
             } else {
-                elevator.setPower(0);
+                extender.setPower(0);
             }
             Vector2d botVel = new Vector2d(0, 0);
             if (gamepad1.dpad_up) {
@@ -172,7 +170,7 @@ public class ManualMain extends LinearOpMode {
             if (botVel.getX() != 0 || botVel.getY() != 0)
                 drivebase.drive(botVel.getX(), botVel.getY(), 0);
 
-            wrist.autoParallel(arm.getAngle());
+            wrist.autoSetAngle(arm.getAngle());
 
             if (curr2.circle && !prev2.circle) {
                 wrist.isAuto = !wrist.isAuto;

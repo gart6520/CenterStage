@@ -36,9 +36,11 @@ public class Wrist {
         leftWristServo.setAngle(angle);
         rightWristServo.setAngle(angle);
     }
-    //Rotate the wrist parallel to the board (60 deg to the horizontal)
-    public void autoParallel(double armAngleDeg) {
-        double targetAngle = 0;
+    /**
+     * Automatically rotate the grabber in case the arm need to be operated manually
+     * */
+    public void autoSetAngle(double armAngleDeg) {
+        double targetAngle;
         if (isAuto) {
             if (armAngleDeg >= 90) {
                 // Backdrop
@@ -51,11 +53,17 @@ public class Wrist {
                 targetAngle = 60;
             }
         } else {
+            // Arm right up in base moving
             targetAngle = 150;
         }
 
         setAngle(targetAngle);
         opMode.telemetry.addData("Wrist Target Angle", targetAngle);
         opMode.telemetry.addData("Wrist Pos", leftWristServo.getServo().getPosition());
+    }
+
+    public void autoParallel(double armAngleDeg)
+    {
+        setAngle(348 - armAngleDeg);
     }
 }

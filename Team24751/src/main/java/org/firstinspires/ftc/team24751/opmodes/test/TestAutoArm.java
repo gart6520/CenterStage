@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import com.ThermalEquilibrium.homeostasis.Utils.Timer;
-import com.qualcomm.hardware.lynx.Supplier;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24751.subsystems.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
-import org.firstinspires.ftc.team24751.subsystems.arm.Elevator;
+import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
@@ -28,7 +28,7 @@ public class TestAutoArm extends LinearOpMode {
     Arm arm = new Arm(this);
     Wrist wrist = new Wrist(this);
     Grabber grabber = new Grabber(this);
-    Elevator elevator = new Elevator(this);
+    Extender extender = new Extender(this);
     Distance distance = new Distance(this);
 
     enum ArmState {
@@ -71,7 +71,7 @@ public class TestAutoArm extends LinearOpMode {
 
         wrist.init();
         grabber.init();
-        elevator.init();
+        extender.init();
         distance.init();
 
         // Enable bulk reads in auto mode
@@ -136,16 +136,13 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case base_moving:
                     // Ensure grabber is not in the way
-                    wrist.isAuto = false;
-                    wrist.autoParallel(arm.getAngle());
+                    wrist.setAngle(FULL_EXTEND_DEG);
                     // Grabber into intake position
                     if (grabberButton.getAsBoolean()) {
-                        wrist.isAuto = true;
                         state = ArmState.intaking;
                     }
                     // Arm up for outaking
                     else if (armButton.getAsBoolean()) {
-                        wrist.isAuto = true;
                         state = ArmState.arm_moving_up;
                         armMoveUpTimeout.reset();
                         arm.setTargetAngle(armParallelAngle);
@@ -154,7 +151,7 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case arm_moving_up:
                     // Get grabber out of the way
-                    wrist.setAngle(250);
+                    wrist.setAngle(FULL_EXTEND_DEG);
                     // PID
                     if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 3) {
                         state = ArmState.outaking;
@@ -162,7 +159,7 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case intaking:
                     // Reset grabber when misaligned
-                    wrist.autoParallel(arm.getAngle());
+                    wrist.setAngle(GROUND_PARALLEL_DEG);
                     if (quickResetButton.getAsBoolean()) {
                         armMoveDownTimer.reset();
                         state = ArmState.quick_reset;
@@ -187,7 +184,7 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_down:
-                    wrist.setAngle(43);
+                    wrist.setAngle(GROUND_PARALLEL_DEG);
                     // Move down until timer
 
                     if (armMoveDownTimer.seconds() > 2) {
@@ -202,6 +199,7 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case quick_reset:
+                    wrist.setAngle(GROUND_PARALLEL_DEG);
                     // Initially move up
                     if (armMoveDownTimer.seconds() < 0.5) {
                         arm.setPower(0.5);
@@ -216,11 +214,11 @@ public class TestAutoArm extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
-                elevator.setPower(0.9);
+                extender.setPower(0.9);
             } else if (gamepad2.dpad_right) {
-                elevator.setPower(-0.9);
+                extender.setPower(-0.9);
             } else {
-                elevator.setPower(0);
+                extender.setPower(0);
             }
 
 

@@ -40,7 +40,7 @@ public class Constants {
         // Arm motors
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
-        public static final String ELEVATOR_MOTOR = "elevatorMotor";
+        public static final String EXTENDER_MOTOR = "elevatorMotor";
         public static final String LIFT_MOTOR = "liftMotor";
 
 
@@ -169,8 +169,19 @@ public class Constants {
         }
 
         //Constant for wrist and grabber
+        @Config
         public static class Hand {
             public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
+            /* Parallel to the ground
+             * ========\
+             *           \====
+             * */
+            public static double GROUND_PARALLEL_DEG = 60;
+            /* Extend and touch arm (max angle)
+             *      ====\
+             * ===========\
+             * */
+            public static double FULL_EXTEND_DEG = 250;
         }
 
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
