@@ -42,14 +42,18 @@ public class TestAutoArm extends LinearOpMode {
     boolean grablt = false;
     boolean grabrt = false;
     ElapsedTime armMoveDownTimer = new ElapsedTime();
+    ElapsedTime armMoveUpTimeout = new ElapsedTime();
 
 
     private void dropArmAndReset() {
         ElapsedTime timer = new ElapsedTime();
         wrist.setAngle(43);
         timer.reset();
-        while (timer.seconds() > 0.3 && timer.seconds() < 1.3) {
-            arm.setPower(-0.5);
+        telemetry.addData("Timer", timer.seconds());
+        telemetry.update();
+        while (timer.seconds() <= 1.5) {
+            if (timer.seconds() >= 0.7)
+                arm.setPower(-0.4);
         }
         arm.setPower(0);
         arm.resetEncoder();
@@ -101,7 +105,7 @@ public class TestAutoArm extends LinearOpMode {
             curr.copy(gamepad2);
 
             // Control drivebase manually
-            drivebase.manualControl(true);
+            drivebase.manualControl(false);
 
 
             /*if (gamepad1.dpad_down)
@@ -143,6 +147,7 @@ public class TestAutoArm extends LinearOpMode {
                     else if (armButton.getAsBoolean()) {
                         wrist.isAuto = true;
                         state = ArmState.arm_moving_up;
+                        armMoveUpTimeout.reset();
                         arm.setTargetAngle(armParallelAngle);
                         arm.resetPID();
                     }
@@ -151,7 +156,7 @@ public class TestAutoArm extends LinearOpMode {
                     // Get grabber out of the way
                     wrist.setAngle(250);
                     // PID
-                    if (arm.anglePIDLoop()) {
+                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 3) {
                         state = ArmState.outaking;
                     }
                     break;
@@ -167,6 +172,7 @@ public class TestAutoArm extends LinearOpMode {
                     } // Arm up for outaking
                     else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
+                        armMoveUpTimeout.reset();
                         arm.setTargetAngle(armParallelAngle);
                         arm.resetPID();
                     }
@@ -181,9 +187,14 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_down:
-                    wrist.autoParallel(arm.getAngle());
+                    wrist.setAngle(43);
                     // Move down until timer
-                    arm.setPower(-0.6);
+
+                    if (armMoveDownTimer.seconds() > 2) {
+                        arm.setPower(-0.4);
+                    } else {
+                        arm.setPower(-0.6);
+                    }
                     if (armMoveDownTimer.seconds() > 3) {
                         arm.resetEncoder();
                         arm.setPower(0);

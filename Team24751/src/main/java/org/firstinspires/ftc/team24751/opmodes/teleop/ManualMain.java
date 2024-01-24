@@ -38,7 +38,7 @@ public class ManualMain extends LinearOpMode {
 
     Lift lift = new Lift(this);
 
-    private AHRS navx_device;
+//    private AHRS navx_device;
 
     // Gamepad
     Gamepad prev1 = null;
@@ -63,8 +63,8 @@ public class ManualMain extends LinearOpMode {
         distance.init();
         lift.init();
 
-        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
-                AHRS.DeviceDataType.kProcessedData);
+//        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+//                AHRS.DeviceDataType.kProcessedData);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -200,7 +200,7 @@ public class ManualMain extends LinearOpMode {
 
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
-            telemetry.addData("Arm roll", navx_device.getRoll());
+//            telemetry.addData("Arm roll", navx_device.getRoll());
 
             telemetry.addData("Distance", distance.getDistanceCM());
 

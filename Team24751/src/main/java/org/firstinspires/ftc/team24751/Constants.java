@@ -164,7 +164,7 @@ public class Constants {
             public static final double POSITION_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
             public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
-                    new WPILibMotionProfile.Constraints(20, 5);
+                    new WPILibMotionProfile.Constraints(40, 10);
 
         }
 
