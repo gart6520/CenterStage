@@ -8,14 +8,12 @@ public class FuseSensor {
     private double prevX;
     private double prevCovariance;
     double x; // your initial state
-    double Q = 0.1; // your model covariance
-    double R = 0.4; // your sensor covariance
+    double Q = 0.1; // your model covariance (variance of first sensor)
+    double R = 0.4; // your sensor covariance (variance of second sensor)
     double p = 1; // your initial covariance guess
     double K = 1; // your initial Kalman gain guess
 
-    /**
-     * @param secondarySensor should not be at any null
-     */
+
     public FuseSensor(double x0) {
 
         x = x0;
@@ -33,18 +31,15 @@ public class FuseSensor {
             x = x + K * (secondarySensor - x);
             p = (1 - K) * p;
 
-            prevX = x;
-            prevCovariance = p;
         } else {
             //Secondary sensor NOT available
             x = primarySensor;
             p = prevCovariance + Q;
-            K = p / (p + R);
-            p = (1 - K) * p;
-
-            prevX = x;
-            prevCovariance = p;
+//            K = p / (p + R);
+//            p = (1 - K) * p;
         }
+        prevX = x;
+        prevCovariance = p;
         return x;
 
     }
