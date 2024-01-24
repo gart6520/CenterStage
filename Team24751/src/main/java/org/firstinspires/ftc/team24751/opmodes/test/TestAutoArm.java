@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,8 +42,9 @@ public class TestAutoArm extends LinearOpMode {
     Gamepad curr = null;
     boolean grablt = false;
     boolean grabrt = false;
-    ElapsedTime armMoveDownTimer = new ElapsedTime();
+    ElapsedTime armMoveDownTimeout = new ElapsedTime();
     ElapsedTime armMoveUpTimeout = new ElapsedTime();
+    ElapsedTime distSensorNailInTheCoffinTimer = new ElapsedTime();
 
 
     private void dropArmAndReset() {
@@ -161,7 +163,7 @@ public class TestAutoArm extends LinearOpMode {
                     // Reset grabber when misaligned
                     wrist.setAngle(GROUND_PARALLEL_DEG);
                     if (quickResetButton.getAsBoolean()) {
-                        armMoveDownTimer.reset();
+                        armMoveDownTimeout.reset();
                         state = ArmState.quick_reset;
                     } // Get grabber out of the way
                     else if (grabberButton.getAsBoolean()) {
@@ -179,20 +181,22 @@ public class TestAutoArm extends LinearOpMode {
                     wrist.autoParallel(arm.getAngle());
                     // Move arm down
                     if (armButton.getAsBoolean()) {
-                        armMoveDownTimer.reset();
+                        armMoveDownTimeout.reset();
                         state = ArmState.arm_moving_down;
                     }
                     break;
                 case arm_moving_down:
                     wrist.setAngle(GROUND_PARALLEL_DEG);
+                    //Wait for wrist
+                    if (armMoveDownTimeout.seconds() < 1) break;
                     // Move down until timer
-
-                    if (armMoveDownTimer.seconds() > 2) {
+                    if (armMoveDownTimeout.seconds() > 3) {
                         arm.setPower(-0.4);
                     } else {
                         arm.setPower(-0.6);
                     }
-                    if (armMoveDownTimer.seconds() > 3) {
+                    //Go until distance sensor report // to the ground or timeout
+                    if (armMoveDownTimeout.seconds() > 7 || distance.getDistanceCM() < DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.resetEncoder();
                         arm.setPower(0);
                         state = ArmState.intaking;
@@ -201,10 +205,10 @@ public class TestAutoArm extends LinearOpMode {
                 case quick_reset:
                     wrist.setAngle(GROUND_PARALLEL_DEG);
                     // Initially move up
-                    if (armMoveDownTimer.seconds() < 0.5) {
+                    if (armMoveDownTimeout.seconds() < 0.5) {
                         arm.setPower(0.5);
                     } //Then move down
-                    else if (armMoveDownTimer.seconds() < 1.25) {
+                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.setPower(-0.4);
                     } else {
                         arm.resetEncoder();

@@ -163,6 +163,10 @@ public class Constants {
                     0, 0.1);
             public static final double POSITION_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
+            /**
+             * Distance reported by distance sensor when arm is // ground
+             * */
+            public static double DISTANCE_TO_GROUND_THRESHOLD = 3;
             public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
                     new WPILibMotionProfile.Constraints(40, 10);
 
