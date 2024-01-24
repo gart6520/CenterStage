@@ -48,7 +48,7 @@ public class TestAutoArm extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         wrist.setAngle(43);
         timer.reset();
-        while (timer.seconds() < 1) {
+        while (timer.seconds() > 0.3 && timer.seconds() < 1.3) {
             arm.setPower(-0.5);
         }
         arm.setPower(0);
@@ -184,7 +184,6 @@ public class TestAutoArm extends LinearOpMode {
                     wrist.autoParallel(arm.getAngle());
                     // Move down until timer
                     arm.setPower(-0.6);
-                    telemetry.addData("Timer", armMoveDownTimer.seconds());
                     if (armMoveDownTimer.seconds() > 3) {
                         arm.resetEncoder();
                         arm.setPower(0);
@@ -193,11 +192,11 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case quick_reset:
                     // Initially move up
-                    if (armMoveDownTimer.seconds() < 1) {
-                        arm.setPower(0.6);
+                    if (armMoveDownTimer.seconds() < 0.5) {
+                        arm.setPower(0.5);
                     } //Then move down
-                    else if (armMoveDownTimer.seconds() < 2.5) {
-                        arm.setPower(-0.6);
+                    else if (armMoveDownTimer.seconds() < 1.25) {
+                        arm.setPower(-0.4);
                     } else {
                         arm.resetEncoder();
                         state = ArmState.intaking;
