@@ -148,22 +148,23 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 27; //tick
-            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 301; //tick
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; //tick
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 275; //tick
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
-            public static final PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.3, 0, 0,
+            public static PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(
+                    0.05, 0, 0,
                     0.5, 30, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.05, 0, 0.05,
                     2, 5, 0.1);
-            public static final FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
+            public static FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
                     0.1, 0.1, 0,
                     0, 0.1);
             public static final double POSITION_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
-            public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT = new WPILibMotionProfile.Constraints(5, 5);
+            public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
+                    new WPILibMotionProfile.Constraints(20, 5);
 
         }
 

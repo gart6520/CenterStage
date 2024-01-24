@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Arm {
     public DcMotorEx leftArmMotor;
@@ -21,17 +24,22 @@ public class Arm {
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
     WPILibMotionProfile motionProfile = null;
-    Timer timer = new Timer();
+    ElapsedTime timer = new ElapsedTime();
+    double prevAngle = 0;
+    double prevTime = 0;
+    double angularVelocity = 0;
+    ElapsedTime derivativeTimer = new ElapsedTime();
 
     public Arm(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
-    public DcMotorEx getArm() {
-        return rightArmMotor;
+    public void update()
+    {
+        angularVelocity = (getAngle() - prevAngle) / (derivativeTimer.seconds() - prevTime);
+        prevAngle =getAngle();
+        prevTime = derivativeTimer.seconds();
     }
-
-
     private double degToTick(double deg) {
         return (deg - MOTOR_DEG_AT_ZERO_TICK) / MOTOR_DEG_PER_TICK;
     }
@@ -64,19 +72,21 @@ public class Arm {
             positionPID.calculate(0, getAngle());
             return true;
         }
-        WPILibMotionProfile.State targetState = motionProfile.calculate(timer.currentTime());
+        WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
         double pidPow = positionPID.calculate(targetState.position, getAngle());
         if (Math.abs(getAngle() - targetAngle) < POSITION_THRESHOLD) {
-            leftArmMotor.setPower(0);
-            rightArmMotor.setPower(0);
+            setPower(0);
             return true;
         }
         //Probably should switch to PositionVelocitySystem
         double ffPow = feedforward.calculate(
-                targetState.position,
-                targetState.velocity, 0);
-        leftArmMotor.setPower(ffPow);
-        rightArmMotor.setPower(ffPow);
+                Math.toRadians(targetState.position - getAngle()),
+                targetState.velocity - angularVelocity,
+                0);
+        opMode.telemetry.addData("Target State", targetState.position + " " + targetState.velocity);
+        opMode.telemetry.addData("FF Pow", ffPow);
+        opMode.telemetry.addData("PID Pow", pidPow);
+        setPower(ffPow + pidPow);
         return false;
     }
 
@@ -114,5 +124,6 @@ public class Arm {
 
         leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        prevAngle = 0;
     }
 }

@@ -41,12 +41,17 @@ public class TestAutoArm extends LinearOpMode {
     Gamepad curr = null;
     boolean grablt = false;
     boolean grabrt = false;
+    ElapsedTime armMoveDownTimer = new ElapsedTime();
+
 
     private void dropArmAndReset() {
-        Timer timer = new Timer();
-        while (timer.currentTime() < 3) {
-            arm.setPower(-0.6);
+        ElapsedTime timer = new ElapsedTime();
+        wrist.setAngle(43);
+        timer.reset();
+        while (timer.seconds() < 1) {
+            arm.setPower(-0.5);
         }
+        arm.setPower(0);
         arm.resetEncoder();
     }
 
@@ -89,7 +94,7 @@ public class TestAutoArm extends LinearOpMode {
         // Reset runtime
         runtime.reset();
         dropArmAndReset();
-        state = ArmState.base_moving;
+        state = ArmState.intaking;
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
             // Update gamepad
@@ -118,8 +123,9 @@ public class TestAutoArm extends LinearOpMode {
             BooleanSupplier grabberButton = () -> curr.cross && !prev.cross;
             BooleanSupplier armButton = () -> curr.triangle && !prev.triangle;
             BooleanSupplier quickResetButton = () -> curr.left_bumper && !prev.left_bumper;
-            Timer armMoveDownTimer = new Timer();
+            final double armParallelAngle = 141;
             // Finite state machine
+//            arm.update();
             switch (state) {
                 case none:
                     // Impossible state
@@ -135,14 +141,15 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     // Arm up for outaking
                     else if (armButton.getAsBoolean()) {
+                        wrist.isAuto = true;
                         state = ArmState.arm_moving_up;
-                        arm.setTargetAngle(100.0);
+                        arm.setTargetAngle(armParallelAngle);
                         arm.resetPID();
                     }
                     break;
                 case arm_moving_up:
                     // Get grabber out of the way
-                    wrist.setAngle(90);
+                    wrist.setAngle(250);
                     // PID
                     if (arm.anglePIDLoop()) {
                         state = ArmState.outaking;
@@ -150,6 +157,7 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case intaking:
                     // Reset grabber when misaligned
+                    wrist.autoParallel(arm.getAngle());
                     if (quickResetButton.getAsBoolean()) {
                         armMoveDownTimer.reset();
                         state = ArmState.quick_reset;
@@ -159,7 +167,7 @@ public class TestAutoArm extends LinearOpMode {
                     } // Arm up for outaking
                     else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
-                        arm.setTargetAngle(100.0);
+                        arm.setTargetAngle(armParallelAngle);
                         arm.resetPID();
                     }
                     break;
@@ -176,17 +184,19 @@ public class TestAutoArm extends LinearOpMode {
                     wrist.autoParallel(arm.getAngle());
                     // Move down until timer
                     arm.setPower(-0.6);
-                    if (armMoveDownTimer.currentTime() > 5) {
+                    telemetry.addData("Timer", armMoveDownTimer.seconds());
+                    if (armMoveDownTimer.seconds() > 3) {
                         arm.resetEncoder();
+                        arm.setPower(0);
                         state = ArmState.intaking;
                     }
                     break;
                 case quick_reset:
                     // Initially move up
-                    if (armMoveDownTimer.currentTime() < 1) {
+                    if (armMoveDownTimer.seconds() < 1) {
                         arm.setPower(0.6);
                     } //Then move down
-                    else if (armMoveDownTimer.currentTime() < 2.5) {
+                    else if (armMoveDownTimer.seconds() < 2.5) {
                         arm.setPower(-0.6);
                     } else {
                         arm.resetEncoder();
@@ -221,6 +231,7 @@ public class TestAutoArm extends LinearOpMode {
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
+            telemetry.addData("FSM State", state.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
