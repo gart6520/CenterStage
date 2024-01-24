@@ -4,7 +4,7 @@ This repo contains the Android Studio projects with code for FTC#24751 GreenAms 
 
 # How to build?
 
-- Step 1: Clone this repo by either using `git clone https://github.com/gart6520/CenterStage` or by downloading zip on Github (although this is not recommened)
+- Step 1: Clone this repo by either using `git clone https://github.com/gart6520/CenterStage` or by downloading zip on Github (although this is not recommended)
 - Step 2: Open it in Android Studio 2021.2 (codename Chipmunk) or later.
 - Step 3: Wait for Gradle to Sync
 - Step 4: Build
