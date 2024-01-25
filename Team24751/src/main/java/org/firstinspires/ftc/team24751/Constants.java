@@ -54,6 +54,7 @@ public class Constants {
         public static final String RIGHT_WRIST = "rightWristServo";
         public static final String LEFT_CLAW = "leftClawServo";
         public static final String RIGHT_CLAW = "rightClawServo";
+        public static final String DRONE_LAUNCHER = "droneLauncherServo";
 
         // Active intake servo
         public static final String ACTIVE_INTAKE_SERVO = "activeIntakeServo";
@@ -188,6 +189,11 @@ public class Constants {
              * ===========\
              * */
             public static double FULL_EXTEND_DEG = 0;
+        }
+        public static class DroneLauncher {
+            public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
+            public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.6;
+
         }
 
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;

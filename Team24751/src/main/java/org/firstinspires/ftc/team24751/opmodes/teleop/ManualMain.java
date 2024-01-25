@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.teleop;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.LOAD_DRONE_LAUNCHER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.SHOOT_DRONE_LAUNCHER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.FULL_EXTEND_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.GROUND_PARALLEL_DEG;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
@@ -15,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.Distance;
+import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
@@ -35,6 +38,7 @@ public class ManualMain extends LinearOpMode {
     Grabber grabber = new Grabber(this);
     Extender extender = new Extender(this);
     Distance distance = new Distance(this);
+    DroneLauncher droneLauncher = new DroneLauncher(this);
 
     Lift lift = new Lift(this);
 
@@ -48,6 +52,7 @@ public class ManualMain extends LinearOpMode {
     boolean grablt = false;
     boolean grabrt = false;
     boolean wristDown = true;
+    boolean hasDroneLauncherShoot = false;
 
     @Override
     public void runOpMode() {
@@ -57,12 +62,12 @@ public class ManualMain extends LinearOpMode {
 
         //Init all subsystems
         arm.init();
-
         wrist.init();
         grabber.init();
         extender.init();
         distance.init();
         lift.init();
+        droneLauncher.init();
 
 //        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
 //                AHRS.DeviceDataType.kProcessedData);
@@ -183,6 +188,16 @@ public class ManualMain extends LinearOpMode {
                 } else {
                     wrist.setAngle(GROUND_PARALLEL_DEG);
                     wristDown = true;
+                }
+            }
+
+            if (curr2.right_bumper && !prev2.right_bumper) {
+                if (hasDroneLauncherShoot) {
+                    droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
+                    hasDroneLauncherShoot = false;
+                } else {
+                    droneLauncher.setPosition(SHOOT_DRONE_LAUNCHER_POSITION);
+                    hasDroneLauncherShoot = true;
                 }
             }
             if (curr1.left_bumper && curr1.left_bumper != prev1.left_bumper) {
