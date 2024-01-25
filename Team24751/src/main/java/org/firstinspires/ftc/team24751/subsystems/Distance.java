@@ -16,15 +16,21 @@ public class Distance {
     public Distance(LinearOpMode _opMode) {
         opMode = _opMode;
     }
+
     public DistanceSensor getDistanceSensor() {
         return this.distance;
     }
 
     public void init() {
-        distance = opMode.hardwareMap.get(DistanceSensor.class, DISTANCE_SENSOR);
+//        distance = opMode.hardwareMap.get(DistanceSensor.class, DISTANCE_SENSOR);
     }
 
-    public double getDistanceCM() {return distance.getDistance(DistanceUnit.CM);}
+    public double getDistanceCM() {
+//        return distance.getDistance(DistanceUnit.CM);
+        return 10000;
+    }
 
-    public double getDistanceMM() {return distance.getDistance(DistanceUnit.MM);}
+    public double getDistanceMM() {
+        return distance.getDistance(DistanceUnit.MM);
+    }
 }

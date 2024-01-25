@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.FeedforwardEx;
-import com.ThermalEquilibrium.homeostasis.Utils.Timer;
 import com.ThermalEquilibrium.homeostasis.Utils.WPILibMotionProfile;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,13 +12,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 public class Arm {
     public DcMotorEx leftArmMotor;
     public DcMotorEx rightArmMotor;
     LinearOpMode opMode;
-    PIDEx positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+    PIDEx positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
     PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
@@ -34,12 +31,12 @@ public class Arm {
         opMode = _opMode;
     }
 
-    public void update()
-    {
+    public void update() {
         angularVelocity = (getAngle() - prevAngle) / (derivativeTimer.seconds() - prevTime);
-        prevAngle =getAngle();
+        prevAngle = getAngle();
         prevTime = derivativeTimer.seconds();
     }
+
     private double degToTick(double deg) {
         return (deg - MOTOR_DEG_AT_ZERO_TICK) / MOTOR_DEG_PER_TICK;
     }
@@ -53,7 +50,7 @@ public class Arm {
      */
     public void setTargetAngle(Double targetAngle) {
         this.targetAngle = targetAngle;
-        positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+        positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
         if (targetAngle != null)
             motionProfile = new WPILibMotionProfile(
                     ARM_VA_CONSTRAINT,
@@ -63,7 +60,7 @@ public class Arm {
     }
 
     public void resetPID() {
-        positionPID = new PIDEx(ARM_POSITION_PID_COEFFICIENTS);
+        positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
         distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
@@ -74,16 +71,18 @@ public class Arm {
         }
         WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
         double pidPow = positionPID.calculate(targetState.position, getAngle());
-        if (Math.abs(getAngle() - targetAngle) < POSITION_THRESHOLD) {
+        if (Math.abs(getAngle() - targetAngle) < ANGLE_THRESHOLD) {
             setPower(0);
             return true;
         }
         //Probably should switch to PositionVelocitySystem
         double ffPow = feedforward.calculate(
                 Math.toRadians(targetState.position - getAngle()),
-//                targetState.velocity,
-                0,
+                targetState.velocity,
+//                0,
                 0);
+        if (timer.seconds() > motionProfile.totalTime())
+            ffPow = 0;
         opMode.telemetry.addData("Target State", targetState.position + " " + targetState.velocity);
         opMode.telemetry.addData("FF Pow", ffPow);
         opMode.telemetry.addData("PID Pow", pidPow);

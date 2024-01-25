@@ -45,8 +45,8 @@ public class Constants {
 
 
         //Odo pod encoder (could be the same name as other motors)
-        public static final String LEFT_ODO = LIFT_MOTOR;
-        public static final String RIGHT_ODO = LEFT_FRONT;
+        public static final String LEFT_ODO =  LEFT_FRONT;
+        public static final String RIGHT_ODO = LIFT_MOTOR;
         public static final String FRONT_ODO = LEFT_ARM_MOTOR;
 
         // Hand servos
@@ -152,23 +152,24 @@ public class Constants {
             public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 275; //tick
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
-            public static PIDCoefficientsEx ARM_POSITION_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.05, 0, 0,
-                    0.5, 30, 0.1);
+            public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
+                    0.07, 0.1, 0.02,
+                    3, 20, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.05, 0, 0.05,
+                    0.05, .05, 0.02,
                     2, 5, 0.1);
             public static FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
                     0.1, 0.1, 0,
                     0, 0.1);
-            public static final double POSITION_THRESHOLD = 1;
+            public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
+                    new WPILibMotionProfile.Constraints(
+                            50, 35);
+            public static final double ANGLE_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
             /**
              * Distance reported by distance sensor when arm is // ground
-             * */
-            public static double DISTANCE_TO_GROUND_THRESHOLD = 3;
-            public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
-                    new WPILibMotionProfile.Constraints(40, 10);
+             */
+            public static double DISTANCE_TO_GROUND_THRESHOLD = 2;
 
         }
 

@@ -120,7 +120,7 @@ public class ManualMain extends LinearOpMode {
 
             // Drive
 //            drivebase.drive(left_x, left_y, right_x); // Drive bot-oriented
-            drivebase.drive(left_x, left_y, right_x); // Drive field-oriented
+            drivebase.driveFieldOriented(left_x, left_y, right_x); // Drive field-oriented
 
             // TODO: Implement buttons for mechanisms and semi-auto drive
             // IMPORTANT NOTE: For semi-auto buttons, encoder MUST be reset

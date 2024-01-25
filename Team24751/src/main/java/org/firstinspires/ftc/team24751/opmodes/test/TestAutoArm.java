@@ -53,9 +53,9 @@ public class TestAutoArm extends LinearOpMode {
         timer.reset();
         telemetry.addData("Timer", timer.seconds());
         telemetry.update();
-        while (timer.seconds() <= 1.5) {
+        while (timer.seconds() <= 1.7) {
             if (timer.seconds() >= 0.7)
-                arm.setPower(-0.4);
+                arm.setPower(-0.5);
         }
         arm.setPower(0);
         arm.resetEncoder();
@@ -155,7 +155,8 @@ public class TestAutoArm extends LinearOpMode {
                     // Get grabber out of the way
                     wrist.setAngle(FULL_EXTEND_DEG);
                     // PID
-                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 3) {
+                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 100) {
+                        arm.setPower(0);
                         state = ArmState.outaking;
                     }
                     break;
@@ -196,7 +197,7 @@ public class TestAutoArm extends LinearOpMode {
                         arm.setPower(-0.6);
                     }
                     //Go until distance sensor report // to the ground or timeout
-                    if (armMoveDownTimeout.seconds() > 7 || distance.getDistanceCM() < DISTANCE_TO_GROUND_THRESHOLD) {
+                    if (armMoveDownTimeout.seconds() > 5 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.resetEncoder();
                         arm.setPower(0);
                         state = ArmState.intaking;
@@ -208,7 +209,7 @@ public class TestAutoArm extends LinearOpMode {
                     if (armMoveDownTimeout.seconds() < 0.5) {
                         arm.setPower(0.5);
                     } //Then move down
-                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
+                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.setPower(-0.4);
                     } else {
                         arm.resetEncoder();
