@@ -113,7 +113,7 @@ public class ManualMain extends LinearOpMode {
             // Get speed
             double speed = gamepad1.right_trigger > 0.15 ? 1 : 0.5;
             // Get joystick axis values
-            // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
+            // Left joystick is used for driving bot in up/down/liftPower/right direction, while right joystick is used for rotating the bot
             double left_y = -gamepad1.left_stick_y * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
             double left_x = gamepad1.left_stick_x * DRIVEBASE_SPEED_X * speed;
             double right_x = gamepad1.right_stick_x * DRIVEBASE_SPEED_Z * speed;
@@ -133,21 +133,21 @@ public class ManualMain extends LinearOpMode {
             double slow = 1;
             if (arm.getAngle() > 90)
             {
-                slow = 0.5;
+                slow = 1;
             }
             if (gamepad2.triangle) {
-                arm.setPower(0.8 * slow);
+                arm.setPower(0.3 * slow);
             } else if (gamepad2.cross) {
-                arm.setPower(-0.7);
+                arm.setPower(-0.3);
             } else {
                 arm.setPower(0);
             }
 
-            double left = 0;
-            if (gamepad1.dpad_left) left = -1;
-            if (gamepad1.dpad_right) left = 1;
+            double liftPower = 0;
+            if (gamepad2.dpad_left) liftPower = -0.8;
+            if (gamepad2.dpad_right) liftPower = 0.8;
 
-            lift.setPower(left);
+            lift.setPower(liftPower);
 
             if (gamepad2.dpad_down) {
                 extender.setPower(0.6);

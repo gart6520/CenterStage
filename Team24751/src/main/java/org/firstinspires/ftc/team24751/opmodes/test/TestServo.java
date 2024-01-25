@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LEFT_WRIST;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 
 import java.util.List;
 
@@ -22,9 +28,8 @@ public class TestServo extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Init servo
-        servo = hardwareMap.get(ServoImplEx.class, "servo");
-        servo.setPwmRange(new PwmControl.PwmRange(550, 2450));
-        servo.setDirection(ServoImplEx.Direction.REVERSE);
+        AngleServo angleServo =new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
+        angleServo.init(REV_SERVO_PWM_RANGE);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -63,11 +68,11 @@ public class TestServo extends LinearOpMode {
             // Delay 50ms
             //sleep(50);
             if (gamepad1.dpad_left) {
-                servo.setPosition(0);
+                angleServo.setAngle(0);
             }
 
             if (gamepad1.dpad_right) {
-                servo.setPosition(1);
+                angleServo.setAngle(181);
             }
 
             telemetry.update();

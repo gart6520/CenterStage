@@ -148,22 +148,23 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
+            public static double ARM_PARALLEL_ANGLE = 149;
             public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; //tick
             public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 275; //tick
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.07, 0.1, 0.02,
-                    3, 20, 0.1);
+                    0.01, 0.3, 0.02,
+                    10, 20, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.05, .05, 0.02,
                     2, 5, 0.1);
             public static FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
-                    0.1, 0.1, 0,
+                    0, 0, 0,
                     0, 0.1);
             public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
                     new WPILibMotionProfile.Constraints(
-                            50, 35);
+                            100, 70);
             public static final double ANGLE_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
             /**
@@ -181,12 +182,12 @@ public class Constants {
              * ========\
              *           \====
              * */
-            public static double GROUND_PARALLEL_DEG = 60;
+            public static double GROUND_PARALLEL_DEG = 190;
             /* Extend and touch arm (max angle)
              *      ====\
              * ===========\
              * */
-            public static double FULL_EXTEND_DEG = 250;
+            public static double FULL_EXTEND_DEG = 0;
         }
 
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;

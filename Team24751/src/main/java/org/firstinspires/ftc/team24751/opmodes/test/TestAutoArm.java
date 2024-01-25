@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_PARALLEL_ANGLE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -31,6 +34,7 @@ public class TestAutoArm extends LinearOpMode {
     Grabber grabber = new Grabber(this);
     Extender extender = new Extender(this);
     Distance distance = new Distance(this);
+    AHRS navx = null;
 
     enum ArmState {
         none, base_moving, arm_moving_up, arm_moving_down, intaking, outaking, quick_reset
@@ -49,16 +53,17 @@ public class TestAutoArm extends LinearOpMode {
 
     private void dropArmAndReset() {
         ElapsedTime timer = new ElapsedTime();
-        wrist.setAngle(43);
+        wrist.setAngle(GROUND_PARALLEL_DEG);
         timer.reset();
         telemetry.addData("Timer", timer.seconds());
         telemetry.update();
-        while (timer.seconds() <= 1.7) {
-            if (timer.seconds() >= 0.7)
+        while (timer.seconds() <= 2.5) {
+            if (timer.seconds() >= 1.5)
                 arm.setPower(-0.5);
         }
         arm.setPower(0);
         arm.resetEncoder();
+        navx.zeroYaw();
     }
 
     @Override
@@ -70,11 +75,12 @@ public class TestAutoArm extends LinearOpMode {
         //Init all subsystems
         drivebase = new Drivebase(this);
         arm.init();
-
         wrist.init();
         grabber.init();
         extender.init();
         distance.init();
+        navx = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+                AHRS.DeviceDataType.kProcessedData);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -129,7 +135,6 @@ public class TestAutoArm extends LinearOpMode {
             BooleanSupplier grabberButton = () -> curr.cross && !prev.cross;
             BooleanSupplier armButton = () -> curr.triangle && !prev.triangle;
             BooleanSupplier quickResetButton = () -> curr.left_bumper && !prev.left_bumper;
-            final double armParallelAngle = 141;
             // Finite state machine
 //            arm.update();
             switch (state) {
@@ -147,7 +152,7 @@ public class TestAutoArm extends LinearOpMode {
                     else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
                         armMoveUpTimeout.reset();
-                        arm.setTargetAngle(armParallelAngle);
+                        arm.setTargetAngle(ARM_PARALLEL_ANGLE);
                         arm.resetPID();
                     }
                     break;
@@ -155,7 +160,7 @@ public class TestAutoArm extends LinearOpMode {
                     // Get grabber out of the way
                     wrist.setAngle(FULL_EXTEND_DEG);
                     // PID
-                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 100) {
+                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 7) {
                         arm.setPower(0);
                         state = ArmState.outaking;
                     }
@@ -173,7 +178,7 @@ public class TestAutoArm extends LinearOpMode {
                     else if (armButton.getAsBoolean()) {
                         state = ArmState.arm_moving_up;
                         armMoveUpTimeout.reset();
-                        arm.setTargetAngle(armParallelAngle);
+                        arm.setTargetAngle(ARM_PARALLEL_ANGLE);
                         arm.resetPID();
                     }
                     break;
@@ -188,8 +193,6 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case arm_moving_down:
                     wrist.setAngle(GROUND_PARALLEL_DEG);
-                    //Wait for wrist
-                    if (armMoveDownTimeout.seconds() < 1) break;
                     // Move down until timer
                     if (armMoveDownTimeout.seconds() > 3) {
                         arm.setPower(-0.4);
@@ -213,6 +216,7 @@ public class TestAutoArm extends LinearOpMode {
                         arm.setPower(-0.4);
                     } else {
                         arm.resetEncoder();
+                        arm.setPower(0);
                         state = ArmState.intaking;
                     }
                     break;
@@ -243,6 +247,7 @@ public class TestAutoArm extends LinearOpMode {
             // Show elapsed run time
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
+            telemetry.addData("Current Arm Angle (NAVX)", Math.toDegrees(navx.getYaw()));
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());

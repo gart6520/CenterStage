@@ -17,8 +17,10 @@ public class Wrist {
 
     public Wrist(LinearOpMode _opMode) {
         opMode = _opMode;
-        leftWristServo = new AngleServo(LEFT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
-        rightWristServo = new AngleServo(RIGHT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
+        leftWristServo = new AngleServo(
+                LEFT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
+        rightWristServo = new AngleServo(
+                RIGHT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
     }
 
     public void init() {
@@ -64,6 +66,6 @@ public class Wrist {
 
     public void autoParallel(double armAngleDeg)
     {
-        setAngle(348 - armAngleDeg);
+        setAngle(armAngleDeg - 120);
     }
 }
