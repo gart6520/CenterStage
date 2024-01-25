@@ -10,11 +10,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Arm {
     public DcMotorEx leftArmMotor;
     public DcMotorEx rightArmMotor;
+    VoltageSensor batteryVoltageSensor;
     LinearOpMode opMode;
     PIDEx positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
     PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
@@ -86,7 +88,7 @@ public class Arm {
         opMode.telemetry.addData("Target State", targetState.position + " " + targetState.velocity);
         opMode.telemetry.addData("FF Pow", ffPow);
         opMode.telemetry.addData("PID Pow", pidPow);
-        setPower(ffPow + pidPow);
+        setPower((ffPow + pidPow) * 12 / batteryVoltageSensor.getVoltage());
         return false;
     }
 
@@ -116,6 +118,8 @@ public class Arm {
         leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        batteryVoltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }
 
     public void resetEncoder() {

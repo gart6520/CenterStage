@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.teleop;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.FULL_EXTEND_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.GROUND_PARALLEL_DEG;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
 import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
@@ -45,6 +47,7 @@ public class ManualMain extends LinearOpMode {
     Gamepad curr2 = null;
     boolean grablt = false;
     boolean grabrt = false;
+    boolean wristDown = true;
 
     @Override
     public void runOpMode() {
@@ -95,6 +98,7 @@ public class ManualMain extends LinearOpMode {
         ElapsedTime timing = new ElapsedTime();
         timing.reset();
         arm.resetEncoder();
+        wrist.setAngle(GROUND_PARALLEL_DEG);
         while (timing.seconds() < 0.8) {
             arm.setPower(-0.5);
         }
@@ -135,9 +139,9 @@ public class ManualMain extends LinearOpMode {
             {
                 slow = 1;
             }
-            if (gamepad2.triangle) {
+            if (gamepad2.dpad_up) {
                 arm.setPower(0.3 * slow);
-            } else if (gamepad2.cross) {
+            } else if (gamepad2.dpad_down) {
                 arm.setPower(-0.3);
             } else {
                 arm.setPower(0);
@@ -149,9 +153,9 @@ public class ManualMain extends LinearOpMode {
 
             lift.setPower(liftPower);
 
-            if (gamepad2.dpad_down) {
+            if (gamepad2.triangle) {
                 extender.setPower(0.6);
-            } else if (gamepad2.dpad_up) {
+            } else if (gamepad2.cross) {
                 extender.setPower(-0.6);
             } else {
                 extender.setPower(0);
@@ -170,10 +174,16 @@ public class ManualMain extends LinearOpMode {
             if (botVel.getX() != 0 || botVel.getY() != 0)
                 drivebase.drive(botVel.getX(), botVel.getY(), 0);
 
-            wrist.autoSetAngle(arm.getAngle());
+//            wrist.autoSetAngle(arm.getAngle());
 
-            if (curr2.circle && !prev2.circle) {
-                wrist.isAuto = !wrist.isAuto;
+            if (curr2.left_bumper && !prev2.left_bumper) {
+                if (wristDown) {
+                    wrist.setAngle(FULL_EXTEND_DEG);
+                    wristDown = false;
+                } else {
+                    wrist.setAngle(GROUND_PARALLEL_DEG);
+                    wristDown = true;
+                }
             }
             if (curr1.left_bumper && curr1.left_bumper != prev1.left_bumper) {
                 grablt = !grablt;
