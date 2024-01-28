@@ -45,9 +45,9 @@ public class Constants {
 
 
         //Odo pod encoder (could be the same name as other motors)
-        public static final String LEFT_ODO =  LEFT_FRONT;
-        public static final String RIGHT_ODO = LIFT_MOTOR;
-        public static final String FRONT_ODO = LEFT_ARM_MOTOR;
+        public static final String LEFT_ODO =  RIGHT_FRONT;
+        public static final String RIGHT_ODO = EXTENDER_MOTOR;
+        public static final String FRONT_ODO = RIGHT_BACK;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";
@@ -192,7 +192,7 @@ public class Constants {
         }
         public static class DroneLauncher {
             public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
-            public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.6;
+            public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.3;
 
         }
 
