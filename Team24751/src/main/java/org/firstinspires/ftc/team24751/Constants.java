@@ -25,7 +25,6 @@ public class Constants {
     //TODO: All AutoOpMode should init this variable to the correct color
     public static AllianceColor allianceColor = AllianceColor.TEST;
 
-
     /**
      * Device names
      * They are kept here for convenient (eg to quickly change when needed)
@@ -45,9 +44,9 @@ public class Constants {
 
 
         //Odo pod encoder (could be the same name as other motors)
-        public static final String LEFT_ODO =  LEFT_FRONT;
-        public static final String RIGHT_ODO = LIFT_MOTOR;
-        public static final String FRONT_ODO = LEFT_ARM_MOTOR;
+        public static final String LEFT_ODO = RIGHT_FRONT;
+        public static final String RIGHT_ODO = RIGHT_ARM_MOTOR;
+        public static final String FRONT_ODO = RIGHT_BACK;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";
@@ -60,7 +59,6 @@ public class Constants {
         public static final String ACTIVE_INTAKE_SERVO = "activeIntakeServo";
 
         // Sensors
-        public static final String IMU_NAME = "imu";
         public static final String DISTANCE_SENSOR = "distanceSensor";
 
         // Camera
@@ -197,7 +195,7 @@ public class Constants {
         }
 
         public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
-        public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
+        public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(500, 2500);
         //TODO: Tune for gobilda one
         public static final PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
         public static final double REV_SERVO_ANGLE_RANGE = 270;

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LEFT_WRIST;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
 
@@ -72,7 +72,7 @@ public class TestServo extends LinearOpMode {
             }
 
             if (gamepad1.dpad_right) {
-                angleServo.setAngle(181);
+                angleServo.setAngle(270);
             }
 
             telemetry.update();
