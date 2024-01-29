@@ -2,13 +2,12 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_PARALLEL_ANGLE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.FULL_EXTEND_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.GROUND_PARALLEL_DEG;
+import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
 import com.kauailabs.navx.ftc.AHRS;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,7 +20,6 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 @TeleOp(name = "Test Auto Arm", group = "Test")
@@ -63,7 +61,7 @@ public class TestAutoArm extends LinearOpMode {
         }
         arm.setPower(0);
         arm.resetEncoder();
-        navx.zeroYaw();
+//        navx.zeroYaw();
     }
 
     @Override
@@ -79,15 +77,11 @@ public class TestAutoArm extends LinearOpMode {
         grabber.init();
         extender.init();
         distance.init();
-        navx = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
-                AHRS.DeviceDataType.kProcessedData);
+//        navx = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
+//                AHRS.DeviceDataType.kProcessedData);
 
         // Enable bulk reads in auto mode
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
+        enableBulkRead(hardwareMap);
 
         prev = new Gamepad();
         prev.copy(gamepad2);
@@ -190,6 +184,11 @@ public class TestAutoArm extends LinearOpMode {
                         armMoveDownTimeout.reset();
                         state = ArmState.arm_moving_down;
                     }
+                    if (gamepad1.dpad_up) {
+                        arm.setPower(0.3);
+                    } else if (gamepad1.dpad_down) {
+                        arm.setPower(-0.3);
+                    }
                     break;
                 case arm_moving_down:
                     wrist.setAngle(GROUND_PARALLEL_DEG);
@@ -244,10 +243,10 @@ public class TestAutoArm extends LinearOpMode {
             // Update prev gamepad
             prev.copy(curr);
 
-            // Show elapsed run time
+            // Show telemetry
             telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
-            telemetry.addData("Current Arm Angle (NAVX)", Math.toDegrees(navx.getYaw()));
+//            telemetry.addData("Current Arm Angle (NAVX)", Math.toDegrees(navx.getYaw()));
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());

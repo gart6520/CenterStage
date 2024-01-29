@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.team24751;
 
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.util.List;
+
 /**
  * Utilities functions, wrapper, etc...
  */
@@ -33,6 +38,14 @@ public class Utility {
                 while (angle >= Math.PI) angle -= Math.PI;
                 while (angle < -Math.PI) angle += Math.PI;
                 return angle;
+        }
+    }
+
+    public static void enableBulkRead(HardwareMap hardwareMap) {
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
     }
 }
