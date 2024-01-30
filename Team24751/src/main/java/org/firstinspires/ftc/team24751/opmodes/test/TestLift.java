@@ -21,7 +21,7 @@ public class TestLift extends LinearOpMode {
             if (gamepad1.dpad_right) left = 1;
 
             lift.setPower(left);
-            drive.manualControl(true);
+            drive.manualControl(false);
         }
     }
 }
