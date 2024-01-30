@@ -28,8 +28,10 @@ public class TestServo extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Init servo
-        AngleServo angleServo =new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
-        angleServo.init(REV_SERVO_PWM_RANGE);
+        AngleServo leftAngleServo = new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
+        AngleServo rightAngleServo = new AngleServo(RIGHT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
+        leftAngleServo.init(REV_SERVO_PWM_RANGE);
+        rightAngleServo.init(REV_SERVO_PWM_RANGE);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -68,11 +70,13 @@ public class TestServo extends LinearOpMode {
             // Delay 50ms
             //sleep(50);
             if (gamepad1.dpad_left) {
-                angleServo.setAngle(0);
+                leftAngleServo.setAngle(0);
+                rightAngleServo.setAngle(270);
             }
 
             if (gamepad1.dpad_right) {
-                angleServo.setAngle(270);
+                leftAngleServo.setAngle(270);
+                rightAngleServo.setAngle(0);
             }
 
             telemetry.update();

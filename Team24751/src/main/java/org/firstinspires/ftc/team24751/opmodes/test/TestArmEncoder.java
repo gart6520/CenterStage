@@ -67,7 +67,7 @@ public class TestArmEncoder extends LinearOpMode {
             prev.copy(curr);
 
             // Show telemetry
-            telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Position (R)", arm.leftArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();

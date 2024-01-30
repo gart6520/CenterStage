@@ -139,7 +139,7 @@ public class Constants {
         public static class Arm {
 
 
-            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 290; //tick
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 266.8; //tick
             public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; //tick
             /*
              *                      / <- arm
@@ -149,7 +149,7 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 80;
+            public static double ARM_PARALLEL_ANGLE = 120;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
@@ -176,21 +176,21 @@ public class Constants {
         //Constant for wrist and grabber
         @Config
         public static class Hand {
-            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
+            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 10;
             /* Parallel to the ground
              * ========\
              *           \====
              * */
-            public static double GROUND_PARALLEL_DEG = 190;
+            public static double GROUND_PARALLEL_DEG = 192;
             /* Extend and touch arm (max angle)
              *      ====\
              * ===========\
              * */
-            public static double FULL_EXTEND_DEG = 0;
+            public static double FULL_EXTEND_DEG = 30;
         }
         public static class DroneLauncher {
             public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
-            public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.3;
+            public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
         }
 

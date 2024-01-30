@@ -119,6 +119,7 @@ public class Arm {
         leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         batteryVoltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }

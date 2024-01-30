@@ -55,9 +55,9 @@ public class TestAutoArm extends LinearOpMode {
         timer.reset();
         telemetry.addData("Timer", timer.seconds());
         telemetry.update();
-        while (timer.seconds() <= 2.5) {
+        while (timer.seconds() <= 5 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
             if (timer.seconds() >= 1.5)
-                arm.setPower(-0.5);
+                arm.setPower(-0.4);
         }
         arm.setPower(0);
         arm.resetEncoder();
@@ -184,10 +184,12 @@ public class TestAutoArm extends LinearOpMode {
                         armMoveDownTimeout.reset();
                         state = ArmState.arm_moving_down;
                     }
-                    if (gamepad1.dpad_up) {
-                        arm.setPower(0.3);
-                    } else if (gamepad1.dpad_down) {
-                        arm.setPower(-0.3);
+                    if (gamepad2.dpad_up) {
+                        arm.setPower(0.15);
+                    } else if (gamepad2.dpad_down) {
+                        arm.setPower(-0.15);
+                    } else {
+                        arm.setPower(0);
                     }
                     break;
                 case arm_moving_down:
@@ -196,7 +198,7 @@ public class TestAutoArm extends LinearOpMode {
                     if (armMoveDownTimeout.seconds() > 3) {
                         arm.setPower(-0.4);
                     } else {
-                        arm.setPower(-0.6);
+                        arm.setPower(-0.4);
                     }
                     //Go until distance sensor report // to the ground or timeout
                     if (armMoveDownTimeout.seconds() > 5 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
@@ -230,12 +232,12 @@ public class TestAutoArm extends LinearOpMode {
             }
 
 
-            if (curr.square && !prev.square) {
+            if (curr.circle && !prev.circle) {
                 grablt = !grablt;
                 grabber.leftClaw.setPosition(grablt ? 1 : 0);
             }
 
-            if (curr.circle && !prev.circle) {
+            if (curr.square && !prev.square) {
                 grabrt = !grabrt;
                 grabber.rightClaw.setPosition(grabrt ? 1 : 0);
             }
@@ -246,7 +248,6 @@ public class TestAutoArm extends LinearOpMode {
             // Show telemetry
             telemetry.addData("Current Arm Position (R)", arm.leftArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
-//            telemetry.addData("Current Arm Angle (NAVX)", Math.toDegrees(navx.getYaw()));
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());

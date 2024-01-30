@@ -25,9 +25,9 @@ public class Wrist {
 
     public void init() {
         leftWristServo.init(REV_SERVO_PWM_RANGE);
-        leftWristServo.getServo().setDirection(Servo.Direction.FORWARD);
+        leftWristServo.getServo().setDirection(Servo.Direction.REVERSE);
         rightWristServo.init(REV_SERVO_PWM_RANGE);
-        rightWristServo.getServo().setDirection(Servo.Direction.REVERSE);
+        rightWristServo.getServo().setDirection(Servo.Direction.FORWARD);
     }
 
     public void setSpeed(double speed) {
