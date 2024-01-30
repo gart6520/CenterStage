@@ -145,9 +145,9 @@ public class ManualMain extends LinearOpMode {
                 slow = 1;
             }
             if (gamepad2.dpad_up) {
-                arm.setPower(0.3 * slow);
+                arm.setPower(0.8 * slow);
             } else if (gamepad2.dpad_down) {
-                arm.setPower(-0.3);
+                arm.setPower(-0.8);
             } else {
                 arm.setPower(0);
             }
