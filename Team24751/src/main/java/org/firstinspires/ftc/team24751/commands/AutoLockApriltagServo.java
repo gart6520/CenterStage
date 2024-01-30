@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.commands;
 
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.BIG_APRIL_TAG_ID;
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_FIELD_PARAMETER;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_BIG_APRIL_TAG_LIST;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
 import static org.firstinspires.ftc.team24751.Utility.WRAP_ANGLE_TYPE;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 
@@ -33,10 +34,10 @@ public class AutoLockApriltagServo {
 
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
-        servo = new AngleServo(servoName, INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
+        servo = new AngleServo(servoName, Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
                 270, linearOpMode);
         this.linearOpMode = linearOpMode;
-        INIT_FIELD_PARAMETER();
+        INIT_BIG_APRIL_TAG_LIST();
         for (int id : BIG_APRIL_TAG_ID) {
             VectorF _pos = AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(id).fieldPosition;
             aprilTagPos.add(new Vector2d(_pos.get(0), _pos.get(1)));
@@ -45,7 +46,7 @@ public class AutoLockApriltagServo {
 
     //Must call
     public void initServo() {
-        servo.init(REV_SERVO_PWM_RANGE);
+        servo.init(GENERAL_SERVO.REV_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
 

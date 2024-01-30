@@ -18,15 +18,15 @@ public class Wrist {
     public Wrist(LinearOpMode _opMode) {
         opMode = _opMode;
         leftWristServo = new AngleServo(
-                LEFT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
+                LEFT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, GENERAL_SERVO.REV_SERVO_ANGLE_RANGE, opMode);
         rightWristServo = new AngleServo(
-                RIGHT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, opMode);
+                RIGHT_WRIST, INIT_WRIST_SERVO_ANGLE_DEG, GENERAL_SERVO.REV_SERVO_ANGLE_RANGE, opMode);
     }
 
     public void init() {
-        leftWristServo.init(REV_SERVO_PWM_RANGE);
+        leftWristServo.init(GENERAL_SERVO.REV_SERVO_PWM_RANGE);
         leftWristServo.getServo().setDirection(Servo.Direction.REVERSE);
-        rightWristServo.init(REV_SERVO_PWM_RANGE);
+        rightWristServo.init(GENERAL_SERVO.REV_SERVO_PWM_RANGE);
         rightWristServo.getServo().setDirection(Servo.Direction.FORWARD);
     }
 

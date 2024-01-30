@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Distance;
+import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.subsystems;
+package org.firstinspires.ftc.team24751.subsystems.sensor;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.DISTANCE_SENSOR;
 

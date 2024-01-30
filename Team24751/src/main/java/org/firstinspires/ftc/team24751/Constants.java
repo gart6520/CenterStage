@@ -60,6 +60,7 @@ public class Constants {
 
         // Sensors
         public static final String DISTANCE_SENSOR = "distanceSensor";
+        public static final String POTENTIOMETER = "potentiometer";
 
         // Camera
         public static final String BACK_CAMERA_NAME = "backCamera"; // fieldCamera
@@ -95,30 +96,19 @@ public class Constants {
     /**
      * Sensitivity / Threshold
      */
-    public static class SENSITIVITY {
+    public static class JOYSTICK_SENSITIVITY {
         // Joystick sensitivity
         public static final double SENSE_X = 0.15;
         public static final double SENSE_Y = 0.15;
         public static final double SENSE_Z = 0.15;
 
-        // AprilTag marginDecision threshold
-        //TODO: tune
-        public static final double MARGIN_DECISION_THRESHOLD = 0.1;
-        //TFOD Team prop position threshold
-        // |    Left     |     Center    |      Right      |
-        // min       left-center     center-right         max
-        public static final double TEAM_PROP_LEFT_CENTER = 100;
-        public static final double TEAM_PROP_CENTER_RIGHT = 200;
-
-        public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
-        public static final double SERVO_PWM_SPEED = 0.1;
     }
 
     /**
      * Field related parameters
      */
     public static class FIELD_PARAMETER {
-        public static void INIT_FIELD_PARAMETER() {
+        public static void INIT_BIG_APRIL_TAG_LIST() {
             // TODO: Add Appropriate April Tag ID
             if (!init) {
                 BIG_APRIL_TAG_ID.add(7);
@@ -189,33 +179,59 @@ public class Constants {
              * */
             public static double FULL_EXTEND_DEG = 30;
         }
-        public static class Extender
-        {
+
+        public static class Extender {
             public static final double EXTENDER_FULLY_IN_THRESHOLD = 50;
         }
+
         public static class DroneLauncher {
             public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
         }
+        public static class POTENTIOMETER
+        {
+            public static final String LUT_DATA_FILE_NAME = "Potentiometer LUT data.txt";
+        }
 
-        public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
-        public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(500, 2500);
-        //TODO: Tune for gobilda one
-        public static final PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
-        public static final double REV_SERVO_ANGLE_RANGE = 270;
-        public static final double GOBILDA_SERVO_ANGLE_RANGE = 300;
+        public static class GENERAL_SERVO
+        {
+            public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(500, 2500);
+            //TODO: Tune for gobilda one
+            public static final PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
+            public static final double REV_SERVO_ANGLE_RANGE = 270;
+            public static final double GOBILDA_SERVO_ANGLE_RANGE = 300;
+            public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
+            public static final double SERVO_PWM_SPEED = 0.1;
+        }
+
     }
 
     /**
-     * Constant used for TFOD
+     * Constant used for Vision
      */
-    public static class TFOD {
-        public static final String TFOD_TEAM_PROP_MODEL_FILE = "TeamPropModelFile.tflite";
-        public static final String[] TFOD_TEAM_PROP_LABELS = {
-                "BlueTeamProp",
-                "RedTeamProp",
-        };
+    public static class VISION {
+
+        public static class APRIL_TAG {
+
+            // AprilTag marginDecision threshold
+            //TODO: tune
+            public static final double MARGIN_DECISION_THRESHOLD = 0.1;
+            public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
+        }
+
+        public static class TFOD {
+            public static final String TFOD_TEAM_PROP_MODEL_FILE = "TeamPropModelFile.tflite";
+            public static final String[] TFOD_TEAM_PROP_LABELS = {
+                    "BlueTeamProp",
+                    "RedTeamProp",
+            };
+            //TFOD Team prop position threshold
+            // |    Left     |     Center    |      Right      |
+            // min       left-center     center-right         max
+            public static final double TEAM_PROP_LEFT_CENTER = 100;
+            public static final double TEAM_PROP_CENTER_RIGHT = 200;
+        }
     }
 
     /**

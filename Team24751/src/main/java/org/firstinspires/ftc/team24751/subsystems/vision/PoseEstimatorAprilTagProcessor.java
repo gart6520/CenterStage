@@ -10,7 +10,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.*;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class PoseEstimatorAprilTagProcessor {
             //Storing the pose from the detection and its decision margin
             robotPoseResult.add(new Pair<>(getCameraPoseFromAprilTagDetection(detection, camAngleDeg), detection.decisionMargin));
         }
-        if (decisionMarginSum < MARGIN_DECISION_THRESHOLD) return null;
+        if (decisionMarginSum < VISION.APRIL_TAG.MARGIN_DECISION_THRESHOLD) return null;
         Vector2d currentPose = new Vector2d(0, 0);
         //Weighted average of all pose from apriltag
         for (Pair<Vector2d, Float> result : robotPoseResult) {

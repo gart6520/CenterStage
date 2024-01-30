@@ -5,8 +5,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -44,8 +44,8 @@ public class RandomizationProcessor {
         telemetry.update();
         //Disable processor to save on resource
         camera.disableProcessor(tfod);
-        if (center <= TEAM_PROP_LEFT_CENTER) return TeamPropPosition.LEFT;
-        if (center <= TEAM_PROP_CENTER_RIGHT) return TeamPropPosition.CENTER;
+        if (center <= Constants.VISION.TFOD.TEAM_PROP_LEFT_CENTER) return TeamPropPosition.LEFT;
+        if (center <= Constants.VISION.TFOD.TEAM_PROP_CENTER_RIGHT) return TeamPropPosition.CENTER;
         return TeamPropPosition.RIGHT;
     }
 

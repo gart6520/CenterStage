@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.SERVO_ANGLE_PWM_THRESHOLD;
-import static org.firstinspires.ftc.team24751.Constants.SENSITIVITY.SERVO_PWM_SPEED;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.SERVO_ANGLE_PWM_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.SERVO_PWM_SPEED;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

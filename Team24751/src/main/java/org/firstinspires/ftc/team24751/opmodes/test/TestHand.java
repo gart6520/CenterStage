@@ -2,9 +2,9 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static androidx.core.math.MathUtils.clamp;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_ANGLE_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_PWM_RANGE;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.subsystems.Distance;
+import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
@@ -62,8 +62,8 @@ public class TestAutoArm extends LinearOpMode {
             if (timer.seconds() >= 1.5)
                 arm.setPower(-0.4);
         }
-        arm.setPower(0);
         arm.resetEncoder();
+        arm.setPower(0);
 //        navx.zeroYaw();
     }
 
