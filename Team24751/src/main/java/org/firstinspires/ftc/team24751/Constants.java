@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751;
 
+import android.annotation.SuppressLint;
+
 import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Utils.WPILibMotionProfile;
@@ -96,12 +98,14 @@ public class Constants {
     /**
      * Sensitivity / Threshold
      */
-    public static class JOYSTICK_SENSITIVITY {
+    public static class GAMEPAD_SENSITIVITY {
         // Joystick sensitivity
         public static final double SENSE_X = 0.15;
         public static final double SENSE_Y = 0.15;
         public static final double SENSE_Z = 0.15;
 
+        // Analog buttons
+        public static final double SENSE_TRIGGER = 0.15;
     }
 
     /**
@@ -127,10 +131,9 @@ public class Constants {
     public static class HARDWARE_CONSTANT {
         @Config
         public static class Arm {
+            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 266.8; // tick
+            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; // tick
 
-
-            public static final double MOTOR_POSITION_AT_UPWARD_VERTICAL = 266.8; //tick
-            public static final double MOTOR_POSITION_AT_FRONT_HORIZONTAL = 0; //tick
             /*
              *                      / <- arm
              *                    / arm angle
@@ -157,6 +160,7 @@ public class Constants {
                             100, 70);
             public static final double ANGLE_THRESHOLD = 1;
             public static final double DISTANCE_THRESHOLD = 1;
+
             /**
              * Distance reported by distance sensor when arm is // ground
              */
@@ -168,11 +172,13 @@ public class Constants {
         @Config
         public static class Hand {
             public static final double INIT_WRIST_SERVO_ANGLE_DEG = 10;
+
             /* Parallel to the ground
              * ========\
              *           \====
              * */
             public static double GROUND_PARALLEL_DEG = 192;
+
             /* Extend and touch arm (max angle)
              *      ====\
              * ===========\
@@ -191,7 +197,8 @@ public class Constants {
         }
         public static class POTENTIOMETER
         {
-            public static final String LUT_DATA_FILE_NAME = "Potentiometer LUT data.txt";
+            @SuppressLint("SdCardPath")
+            public static final String LUT_DATA_FILE_NAME = "/sdcard/FIRST/Potentiometer_LUT_data.txt";
         }
 
         public static class GENERAL_SERVO

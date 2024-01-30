@@ -41,11 +41,29 @@ public class Utility {
         }
     }
 
+    /**
+     * Enable bulk read for all hubs
+     * @param hardwareMap hardwareMap object from opMode
+     */
     public static void enableBulkRead(HardwareMap hardwareMap) {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+    }
+
+    /**
+     * Apply sense to input
+     * @param input input value
+     * @param threshold sense threshold
+     * @return input if abs(input) > threshold, else 0
+     */
+    public static double sense(double input, double threshold) {
+        if (Math.abs(input) >= threshold) {
+            return input;
+        } else {
+            return 0;
         }
     }
 }

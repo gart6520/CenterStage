@@ -1,13 +1,5 @@
 package org.firstinspires.ftc.team24751.opmodes.teleop;
 
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.LOAD_DRONE_LAUNCHER_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.SHOOT_DRONE_LAUNCHER_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.FULL_EXTEND_DEG;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.GROUND_PARALLEL_DEG;
-import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_X;
-import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Y;
-import static org.firstinspires.ftc.team24751.Constants.SPEED.DRIVEBASE_SPEED_Z;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -26,9 +18,13 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
+import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
+
 import java.util.List;
 
-@TeleOp(name = "Main", group = "Manual")
+@TeleOp(name = "MainManual", group = "Manual")
 public class ManualMain extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -41,8 +37,6 @@ public class ManualMain extends LinearOpMode {
     DroneLauncher droneLauncher = new DroneLauncher(this);
 
     Lift lift = new Lift(this);
-
-//    private AHRS navx_device;
 
     // Gamepad
     Gamepad prev1 = null;
@@ -68,9 +62,6 @@ public class ManualMain extends LinearOpMode {
         distance.init();
         lift.init();
         droneLauncher.init();
-
-//        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"),
-//                AHRS.DeviceDataType.kProcessedData);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);

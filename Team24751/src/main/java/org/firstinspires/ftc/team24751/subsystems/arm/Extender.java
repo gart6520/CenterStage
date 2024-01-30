@@ -24,8 +24,8 @@ public class Extender {
     }
 
     /**
-     * Set power for extend motor
-     * Negative -> out
+     * Set power for extend motor:
+     * Negative -> out;
      * Positive -> in
      * @param power
      */
