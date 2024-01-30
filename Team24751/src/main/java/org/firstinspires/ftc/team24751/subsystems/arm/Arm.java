@@ -73,7 +73,7 @@ public class Arm {
         }
         WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
         double rawPIDPow = anglePID.calculate(targetState.position, getAngle());
-        double pidPow = Math.max(Math.abs(rawPIDPow), 0.15) * Math.signum(rawPIDPow);
+        double pidPow = Math.max(Math.abs(rawPIDPow), ARM_ANGLE_MIN_PID_POW) * Math.signum(rawPIDPow);
         if (Math.abs(getAngle() - targetAngle) < ANGLE_THRESHOLD) {
             setPower(0);
             return true;

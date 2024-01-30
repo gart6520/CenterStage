@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_PARALLEL_ANGLE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.EXTENDER_FULLY_IN_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.FULL_EXTEND_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.GROUND_PARALLEL_DEG;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
@@ -153,7 +154,7 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_up:
-                    if (extender.getPosition() > 50)
+                    if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD)
                     {
                         extender.setPower(0.9);
                         isUndoExtendTimeoutReset = true;
@@ -205,7 +206,7 @@ public class TestAutoArm extends LinearOpMode {
                     break;
                 case arm_moving_down:
                     // Move down until timer
-                    if (arm.getAngle() < 90) {
+                    if (arm.getAngle() < 45) {
                         if (!isUndoExtendTimeoutReset) {
                             undoExtendTimeout.reset();
                             isUndoExtendTimeoutReset = true;
@@ -215,7 +216,7 @@ public class TestAutoArm extends LinearOpMode {
                         }
 
                         // Undo extend
-                        if (extender.getPosition() < 50 || undoExtendTimeout.seconds() > 1) {
+                        if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || undoExtendTimeout.seconds() > 1) {
                             extender.setPower(0);
                             extender.resetPosition();
                         }
