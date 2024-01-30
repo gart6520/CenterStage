@@ -23,7 +23,7 @@ public class TestPixelRecog extends LinearOpMode {
         pixelProcessor = new PixelProcessor();
 
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(CameraName.class, FOOT_CAMERA_NAME))
+                .setCamera(hardwareMap.get(CameraName.class, FRONT_CAMERA_NAME))
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)

@@ -19,6 +19,7 @@ public class Grabber {
     public void init() {
         leftClaw = opMode.hardwareMap.get(ServoImplEx.class, LEFT_CLAW);
         rightClaw = opMode.hardwareMap.get(ServoImplEx.class, RIGHT_CLAW);
+        rightClaw.setDirection(Servo.Direction.REVERSE);
     }
 
     public void setPosition(double left, double right) {

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static androidx.core.math.MathUtils.clamp;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.FIELD_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.REV_SERVO_PWM_RANGE;
@@ -33,7 +33,7 @@ public class TestHand extends LinearOpMode {
         }
 
         //Init camera
-        Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
+        Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
 
         AngleServo angleServo = new AngleServo("servo", INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG, REV_SERVO_ANGLE_RANGE, this);
         angleServo.init(REV_SERVO_PWM_RANGE);

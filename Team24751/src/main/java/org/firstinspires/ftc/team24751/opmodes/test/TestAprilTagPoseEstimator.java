@@ -18,7 +18,7 @@ import java.util.List;
 
 @TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
 public class TestAprilTagPoseEstimator extends LinearOpMode {
-    Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
+    Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
     Drivebase drive = null;
 

@@ -39,7 +39,7 @@ public class Constants {
         // Arm motors
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
-        public static final String EXTENDER_MOTOR = "elevatorMotor";
+        public static final String EXTENDER_MOTOR = "extendMotor";
         public static final String LIFT_MOTOR = "liftMotor";
 
 
@@ -62,8 +62,8 @@ public class Constants {
         public static final String DISTANCE_SENSOR = "distanceSensor";
 
         // Camera
-        public static final String FIELD_CAMERA_NAME = "fieldCamera";
-        public static final String FOOT_CAMERA_NAME = "footCamera";
+        public static final String BACK_CAMERA_NAME = "backCamera"; // fieldCamera
+        public static final String FRONT_CAMERA_NAME = "frontCamera"; // randomization camera
         // WIP
 
         // LEDs
@@ -149,7 +149,7 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 120;
+            public static double ARM_PARALLEL_ANGLE = 140;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(

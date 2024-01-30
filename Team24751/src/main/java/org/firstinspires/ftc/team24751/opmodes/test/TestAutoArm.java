@@ -47,6 +47,8 @@ public class TestAutoArm extends LinearOpMode {
     ElapsedTime armMoveDownTimeout = new ElapsedTime();
     ElapsedTime armMoveUpTimeout = new ElapsedTime();
     ElapsedTime distSensorNailInTheCoffinTimer = new ElapsedTime();
+    ElapsedTime undoExtendTimeout = new ElapsedTime();
+    boolean isUndoExtendTimeoutReset = false;
 
 
     private void dropArmAndReset() {
@@ -151,6 +153,15 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_up:
+                    if (extender.getPosition() > 50)
+                    {
+                        extender.setPower(0.9);
+                        isUndoExtendTimeoutReset = true;
+                    }
+                    else {
+                        extender.setPower(0);
+                        isUndoExtendTimeoutReset = false;
+                    }
                     // Get grabber out of the way
                     wrist.setAngle(FULL_EXTEND_DEG);
                     // PID
@@ -193,17 +204,34 @@ public class TestAutoArm extends LinearOpMode {
                     }
                     break;
                 case arm_moving_down:
-                    wrist.setAngle(GROUND_PARALLEL_DEG);
                     // Move down until timer
-                    if (armMoveDownTimeout.seconds() > 3) {
-                        arm.setPower(-0.4);
+                    if (arm.getAngle() < 90) {
+                        if (!isUndoExtendTimeoutReset) {
+                            undoExtendTimeout.reset();
+                            isUndoExtendTimeoutReset = true;
+                            wrist.setAngle(GROUND_PARALLEL_DEG);
+                            extender.setPower(0.9);
+                            arm.setPower(0);
+                        }
+
+                        // Undo extend
+                        if (extender.getPosition() < 50 || undoExtendTimeout.seconds() > 1) {
+                            extender.setPower(0);
+                            extender.resetPosition();
+                        }
+
+                        if (undoExtendTimeout.seconds() > 1) {
+                            arm.setPower(-0.1);
+                        }
                     } else {
-                        arm.setPower(-0.4);
+                        arm.setPower(-0.6);
                     }
+
                     //Go until distance sensor report // to the ground or timeout
                     if (armMoveDownTimeout.seconds() > 5 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.resetEncoder();
                         arm.setPower(0);
+                        isUndoExtendTimeoutReset = false;
                         state = ArmState.intaking;
                     }
                     break;
@@ -227,19 +255,19 @@ public class TestAutoArm extends LinearOpMode {
                 extender.setPower(0.9);
             } else if (gamepad2.dpad_right) {
                 extender.setPower(-0.9);
-            } else {
+            } else if (!isUndoExtendTimeoutReset) {
                 extender.setPower(0);
             }
 
 
             if (curr.circle && !prev.circle) {
                 grablt = !grablt;
-                grabber.leftClaw.setPosition(grablt ? 1 : 0);
+                grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
             }
 
             if (curr.square && !prev.square) {
                 grabrt = !grabrt;
-                grabber.rightClaw.setPosition(grabrt ? 1 : 0);
+                grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
             }
 
             // Update prev gamepad
@@ -250,6 +278,7 @@ public class TestAutoArm extends LinearOpMode {
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
+            telemetry.addData("Extend position", extender.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

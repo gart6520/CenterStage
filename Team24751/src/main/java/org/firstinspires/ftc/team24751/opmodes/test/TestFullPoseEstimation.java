@@ -31,7 +31,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
 
     // Subsystems
     private Drivebase drivebase = null;
-    private Camera fieldCamera = new Camera(FIELD_CAMERA_NAME, this);
+    private Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     private PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
     private FullPoseEstimator poseEstimator = new FullPoseEstimator(aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate);
 
