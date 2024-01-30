@@ -244,7 +244,7 @@ public class TestAutoArm extends LinearOpMode {
             prev.copy(curr);
 
             // Show telemetry
-            telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
+            telemetry.addData("Current Arm Position (R)", arm.leftArmMotor.getCurrentPosition());
             telemetry.addData("Current Arm Angle (R)", arm.getAngle());
 //            telemetry.addData("Current Arm Angle (NAVX)", Math.toDegrees(navx.getYaw()));
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());

@@ -59,7 +59,7 @@ public class TestDrivebase extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            drivebase.manualControl(true);
+            drivebase.manualControl(false);
 
             // Show pose estimation
             Pose2d pose = drivebase.getPoseEstimate();

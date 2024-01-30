@@ -18,7 +18,7 @@ public class Arm {
     public DcMotorEx rightArmMotor;
     VoltageSensor batteryVoltageSensor;
     LinearOpMode opMode;
-    PIDEx positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+    PIDEx anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
     PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
@@ -44,7 +44,7 @@ public class Arm {
     }
 
     public double getAngle() {
-        return rightArmMotor.getCurrentPosition() * MOTOR_DEG_PER_TICK + MOTOR_DEG_AT_ZERO_TICK;
+        return leftArmMotor.getCurrentPosition() * MOTOR_DEG_PER_TICK + MOTOR_DEG_AT_ZERO_TICK;
     }
 
     /**
@@ -52,7 +52,7 @@ public class Arm {
      */
     public void setTargetAngle(Double targetAngle) {
         this.targetAngle = targetAngle;
-        positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+        anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
         if (targetAngle != null)
             motionProfile = new WPILibMotionProfile(
                     ARM_VA_CONSTRAINT,
@@ -62,17 +62,18 @@ public class Arm {
     }
 
     public void resetPID() {
-        positionPID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+        anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
         distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
     public boolean anglePIDLoop() {
         if (targetAngle == null) {
-            positionPID.calculate(0, getAngle());
+            anglePID.calculate(0, getAngle());
             return true;
         }
         WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
-        double pidPow = positionPID.calculate(targetState.position, getAngle());
+        double rawPIDPow = anglePID.calculate(targetState.position, getAngle());
+        double pidPow = Math.max(Math.abs(rawPIDPow), 0.15) * Math.signum(rawPIDPow);
         if (Math.abs(getAngle() - targetAngle) < ANGLE_THRESHOLD) {
             setPower(0);
             return true;
@@ -85,10 +86,10 @@ public class Arm {
                 0);
         if (timer.seconds() > motionProfile.totalTime())
             ffPow = 0;
+        setPower((ffPow + pidPow) * 12 / batteryVoltageSensor.getVoltage());
         opMode.telemetry.addData("Target State", targetState.position + " " + targetState.velocity);
         opMode.telemetry.addData("FF Pow", ffPow);
         opMode.telemetry.addData("PID Pow", pidPow);
-        setPower((ffPow + pidPow) * 12 / batteryVoltageSensor.getVoltage());
         return false;
     }
 
@@ -117,7 +118,7 @@ public class Arm {
 
         leftArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         batteryVoltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }
