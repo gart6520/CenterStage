@@ -105,7 +105,7 @@ public class Constants {
         public static final double SENSE_Z = 0.15;
 
         // Analog buttons
-        public static final double SENSE_TRIGGER = 0.15;
+        public static final double SENSE_TRIGGER = 0.1;
     }
 
     /**
@@ -142,19 +142,19 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 140;
+            public static double ARM_PARALLEL_ANGLE = 137;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static double ARM_ANGLE_MIN_PID_POW = 0;
             public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.055, 2, 0,
+                    0.08, 2, 0.03,
                     10, 20, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.05, .05, 0.02,
                     2, 5, 0.1);
             public static FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
-                    0.0075, 0, 0,
-                    0, 0.1);
+                    0.007, 0, 0,
+                    0, 0.05);
             public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
                     new WPILibMotionProfile.Constraints(
                             100, 70);
@@ -193,6 +193,7 @@ public class Constants {
         public static class DroneLauncher {
             public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
+
 
         }
         public static class POTENTIOMETER

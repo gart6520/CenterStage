@@ -48,10 +48,10 @@ import static org.firstinspires.ftc.team24751.Utility.sense;
  */
 @Config
 public class Drivebase extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.5, 0, 1.3);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(1, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 1.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0.2);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.49;
 
     // Drive speed
     // Should be 1, and leave speed control for opMode

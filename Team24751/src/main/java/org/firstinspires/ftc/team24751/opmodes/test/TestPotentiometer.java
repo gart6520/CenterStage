@@ -4,12 +4,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
+import org.firstinspires.ftc.team24751.subsystems.sensor.Potentiometer;
+
+import java.io.FileNotFoundException;
+
 @TeleOp(name = "TestPotentiometer", group = "Test")
 public class TestPotentiometer extends LinearOpMode {
-    AnalogInput potentiometer;
+    Potentiometer potentiometer;
+
+    {
+        try {
+            potentiometer = new Potentiometer(this);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private double voltageToAngle(double voltage) {
-        return (-0.002346137 + 0.006297726 * voltage + 0.00003397255 * voltage * voltage + -2.971331e-7 * voltage * voltage * voltage + 8.515154e-10 * voltage * voltage * voltage * voltage);
+        return potentiometer.getAngle();
     }
 
     /**
@@ -25,8 +37,9 @@ public class TestPotentiometer extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        potentiometer = hardwareMap.get(AnalogInput.class, "potentiometer");
+        potentiometer.init();
         double voltage;
+        potentiometer.printLUT();
 
         waitForStart();
         while (opModeIsActive()) {
