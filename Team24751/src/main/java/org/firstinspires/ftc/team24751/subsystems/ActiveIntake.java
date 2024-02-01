@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.ACTIVE_INTAKE_SERVO;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.ACTIVE_INTAKE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,7 +20,7 @@ public class ActiveIntake {
     }
 
     public void init() {
-        activeIntakeServo = opMode.hardwareMap.get(DcMotor.class, ACTIVE_INTAKE_SERVO);
+        activeIntakeServo = opMode.hardwareMap.get(DcMotor.class, ACTIVE_INTAKE);
     }
 
     public void run(IntakeDirection direction) {

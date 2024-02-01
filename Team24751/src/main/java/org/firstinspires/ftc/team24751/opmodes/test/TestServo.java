@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_PWM_RANGE;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * You can disable this opmode anytime you would like
  */
 
-@TeleOp(name="TestServo", group="Test")
+@TeleOp(name = "TestServo", group = "Test")
 public class TestServo extends LinearOpMode {
     // Servo object
     ServoImplEx servo = null;
@@ -28,8 +29,10 @@ public class TestServo extends LinearOpMode {
         // Init servo
         AngleServo leftAngleServo = new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
         AngleServo rightAngleServo = new AngleServo(RIGHT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
+        ServoImplEx tuneServo = hardwareMap.get(ServoImplEx.class, CAMERA_SERVO);
         leftAngleServo.init(REV_SERVO_PWM_RANGE);
         rightAngleServo.init(REV_SERVO_PWM_RANGE);
+        tuneServo.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -75,6 +78,12 @@ public class TestServo extends LinearOpMode {
             if (gamepad1.dpad_right) {
                 leftAngleServo.setAngle(270);
                 rightAngleServo.setAngle(0);
+            }
+            if (gamepad1.dpad_up) {
+                tuneServo.setPosition(0);
+            }
+            if (gamepad1.dpad_down) {
+                tuneServo.setPosition(1);
             }
 
             telemetry.update();

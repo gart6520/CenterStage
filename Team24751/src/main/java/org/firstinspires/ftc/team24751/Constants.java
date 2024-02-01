@@ -58,7 +58,9 @@ public class Constants {
         public static final String DRONE_LAUNCHER = "droneLauncherServo";
 
         // Active intake servo
-        public static final String ACTIVE_INTAKE_SERVO = "activeIntakeServo";
+        public static final String ACTIVE_INTAKE = "activeIntakeServo";
+        // Misc servo
+        public static final String CAMERA_SERVO = "cameraServo";
 
         // Sensors
         public static final String DISTANCE_SENSOR = "distanceSensor";
@@ -142,24 +144,24 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 137;
+            public static double ARM_PARALLEL_ANGLE = 135;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static double ARM_ANGLE_MIN_PID_POW = 0;
             public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
-                    0.08, 2, 0.03,
-                    10, 20, 0.1);
+                    0.0975, 5, 0.01,
+                    40, 100, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.05, .05, 0.02,
                     2, 5, 0.1);
             public static FeedforwardCoefficientsEx ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS = new FeedforwardCoefficientsEx(
-                    0.007, 0, 0,
+                    0.005, 0, 0,
                     0, 0.05);
             public static WPILibMotionProfile.Constraints ARM_VA_CONSTRAINT =
                     new WPILibMotionProfile.Constraints(
-                            100, 70);
-            public static final double ANGLE_THRESHOLD = 1;
-            public static final double DISTANCE_THRESHOLD = 1;
+                            200, 150);
+            public static final double ANGLE_TOLERANCE = 1;
+            public static final double DISTANCE_TOLERANCE = 1;
 
             /**
              * Distance reported by distance sensor when arm is // ground

@@ -166,7 +166,7 @@ public class ManualSemi extends LinearOpMode {
                     }
 
                     // When finished moving up
-                    else if (armMoveDownTimeout.seconds() >= 0.5 && armMoveDownTimeout.seconds() <= 1.8) {
+                    else if (armMoveDownTimeout.seconds() >= 0.5 && armMoveDownTimeout.seconds() <= 1) {
                         // Stop the arm
                         arm.setPower(0);
 
@@ -221,7 +221,7 @@ public class ManualSemi extends LinearOpMode {
                     wrist.setAngle(FULL_EXTEND_DEG);
 
                     // Use arm PID to move arm to desired angle
-                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 5) {
+                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
                         arm.setPower(0);
                         state = ArmState.outaking;
                     }
@@ -333,9 +333,10 @@ public class ManualSemi extends LinearOpMode {
 
                         // Reset boolean
                         isRetractExtenderTimeoutReset = false;
+                        wrist.setAngle(FULL_EXTEND_DEG);
 
                         // Switch to intaking state
-                        state = ArmState.intaking;
+                        state = ArmState.base_moving;
                     }
 
                     break;
@@ -414,7 +415,7 @@ public class ManualSemi extends LinearOpMode {
             if (gamepad1.triangle) {
                 // Up
                 lift.setPower(1);
-            } else if (gamepad1.cross) {
+            } else if (gamepad1.cross && !gamepad1.options) {
                 // Down
                 lift.setPower(-1);
             } else {
@@ -439,7 +440,7 @@ public class ManualSemi extends LinearOpMode {
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Extend position", extender.getPosition());
-            telemetry.addData("Robot Yaw", pose.getHeading());
+            telemetry.addData("Robot Yaw", Math.toDegrees(pose.getHeading()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
