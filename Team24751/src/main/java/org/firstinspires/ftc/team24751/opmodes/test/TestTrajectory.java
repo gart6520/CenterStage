@@ -27,7 +27,7 @@ public class TestTrajectory extends LinearOpMode {
                 .lineTo(new Vector2d(46.50, -39.00))
                 .setReversed(true)
                 .build();
-        TrajectorySequence repeatTraj = drive.trajectorySequenceBuilder(traj.end())
+        TrajectorySequence repeatTraj = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineTo(new Vector2d(-49.00, -39.00))
                 .lineTo(new Vector2d(46.50, -39.00))
                 .build();
