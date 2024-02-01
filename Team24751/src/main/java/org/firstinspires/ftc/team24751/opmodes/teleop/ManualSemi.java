@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team24751.opmodes.teleop;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -48,8 +49,8 @@ public class ManualSemi extends LinearOpMode {
     // Gamepad 1
     Gamepad prev1 = null;
     Gamepad curr1 = null;
-    boolean grablt = false;
-    boolean grabrt = false;
+    boolean grablt = true;
+    boolean grabrt = true;
     boolean droneLauncherShot = false;
 
     // Gamepad 2
@@ -144,6 +145,7 @@ public class ManualSemi extends LinearOpMode {
 
             // Control drivebase manually using joystick (field-oriented)
             drivebase.manualControl(true);
+            Pose2d pose = drivebase.getPoseEstimate();
 
             // Check if these buttons are just newly pressed
             boolean grabberButton = curr2.cross && !prev2.cross;
@@ -173,7 +175,7 @@ public class ManualSemi extends LinearOpMode {
                     }
 
                     // Move the arm down
-                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD){
+                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD) {
                         arm.setPower(-0.1);
                     }
 
@@ -208,6 +210,7 @@ public class ManualSemi extends LinearOpMode {
                         isRetractExtenderTimeoutReset = true;
                     }
 
+
                     // When done retracing the arm's extender -> stop extender motor
                     else if (armMoveUpTimeout.seconds() < 1.5) {
                         extender.setPower(0);
@@ -222,6 +225,9 @@ public class ManualSemi extends LinearOpMode {
                         arm.setPower(0);
                         state = ArmState.outaking;
                     }
+                    if (arm.getAngle() > 90) {
+                        extenderControl();
+                    }
 
                     break;
                 case intaking:
@@ -229,7 +235,7 @@ public class ManualSemi extends LinearOpMode {
 
                     // Set wrist angle to intake position (fully touch the ground)
                     wrist.setAngle(GROUND_PARALLEL_DEG);
-
+                    extenderControl();
                     // If grabber's reset button is pressed -> switch to quick_reset state
                     // Used to force the grabber to fully touch the ground
                     if (quickResetButton) {
@@ -259,6 +265,7 @@ public class ManualSemi extends LinearOpMode {
 
                     // Set grabber to auto parallel with backdrop
                     wrist.autoParallel(arm.getAngle());
+                    extenderControl();
 
                     // If arm switch state button is pressed -> switch to arm_moving_down state
                     // (Technically moving arm down to intake position)
@@ -367,16 +374,29 @@ public class ManualSemi extends LinearOpMode {
              * General buttons mapping for gamepad1
              */
 
-            // Control left claw
-            if (curr1.left_bumper && !prev1.left_bumper) {
+            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER)
+            {
                 grablt = !grablt;
                 grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
-            }
-
-            // Control right claw
-            if (curr1.right_bumper && !prev1.right_bumper) {
                 grabrt = !grabrt;
                 grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
+            }
+            else {// Control left claw
+                if (curr1.right_bumper && !prev1.right_bumper) {
+                    grablt = !grablt;
+                    grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
+                }
+
+                // Control right claw
+                if (curr1.left_bumper && !prev1.left_bumper) {
+                    grabrt = !grabrt;
+                    grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
+                }
+            }
+
+            //Reset yaw
+            if (curr1.share && !prev1.share) {
+                drivebase.setPoseEstimate(new Pose2d(pose.getX(), pose.getY(), 0));
             }
 
             // Launch drone
@@ -409,14 +429,6 @@ public class ManualSemi extends LinearOpMode {
              * General buttons mapping for gamepad2
              */
 
-            // Control extender
-            if (gamepad2.left_bumper) {
-                extender.setPower(0.7);
-            } else if (gamepad2.left_trigger > SENSE_TRIGGER) {
-                extender.setPower(-0.7);
-            } else if (!isRetractExtenderTimeoutReset) {
-                extender.setPower(0);
-            }
 
             // Update prev2 gamepad
             prev2.copy(curr2);
@@ -427,8 +439,20 @@ public class ManualSemi extends LinearOpMode {
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Extend position", extender.getPosition());
+            telemetry.addData("Robot Yaw", pose.getHeading());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
+        }
+    }
+
+    private void extenderControl() {
+        // Control extender
+        if (gamepad2.left_bumper) {
+            extender.setPower(0.7);
+        } else if (gamepad2.left_trigger > SENSE_TRIGGER) {
+            extender.setPower(-0.7);
+        } else if (!isRetractExtenderTimeoutReset) {
+            extender.setPower(0);
         }
     }
 }
