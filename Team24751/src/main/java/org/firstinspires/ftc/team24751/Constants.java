@@ -204,11 +204,12 @@ public class Constants {
             public static final String LUT_DATA_FILE_NAME = "/sdcard/FIRST/Potentiometer_LUT_data.txt";
         }
 
+        @Config
         public static class GENERAL_SERVO
         {
             public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(500, 2500);
             //TODO: Tune for gobilda one
-            public static final PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(550, 2450);
+            public static PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(450, 2450);
             public static final double REV_SERVO_ANGLE_RANGE = 270;
             public static final double GOBILDA_SERVO_ANGLE_RANGE = 300;
             public static final double SERVO_ANGLE_PWM_THRESHOLD = 1.0 / 30;
@@ -227,7 +228,7 @@ public class Constants {
             // AprilTag marginDecision threshold
             //TODO: tune
             public static final double MARGIN_DECISION_THRESHOLD = 0.1;
-            public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 60;
+            public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
         }
 
         public static class TFOD {
@@ -248,7 +249,7 @@ public class Constants {
      * Bot physical parameters
      */
     public static class BOT_PARAMETERS {
-        public static final Vector2d robotToCamera = new Vector2d(-1, 2);
+        public static final Vector2d robotToCamera = new Vector2d(-6, 5.5);
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;

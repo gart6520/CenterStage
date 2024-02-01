@@ -68,7 +68,7 @@ public class ManualSemi extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         wrist.setAngle(GROUND_PARALLEL_DEG);
         timer.reset();
-        telemetry.addData("Timer", timer.seconds());
+        telemetry.addLine("Resetting arm and extender");
         telemetry.update();
 
         while (timer.seconds() <= 5 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
@@ -85,7 +85,6 @@ public class ManualSemi extends LinearOpMode {
 
         arm.resetEncoder();
         arm.setPower(0);
-
         extender.resetPosition();
     }
 
@@ -160,29 +159,12 @@ public class ManualSemi extends LinearOpMode {
                 case base_moving:
                     // This state will move the grabber up to avoid touching the ground
 
-                    // Move arm up for 0.5 seconds to leave space for moving grabber
-                    if (armMoveDownTimeout.seconds() < 0.5) {
-                        arm.setPower(0.5);
-                    }
+                    // Stop the arm
+                    arm.setPower(0);
 
-                    // When finished moving up
-                    else if (armMoveDownTimeout.seconds() >= 0.5 && armMoveDownTimeout.seconds() <= 1) {
-                        // Stop the arm
-                        arm.setPower(0);
+                    // Move grabber up -> no longer blocking drivebase's movement
+                    wrist.setAngle(FULL_EXTEND_DEG);
 
-                        // Move grabber up -> no longer blocking drivebase's movement
-                        wrist.setAngle(FULL_EXTEND_DEG);
-                    }
-
-                    // Move the arm down
-                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD) {
-                        arm.setPower(-0.1);
-                    }
-
-                    // Finally stop the arm
-                    else {
-                        arm.setPower(0);
-                    }
 
                     // If grabber button is pressed -> change state from base_moving to intaking
                     // (Technically just move the grabber down to intake position)
@@ -243,7 +225,7 @@ public class ManualSemi extends LinearOpMode {
                         state = ArmState.quick_reset;
                     }
 
-                    // If grabber button is pressed -> change state from base_moving to base_moving
+                    // If grabber button is pressed -> change state from intaking to base_moving
                     // (Technically just move the grabber up to avoid touching the ground)
                     else if (grabberButton) {
                         state = ArmState.base_moving;
@@ -335,7 +317,7 @@ public class ManualSemi extends LinearOpMode {
                         isRetractExtenderTimeoutReset = false;
                         wrist.setAngle(FULL_EXTEND_DEG);
 
-                        // Switch to intaking state
+                        // Switch to base_moving state
                         state = ArmState.base_moving;
                     }
 
@@ -375,14 +357,12 @@ public class ManualSemi extends LinearOpMode {
              * General buttons mapping for gamepad1
              */
 
-            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER)
-            {
+            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
                 grablt = !grablt;
                 grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
                 grabrt = !grabrt;
                 grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
-            }
-            else {// Control left claw
+            } else {// Control left claw
                 if (curr1.right_bumper && !prev1.right_bumper) {
                     grablt = !grablt;
                     grabber.leftClaw.setPosition(grablt ? 0.25 : 0);

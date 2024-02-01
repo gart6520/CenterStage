@@ -6,11 +6,13 @@ import com.sun.tools.javac.util.Pair;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.team24751.Utility;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import static org.firstinspires.ftc.team24751.Constants.*;
+import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class PoseEstimatorAprilTagProcessor {
         return currentPose;
     }
 
-    private Vector2d getCameraPoseFromAprilTagDetection(AprilTagDetection detection, double botAngleDeg) {
+    private Vector2d getCameraPoseFromAprilTagDetection(AprilTagDetection detection, double camAngleDeg) {
         VectorF _pos = detection.metadata.fieldPosition;
 
         //Global Position of apriltag
@@ -63,7 +65,7 @@ public class PoseEstimatorAprilTagProcessor {
         Vector2d cameraToApriltag = new Vector2d((float) detection.ftcPose.x * conversionFactor, (float) detection.ftcPose.y * conversionFactor);
 
         //XY swapped between april tag reference frame and FTC reference frame
-        double radians = Math.toRadians(-90 + botAngleDeg);
+        double radians = Math.toRadians(-90 + wrapAngle(camAngleDeg, Utility.WRAP_ANGLE_TYPE.zeroTo360));
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
 

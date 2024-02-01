@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.robotToCamera;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,14 +15,19 @@ public class FullPoseEstimator {
     private DoubleFunction<Vector2d> aprilTagResult;
     private Supplier<Pose2d> odometryResult;
 
+    public double cameraAngle;
     public FullPoseEstimator(DoubleFunction<Vector2d> aprilTagResult, Supplier<Pose2d> odometryResult) {
         this.aprilTagResult = aprilTagResult;
         this.odometryResult = odometryResult;
+    }    public FullPoseEstimator(DoubleFunction<Vector2d> aprilTagResult, Supplier<Pose2d> odometryResult, double initCameraAngle) {
+        this.aprilTagResult = aprilTagResult;
+        this.odometryResult = odometryResult;
+        cameraAngle = initCameraAngle;
     }
 
     public Pose2d update() {
-        Pose2d odoPose = odometryResult.get();
-        Vector2d aprilTagPos = aprilTagResult.apply(odoPose.getHeading());
+        final Pose2d odoPose = odometryResult.get();
+        Vector2d aprilTagPos = aprilTagResult.apply(Math.toDegrees(odoPose.getHeading()) + cameraAngle);
         if (aprilTagPos != null) aprilTagPos = aprilTagPos.minus(robotToCamera);
         Double xAprilTag = aprilTagPos == null ? null : aprilTagPos.getX();
         Double yAprilTag = aprilTagPos == null ? null : aprilTagPos.getY();

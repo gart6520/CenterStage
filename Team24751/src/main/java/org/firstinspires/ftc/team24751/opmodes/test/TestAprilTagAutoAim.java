@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.robotToCamera;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
 
 import android.annotation.SuppressLint;
 
@@ -9,6 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.team24751.commands.AutoLockApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
@@ -16,11 +19,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
-@TeleOp(name = "Test AprilTag Pose Estimator", group = "Test")
-public class TestAprilTagPoseEstimator extends LinearOpMode {
+@TeleOp(name = "Test AprilTag Auto Aim", group = "Test")
+public class TestAprilTagAutoAim extends LinearOpMode {
     Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
     Drivebase drive = null;
+    AutoLockApriltagServo autoLock = new AutoLockApriltagServo(CAMERA_SERVO, this);
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -28,17 +32,24 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
         drive = new Drivebase(this);
+        autoLock.initServo();
+//        autoLock.getAngleServo().setAngle(0);
+
         waitForStart();
         while (opModeIsActive()) {
             Pose2d odoPose = drive.getPoseEstimate();
+            Vector2d odoPos = new Vector2d(odoPose.getX(), odoPose.getY());
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(odoPose.getHeading()));
+            autoLock.loop(odoPos.plus(robotToCamera), Math.toDegrees(odoPose.getHeading()));
 
             if (aprilTagPos == null) {
                 telemetry.addLine("No April Tag");
             } else
                 telemetry.addLine(String.format("\nAbs XY %6.1f, %6.1f", aprilTagPos.getX(), aprilTagPos.getY()));
-            
-            telemetryAprilTag();
+
+            telemetry.addData("Pose", odoPose.toString());
+
+//            telemetryAprilTag();
             drive.manualControl(true);
             telemetry.update();
         }

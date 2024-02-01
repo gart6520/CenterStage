@@ -42,8 +42,9 @@ public class AngleServo {
     }
 
     public void init(PwmControl.PwmRange pwmRange) {
-        servo = (ServoImplEx)linearOpMode.hardwareMap.get(name);
-        servo.setPwmRange(pwmRange);
+        servo = (ServoImplEx) linearOpMode.hardwareMap.get(name);
+        if (pwmRange != null)
+            servo.setPwmRange(pwmRange);
     }
 
     public double getAngle() {
@@ -57,16 +58,14 @@ public class AngleServo {
             to_angle = 360 - to_angle < to_angle - range ? 0 : range;
         }
         double targetPWM = (wrapAngle(to_angle, Utility.WRAP_ANGLE_TYPE.zeroTo360)) / range;
-        if (Math.abs(targetPWM-servo.getPosition()) > SERVO_ANGLE_PWM_THRESHOLD)
-        {
+        if (Math.abs(targetPWM - servo.getPosition()) > SERVO_ANGLE_PWM_THRESHOLD) {
             timer.reset();
             rotateTime = Math.abs(targetPWM - servo.getPosition()) / SERVO_PWM_SPEED;
         }
         servo.setPosition(targetPWM);
     }
 
-    public boolean isRotating ()
-    {
+    public boolean isRotating() {
         return timer.seconds() <= rotateTime;
     }
 }

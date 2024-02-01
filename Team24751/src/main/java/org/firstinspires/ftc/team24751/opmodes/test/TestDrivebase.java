@@ -63,9 +63,9 @@ public class TestDrivebase extends LinearOpMode {
 
             // Show pose estimation
             Pose2d pose = drivebase.getPoseEstimate();
-            telemetry.addData("X", pose.getX());
-            telemetry.addData("Y", pose.getY());
-            telemetry.addData("Heading", pose.getHeading());
+//            drivebase.setPoseEstimate(pose);
+
+            telemetry.addData("Current Pose", pose.toString());
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();

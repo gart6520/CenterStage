@@ -23,7 +23,7 @@ public class TestEncoder extends LinearOpMode {
         encoder3.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         encoder1.setDirection(DcMotorSimple.Direction.REVERSE);
-        encoder2.setDirection(DcMotorSimple.Direction.REVERSE);
+//        encoder2.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()) {
             telemetry.addData("Encoder: L - R - Fr",

@@ -126,10 +126,10 @@ public class Arm {
 
     public void resetEncoder() {
         leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         prevAngle = 0;
     }
 }

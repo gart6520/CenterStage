@@ -30,10 +30,10 @@ public class TestFullPoseEstimation extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Subsystems
-    private Drivebase drivebase = null;
+    private Drivebase drivebase;
     private Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     private PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
-    private FullPoseEstimator poseEstimator = new FullPoseEstimator(aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate);
+    private FullPoseEstimator poseEstimator;
 
 
     @Override
@@ -51,6 +51,9 @@ public class TestFullPoseEstimation extends LinearOpMode {
 
         // Init drivebase
         drivebase = new Drivebase(this);
+        aprilTag.initAprilTagProcessor();
+        fieldCamera.buildCamera();
+        poseEstimator = new FullPoseEstimator(aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate);
 
         // Load last pose from auto mode
         drivebase.setPoseEstimate(PoseStorage.getPose());
@@ -67,7 +70,6 @@ public class TestFullPoseEstimation extends LinearOpMode {
 
         // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            drivebase.update();
 
             // Control drivebase manually
             drivebase.manualControl(true);
@@ -75,9 +77,8 @@ public class TestFullPoseEstimation extends LinearOpMode {
             // Show odoPose estimation
             Pose2d botPose = poseEstimator.update();
 
-            drivebase.setPoseEstimate(botPose);
-
             telemetry.addData("Pose", botPose.toString());
+            drivebase.setPoseEstimate(botPose);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();

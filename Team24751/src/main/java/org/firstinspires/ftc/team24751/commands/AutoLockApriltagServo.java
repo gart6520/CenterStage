@@ -3,6 +3,8 @@ package org.firstinspires.ftc.team24751.commands;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.BIG_APRIL_TAG_ID;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_BIG_APRIL_TAG_LIST;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_ANGLE_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Utility.WRAP_ANGLE_TYPE;
 import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
@@ -35,7 +37,7 @@ public class AutoLockApriltagServo {
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
-                270, linearOpMode);
+                GOBILDA_SERVO_ANGLE_RANGE, linearOpMode);
         this.linearOpMode = linearOpMode;
         INIT_BIG_APRIL_TAG_LIST();
         for (int id : BIG_APRIL_TAG_ID) {
@@ -46,7 +48,7 @@ public class AutoLockApriltagServo {
 
     //Must call
     public void initServo() {
-        servo.init(GENERAL_SERVO.REV_SERVO_PWM_RANGE);
+        servo.init(GOBILDA_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
 
@@ -78,7 +80,7 @@ public class AutoLockApriltagServo {
     private double selectAngle(ArrayList<Pair<Double, Double>> globalTargetAngles_Distances, double globalCameraAngle) {
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
         Double targetAngle = globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
-                ANGLE_WEIGHT * Math.abs(a.first - globalCameraAngle) +
+                ANGLE_WEIGHT * wrapAngle(Math.abs(a.first - globalCameraAngle), WRAP_ANGLE_TYPE.zeroTo360) +
                         DISTANCE_WEIGHT * a.second
         )).get().first;
         return targetAngle;
@@ -88,6 +90,10 @@ public class AutoLockApriltagServo {
         //Angle to set position
         double servoAngle = wrapAngle(globalTargetAngle - botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         linearOpMode.telemetry.addData("Servo Angle", servoAngle);
+        if (Math.abs(servoAngle - 86.91384596744219) > 1)
+        {
+            linearOpMode.telemetry.addLine("WTF");
+        }
         servo.setAngle(servoAngle);
         linearOpMode.telemetry.addData("Servo PWM", servo.getServo().getPosition());
     }
