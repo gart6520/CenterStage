@@ -23,8 +23,8 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extend
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
-@TeleOp(name = "Semi-auto manual", group = "Manual")
-public class ManualSemi extends LinearOpMode {
+@TeleOp(name = "Semi-auto Main", group = "Manual")
+public class SemiAutoMain extends LinearOpMode {
     // Run timer (mostly used for practicing)
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -51,7 +51,6 @@ public class ManualSemi extends LinearOpMode {
     Gamepad curr1 = null;
     boolean grablt = true;
     boolean grabrt = true;
-    boolean droneLauncherShot = false;
 
     // Gamepad 2
     Gamepad prev2 = null;
@@ -61,21 +60,22 @@ public class ManualSemi extends LinearOpMode {
     ElapsedTime armMoveDownTimeout = new ElapsedTime();
     ElapsedTime armMoveUpTimeout = new ElapsedTime();
     ElapsedTime retractExtenderTimeout = new ElapsedTime();
+    ElapsedTime droneLauncherHoldingTimer = new ElapsedTime();
     boolean isRetractExtenderTimeoutReset = false;
 
     // Helper function for dropping the arm down and reset
     private void dropArmAndReset() {
         ElapsedTime timer = new ElapsedTime();
-        wrist.setAngle(FULL_EXTEND_DEG);
+        wrist.setAngle(GROUND_PARALLEL_DEG);
         timer.reset();
         telemetry.addLine("Resetting arm and extender");
         telemetry.update();
 
         while (timer.seconds() <= 5 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
             if (timer.seconds() < 0.5) {
-                extender.setPower(0.9);
+//                extender.setPower(0.9);
             } else {
-                extender.setPower(0);
+//                extender.setPower(0);
             }
 
             if (timer.seconds() >= 1.5) {
@@ -86,6 +86,10 @@ public class ManualSemi extends LinearOpMode {
         arm.resetEncoder();
         arm.setPower(0);
         extender.resetPosition();
+
+        // Set initial state to intaking
+        // After drop arm and reset, the arm now should be at intake position
+        state = ArmState.base_moving;
     }
 
     @Override
@@ -131,10 +135,6 @@ public class ManualSemi extends LinearOpMode {
 
         // Drop the arm down and reset arm angle
         dropArmAndReset();
-
-        // Set initial state to intaking
-        // After drop arm and reset, the arm now should be at intake position
-        state = ArmState.base_moving;
 
         // Main loop, run until driver presses STOP
         while (opModeIsActive()) {
@@ -191,8 +191,6 @@ public class ManualSemi extends LinearOpMode {
                         extender.setPower(0.7);
                         isRetractExtenderTimeoutReset = true;
                     }
-
-
                     // When done retracing the arm's extender -> stop extender motor
                     else if (armMoveUpTimeout.seconds() < 1.5) {
                         extender.setPower(0);
@@ -380,14 +378,12 @@ public class ManualSemi extends LinearOpMode {
             }
 
             // Launch drone
-            if (curr1.circle && !curr1.circle) {
-                if (droneLauncherShot) {
-                    droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
-                    droneLauncherShot = false;
-                } else {
+            if (curr1.circle) {
+                if (droneLauncherHoldingTimer.seconds() >= 0.69) {
                     droneLauncher.setPosition(SHOOT_DRONE_LAUNCHER_POSITION);
-                    droneLauncherShot = true;
                 }
+            } else {
+                droneLauncherHoldingTimer.reset();
             }
 
             // Hang
@@ -405,11 +401,6 @@ public class ManualSemi extends LinearOpMode {
             // Update prev1 gamepad
             prev1.copy(curr1);
 
-            /**
-             * General buttons mapping for gamepad2
-             */
-
-
             // Update prev2 gamepad
             prev2.copy(curr2);
 
@@ -423,6 +414,7 @@ public class ManualSemi extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
+        droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
     }
 
     private void extenderControl() {

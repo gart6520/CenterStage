@@ -107,7 +107,7 @@ public class Constants {
         public static final double SENSE_Z = 0.15;
 
         // Analog buttons
-        public static final double SENSE_TRIGGER = 0.1;
+        public static final double SENSE_TRIGGER = 0.25;
     }
 
     /**
@@ -185,6 +185,8 @@ public class Constants {
              *      ====\
              * ===========\
              * */
+            //TODO Tune backdrop
+            public static double BACKDROP_PARALLEL_DEG = 117;
             public static double FULL_EXTEND_DEG = 30;
         }
 

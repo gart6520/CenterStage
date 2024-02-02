@@ -2,7 +2,6 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.team24751.subsystems.sensor.Potentiometer;
 
@@ -20,32 +19,22 @@ public class TestPotentiometer extends LinearOpMode {
         }
     }
 
-    private double voltageToAngle(double voltage) {
-        return potentiometer.getAngle();
+    private double getAngle() {
+        return potentiometer.getAngle(true);
     }
 
-    /**
-     * Override this method and place your code here.
-     * <p>
-     * Please do not catch {@link InterruptedException}s that are thrown in your OpMode
-     * unless you are doing it to perform some brief cleanup, in which case you must exit
-     * immediately afterward. Once the OpMode has been told to stop, your ability to
-     * control hardware will be limited.
-     *
-     * @throws InterruptedException When the OpMode is stopped while calling a method
-     *                              that can throw {@link InterruptedException}
-     */
     @Override
     public void runOpMode() throws InterruptedException {
         potentiometer.init();
-        double voltage;
         potentiometer.printLUT();
 
         waitForStart();
         while (opModeIsActive()) {
-            voltage = potentiometer.getVoltage();
+            double voltage = potentiometer.getVoltage();
+            double smoothVoltage = potentiometer.getSmoothVoltage();
             telemetry.addData("Voltage", voltage);
-            telemetry.addData("Angle", voltageToAngle(voltage));
+            telemetry.addData("Smooth Voltage", smoothVoltage);
+            telemetry.addData("Angle", getAngle());
             telemetry.update();
         }
     }

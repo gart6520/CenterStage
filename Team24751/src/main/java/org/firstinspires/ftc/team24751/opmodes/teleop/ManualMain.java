@@ -24,7 +24,7 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 
 import java.util.List;
 
-@TeleOp(name = "MainManual", group = "Manual")
+@TeleOp(name = "Manual Main", group = "Manual")
 public class ManualMain extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

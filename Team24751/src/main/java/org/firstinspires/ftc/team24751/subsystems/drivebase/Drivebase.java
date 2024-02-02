@@ -361,13 +361,21 @@ public class Drivebase extends MecanumDrive {
     public void manualControl(boolean fieldOriented) {
         // Control drivebase manually, using gamepad1's joystick
         // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
-        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.9 : 0.5;
+        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 1 : 0.5;
 
         // Get joystick axis values
         // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
-        double left_y = -sense(opMode.gamepad1.left_stick_y, SENSE_Y) * DRIVEBASE_SPEED_Y * speed; // Y axis is inverted
-        double left_x = sense(opMode.gamepad1.left_stick_x, SENSE_X) * DRIVEBASE_SPEED_X * speed;
-        double right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z) * DRIVEBASE_SPEED_Z * speed;
+        double left_y = -sense(opMode.gamepad1.left_stick_y, SENSE_Y); // Y axis is inverted
+        double left_x = sense(opMode.gamepad1.left_stick_x, SENSE_X);
+        double right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z);
+        if (opMode.gamepad1.right_trigger <= SENSE_TRIGGER) {
+            left_y = Math.pow(left_y, 5);
+            left_x = Math.pow(left_x, 5);
+            right_x = Math.pow(right_x, 5);
+        }
+        double linearY = left_y * speed * DRIVEBASE_SPEED_Y;
+        double linearX = left_x * speed * DRIVEBASE_SPEED_X;
+        double angular = right_x * speed * DRIVEBASE_SPEED_Z;
 
 
         // Drive
@@ -381,36 +389,36 @@ public class Drivebase extends MecanumDrive {
 
             if (!dpad_up && !dpad_down && !dpad_left && !dpad_right) {
                 // No dpad is pressed -> normal field-oriented driving using joystick
-                this.driveFieldOriented(left_x, left_y, right_x);
+                this.driveFieldOriented(linearX, linearY, angular);
             } else {
                 // If dpad is pressed -> stop driving field-oriented, temporarily follow bot-oriented using dpad
 
                 // No turn in this mode
-                right_x = 0;
+                angular = 0;
 
                 if (dpad_up) {
                     // Move up
-                    left_x = 0;
-                    left_y = DRIVEBASE_SPEED_X * speed;
+                    linearX = 0;
+                    linearY = DRIVEBASE_SPEED_X * speed;
                 } else if (dpad_down) {
                     // Move down
-                    left_x = 0;
-                    left_y = -DRIVEBASE_SPEED_X * speed;
+                    linearX = 0;
+                    linearY = -DRIVEBASE_SPEED_X * speed;
                 } else if (dpad_left) {
                     // Move to the left
-                    left_x = -DRIVEBASE_SPEED_X * speed;
-                    left_y = 0;
+                    linearX = -DRIVEBASE_SPEED_X * speed;
+                    linearY = 0;
                 } else {
                     // Move to the right
-                    left_x = DRIVEBASE_SPEED_X * speed;
-                    left_y = 0;
+                    linearX = DRIVEBASE_SPEED_X * speed;
+                    linearY = 0;
                 }
 
                 // Drive bot oriented
-                this.drive(left_x, left_y, right_x);
+                this.drive(linearX, linearY, angular);
             }
         } else {
-            this.drive(left_x, left_y, right_x); // Drive bot-oriented
+            this.drive(linearX, linearY, angular); // Drive bot-oriented
         }
     }
 }
