@@ -66,7 +66,7 @@ public class ManualSemi extends LinearOpMode {
     // Helper function for dropping the arm down and reset
     private void dropArmAndReset() {
         ElapsedTime timer = new ElapsedTime();
-        wrist.setAngle(GROUND_PARALLEL_DEG);
+        wrist.setAngle(FULL_EXTEND_DEG);
         timer.reset();
         telemetry.addLine("Resetting arm and extender");
         telemetry.update();
@@ -82,7 +82,7 @@ public class ManualSemi extends LinearOpMode {
                 arm.setPower(-0.02);
             }
         }
-
+        wrist.setAngle(FULL_EXTEND_DEG);
         arm.resetEncoder();
         arm.setPower(0);
         extender.resetPosition();
@@ -134,7 +134,7 @@ public class ManualSemi extends LinearOpMode {
 
         // Set initial state to intaking
         // After drop arm and reset, the arm now should be at intake position
-        state = ArmState.intaking;
+        state = ArmState.base_moving;
 
         // Main loop, run until driver presses STOP
         while (opModeIsActive()) {
@@ -315,10 +315,9 @@ public class ManualSemi extends LinearOpMode {
 
                         // Reset boolean
                         isRetractExtenderTimeoutReset = false;
-                        wrist.setAngle(FULL_EXTEND_DEG);
 
                         // Switch to base_moving state
-                        state = ArmState.base_moving;
+                        state = ArmState.intaking;
                     }
 
                     break;
