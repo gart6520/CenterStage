@@ -181,13 +181,21 @@ public class Constants {
              * */
             public static double GROUND_PARALLEL_DEG = 192;
 
-            /* Extend and touch arm (max angle)
+            /* Fully backward and touch arm (min/max angle)
              *      ====\
              * ===========\
              * */
-            //TODO Tune backdrop
-            public static double BACKDROP_PARALLEL_DEG = 117;
             public static double FULL_EXTEND_DEG = 30;
+            /*                 //||
+             *               //  ||
+             *             //beta||
+             *           //
+             *   alpha // (arm)
+             *  =====================
+             *  beta = BACKDROP_PARALLEL_DEG - alpha
+             * */
+            //TODO Tune backdrop (lesser mean more far from arm)
+            public static double BACKDROP_PARALLEL_DEG = 117;
         }
 
         public static class Extender {
@@ -200,15 +208,14 @@ public class Constants {
 
 
         }
-        public static class POTENTIOMETER
-        {
+
+        public static class POTENTIOMETER {
             @SuppressLint("SdCardPath")
             public static final String LUT_DATA_FILE_NAME = "/sdcard/FIRST/Potentiometer_LUT_data.txt";
         }
 
         @Config
-        public static class GENERAL_SERVO
-        {
+        public static class GENERAL_SERVO {
             public static final PwmControl.PwmRange REV_SERVO_PWM_RANGE = new PwmControl.PwmRange(500, 2500);
             //TODO: Tune for gobilda one
             public static PwmControl.PwmRange GOBILDA_SERVO_PWM_RANGE = new PwmControl.PwmRange(450, 2450);

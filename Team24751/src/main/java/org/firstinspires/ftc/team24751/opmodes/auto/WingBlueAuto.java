@@ -7,12 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 
-@Autonomous(name = "Test Auto", group = "Test")
-public class TestAuto extends BaseAuto {
-
+@Autonomous(name = "Wing Blue Auto", group = "Auto")
+public class WingBlueAuto extends BaseAuto{
     @Override
     protected void initStartingCondition() {
-        allianceColor = Constants.AllianceColor.TEST;
-        startingPos = AutoTrajectoryManager.StartingPos.center;
+        allianceColor = Constants.AllianceColor.BLUE;
+        startingPos = AutoTrajectoryManager.StartingPos.wingBlue;
     }
 }

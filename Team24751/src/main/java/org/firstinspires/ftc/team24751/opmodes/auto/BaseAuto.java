@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.team24751.opmodes.auto;
 
-import static org.firstinspires.ftc.team24751.Constants.AllianceColor.TEST;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 
@@ -16,19 +15,21 @@ public abstract class BaseAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Subsystem objects
-    private Drivebase drivebase = null;
+    protected Drivebase drivebase = null;
+    AutoTrajectoryManager autoTrajectoryManager;
+    protected AutoTrajectoryManager.StartingPos startingPos;
 
     /**
      * Extends this function and set the allianceColor to appropriate color
      * */
-    protected abstract void setAllianceColor();
+    protected abstract void initStartingCondition();
     protected void base_runOpMode() {
         // Update status
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        // Set alliance color
-        setAllianceColor();
+        // Set starting pos
+        initStartingCondition();
 
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -39,6 +40,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
         // Init subsystems
         drivebase = new Drivebase(this);
+        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, drivebase, this);
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -48,14 +50,13 @@ public abstract class BaseAuto extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // TODO: add real auto actions here
-
-        /*Actions.runBlocking(drivebase.actionBuilder(PoseStorage.getPose())
-                .splineTo(new Vector2d(30, 30), Math.PI / 2)
-                .splineTo(new Vector2d(60, 0), Math.PI)
-                .build());*/
+        autoTrajectoryManager.followTrajectory();
 
         // Save the last Pose2d estimated in auto mode, for using in manual mode
         PoseStorage.setPose(drivebase.getPoseEstimate());
+    }
+    @Override
+    public void runOpMode() {
+        base_runOpMode();
     }
 }
