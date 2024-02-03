@@ -114,17 +114,22 @@ public class Constants {
      * Field related parameters
      */
     public static class FIELD_PARAMETER {
-        public static void INIT_BIG_APRIL_TAG_LIST() {
+        public static void initFieldParameters() {
             // TODO: Add Appropriate April Tag ID
             if (!init) {
                 BIG_APRIL_TAG_ID.add(7);
                 BIG_APRIL_TAG_ID.add(10);
                 init = true;
+
+                // Add low speed coors
+                //LOW_SPEED_COORS.add(new ArrayList<Double>())
             }
         }
 
         private static boolean init = false;
         public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
+
+        public static final ArrayList<ArrayList<Double>> LOW_SPEED_COORS = new ArrayList<>();
     }
 
     /**
@@ -144,7 +149,7 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 135;
+            public static double ARM_PARALLEL_ANGLE = 130;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static double ARM_ANGLE_MIN_PID_POW = 0;
@@ -185,7 +190,7 @@ public class Constants {
              *      ====\
              * ===========\
              * */
-            public static double FULL_EXTEND_DEG = 30;
+            public static double FULL_EXTEND_DEG = 60;
             /*                 //||
              *               //  ||
              *             //beta||

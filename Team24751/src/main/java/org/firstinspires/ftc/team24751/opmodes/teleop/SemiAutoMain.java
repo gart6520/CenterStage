@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
+import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAutoAim;
 
 import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
@@ -22,6 +24,10 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneL
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 @TeleOp(name = "Semi-auto Main", group = "Manual")
 public class SemiAutoMain extends LinearOpMode {
@@ -37,6 +43,7 @@ public class SemiAutoMain extends LinearOpMode {
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
     Lift lift = new Lift(this);
+    PoseEstimatorAutoAim apriltag = new PoseEstimatorAutoAim(this);
 
     // States of the arm for FSM
     enum ArmState {
@@ -99,6 +106,7 @@ public class SemiAutoMain extends LinearOpMode {
         telemetry.update();
 
         // Init all subsystems
+        initFieldParameters();
         drivebase = new Drivebase(this);
         arm.init();
         wrist.init();
@@ -107,6 +115,7 @@ public class SemiAutoMain extends LinearOpMode {
         distance.init();
         lift.init();
         droneLauncher.init();
+        apriltag.init();
 
         // Enable bulk reads in auto mode
         enableBulkRead(hardwareMap);
@@ -142,9 +151,14 @@ public class SemiAutoMain extends LinearOpMode {
             curr1.copy(gamepad1);
             curr2.copy(gamepad2);
 
-            // Control drivebase manually using joystick (field-oriented)
-            drivebase.manualControl(true);
+            // Get pose from odometry pod
             Pose2d pose = drivebase.getPoseEstimate();
+
+            // Get position from apriltag
+            Vector2d tagPos = apriltag.getPosition(pose);
+
+            // Control drivebase manually using joystick (field-oriented)
+            this.manualDrive(tagPos);
 
             // Check if these buttons are just newly pressed
             boolean grabberButton = curr2.cross && !prev2.cross;
@@ -165,7 +179,6 @@ public class SemiAutoMain extends LinearOpMode {
                     // Move grabber up -> no longer blocking drivebase's movement
                     wrist.setAngle(FULL_EXTEND_DEG);
 
-
                     // If grabber button is pressed -> change state from base_moving to intaking
                     // (Technically just move the grabber down to intake position)
                     if (grabberButton) {
@@ -179,6 +192,8 @@ public class SemiAutoMain extends LinearOpMode {
                         armMoveUpTimeout.reset();
                         arm.setTargetAngle(ARM_PARALLEL_ANGLE);
                         arm.resetPID();
+
+                        retractExtenderTimeout.reset();
                     }
 
                     break;
@@ -192,7 +207,7 @@ public class SemiAutoMain extends LinearOpMode {
                         isRetractExtenderTimeoutReset = true;
                     }
                     // When done retracing the arm's extender -> stop extender motor
-                    else if (armMoveUpTimeout.seconds() < 1.5) {
+                    else if (armMoveUpTimeout.seconds() < 1.5 || extender.getPosition() <= EXTENDER_FULLY_IN_THRESHOLD) {
                         extender.setPower(0);
                         isRetractExtenderTimeoutReset = false;
                     }
@@ -237,6 +252,8 @@ public class SemiAutoMain extends LinearOpMode {
                         armMoveUpTimeout.reset();
                         arm.setTargetAngle(ARM_PARALLEL_ANGLE);
                         arm.resetPID();
+
+                        retractExtenderTimeout.reset();
                     }
 
                     break;
@@ -270,20 +287,20 @@ public class SemiAutoMain extends LinearOpMode {
                     // Get current arm angle
                     double angle = arm.getAngle();
 
-                    // If arm angle is < 60
-                    if (angle < 60) {
-                        // If just enter 60 degree state
+                    // If arm angle is < 90
+                    if (angle < 90) {
+                        // If just enter 90 degree state
                         if (!isRetractExtenderTimeoutReset) {
                             // Retract extender
                             retractExtenderTimeout.reset();
                             isRetractExtenderTimeoutReset = true;
                             extender.setPower(0.7);
 
-                            // Move wrist to ground parallel position
+                            // Move wrist up to allow base moving
                             wrist.setAngle(GROUND_PARALLEL_DEG);
 
                             // Hold the arm, waiting for extender and wrist to complete their job
-                            arm.setPower(0);
+                            //arm.setPower(0);
                         }
 
                         // If extender is fully retracted
@@ -293,18 +310,18 @@ public class SemiAutoMain extends LinearOpMode {
                         }
 
                         // If done retracting
-                        if (retractExtenderTimeout.seconds() > 1) {
-                            arm.setPower(-0.1);
+                        if (retractExtenderTimeout.seconds() > 0.3) {
+                            arm.setPower(-0.15);
                         }
                     }
 
-                    // If angle > 60 -> move arm down
+                    // If angle > 90 -> move arm down
                     else {
                         arm.setPower(-0.6);
                     }
 
                     // If distance sensor reported touching ground or if arm is timeout
-                    if (armMoveDownTimeout.seconds() > 1 && (armMoveDownTimeout.seconds() > 5 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD)) {
+                    if (armMoveDownTimeout.seconds() > 1 && (armMoveDownTimeout.seconds() > 3 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD)) {
                         // Stop arm
                         arm.setPower(0);
 
@@ -314,8 +331,11 @@ public class SemiAutoMain extends LinearOpMode {
                         // Reset boolean
                         isRetractExtenderTimeoutReset = false;
 
+                        // Move wrist up
+                        wrist.setAngle(FULL_EXTEND_DEG);
+
                         // Switch to base_moving state
-                        state = ArmState.intaking;
+                        state = ArmState.base_moving;
                     }
 
                     break;
@@ -372,7 +392,7 @@ public class SemiAutoMain extends LinearOpMode {
                 }
             }
 
-            //Reset yaw
+            // Reset yaw
             if (curr1.share && !prev1.share) {
                 drivebase.setPoseEstimate(new Pose2d(pose.getX(), pose.getY(), 0));
             }
@@ -419,12 +439,24 @@ public class SemiAutoMain extends LinearOpMode {
 
     private void extenderControl() {
         // Control extender
-        if (gamepad2.left_bumper) {
+        if (gamepad2.left_bumper || gamepad2.dpad_down) {
             extender.setPower(0.7);
-        } else if (gamepad2.left_trigger > SENSE_TRIGGER) {
+        } else if (gamepad2.left_trigger > SENSE_TRIGGER || gamepad2.dpad_up) {
             extender.setPower(-0.7);
         } else if (!isRetractExtenderTimeoutReset) {
             extender.setPower(0);
         }
+    }
+
+    private void manualDrive(Vector2d aprilTagPos) {
+        for (ArrayList<Double> rect : LOW_SPEED_COORS) {
+            if (rect.get(0) <= aprilTagPos.getX() && aprilTagPos.getX() <= rect.get(2)
+             && rect.get(1) <= aprilTagPos.getY() && aprilTagPos.getY() <= rect.get(3)) {
+                drivebase.manualControlLimitSpeed(true);
+                return;
+            }
+        }
+
+        drivebase.manualControl(true);
     }
 }

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.commands;
 
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.BIG_APRIL_TAG_ID;
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.INIT_BIG_APRIL_TAG_LIST;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.initFieldParameters;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
@@ -34,19 +34,18 @@ public class AutoLockApriltagServo {
     private final double ANGLE_WEIGHT = 1;
     private final double DISTANCE_WEIGHT = 0;
 
-
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
                 GOBILDA_SERVO_ANGLE_RANGE, linearOpMode);
         this.linearOpMode = linearOpMode;
-        INIT_BIG_APRIL_TAG_LIST();
+        initFieldParameters();
         for (int id : BIG_APRIL_TAG_ID) {
             VectorF _pos = AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(id).fieldPosition;
             aprilTagPos.add(new Vector2d(_pos.get(0), _pos.get(1)));
         }
     }
 
-    //Must call
+    // Must call
     public void initServo() {
         servo.init(GOBILDA_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);

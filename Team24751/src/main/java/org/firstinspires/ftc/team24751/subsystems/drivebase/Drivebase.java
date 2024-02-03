@@ -421,4 +421,76 @@ public class Drivebase extends MecanumDrive {
             this.drive(linearX, linearY, angular); // Drive bot-oriented
         }
     }
+
+    /**
+     * Call this method in the while loop in your opMode to enable drive using joystick
+     * Note: this method already includes pose update from drive/driveFieldOriented, so
+     * you don't need to call the update() function. This method will also limit the
+     * drivebase's max speed, which is useful when driving close to the backdrop
+     *
+     * @param fieldOriented whether the drive is field oriented (false is bot oriented)
+     */
+    public void manualControlLimitSpeed(boolean fieldOriented) {
+        // Control drivebase manually, using gamepad1's joystick
+        // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
+        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.5 : 0.25;
+
+        // Get joystick axis values
+        // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
+        double left_y = -sense(opMode.gamepad1.left_stick_y, SENSE_Y); // Y axis is inverted
+        double left_x = sense(opMode.gamepad1.left_stick_x, SENSE_X);
+        double right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z);
+        if (opMode.gamepad1.right_trigger <= SENSE_TRIGGER) {
+            left_y = Math.pow(left_y, 5);
+            left_x = Math.pow(left_x, 5);
+            right_x = Math.pow(right_x, 5);
+        }
+        double linearY = left_y * speed * DRIVEBASE_SPEED_Y;
+        double linearX = left_x * speed * DRIVEBASE_SPEED_X;
+        double angular = right_x * speed * DRIVEBASE_SPEED_Z;
+
+
+        // Drive
+        // Hopefully we will never have to switch back to drive bot-oriented
+        if (fieldOriented) {
+            // Dpad buttons state
+            boolean dpad_up = opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up;
+            boolean dpad_down = opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down;
+            boolean dpad_left = opMode.gamepad1.dpad_left;
+            boolean dpad_right = opMode.gamepad1.dpad_right;
+
+            if (!dpad_up && !dpad_down && !dpad_left && !dpad_right) {
+                // No dpad is pressed -> normal field-oriented driving using joystick
+                this.driveFieldOriented(linearX, linearY, angular);
+            } else {
+                // If dpad is pressed -> stop driving field-oriented, temporarily follow bot-oriented using dpad
+
+                // No turn in this mode
+                angular = 0;
+
+                if (dpad_up) {
+                    // Move up
+                    linearX = 0;
+                    linearY = DRIVEBASE_SPEED_X * speed;
+                } else if (dpad_down) {
+                    // Move down
+                    linearX = 0;
+                    linearY = -DRIVEBASE_SPEED_X * speed;
+                } else if (dpad_left) {
+                    // Move to the left
+                    linearX = -DRIVEBASE_SPEED_X * speed;
+                    linearY = 0;
+                } else {
+                    // Move to the right
+                    linearX = DRIVEBASE_SPEED_X * speed;
+                    linearY = 0;
+                }
+
+                // Drive bot oriented
+                this.drive(linearX, linearY, angular);
+            }
+        } else {
+            this.drive(linearX, linearY, angular); // Drive bot-oriented
+        }
+    }
 }

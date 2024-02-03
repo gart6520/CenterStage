@@ -29,11 +29,14 @@
 
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -101,15 +104,25 @@ public class TestTFODPixel extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
+    @SuppressLint("SdCardPath")
     private void initTfod() {
 
         // Create the TensorFlow processor the easy way.
-        tfod = TfodProcessor.easyCreateWithDefaults();
+        tfod = new TfodProcessor.Builder()
+                .setIsModelQuantized(true)
+                .setIsModelTensorFlow2(true)
+                .setModelInputSize(256)
+                .setNumExecutorThreads(4)
+                .setNumDetectorThreads(4)
+                .setModelFileName("/sdcard/FIRST/tflitemodels/pixel.tflite")
+                .build();
+
+        tfod.setMinResultConfidence(0.9f);
 
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "fieldCamera"), tfod);
+                hardwareMap.get(WebcamName.class, "frontCamera"), tfod);
         } else {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                 BuiltinCameraDirection.BACK, tfod);
@@ -134,6 +147,8 @@ public class TestTFODPixel extends LinearOpMode {
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetry.addData("- Angle", recognition.estimateAngleToObject(AngleUnit.DEGREES));
+
         }   // end for() loop
 
     }   // end method telemetryTfod()
