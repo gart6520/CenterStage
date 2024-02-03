@@ -29,10 +29,12 @@
 
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.VISION.TFOD.TFOD_PIXEL_MODEL_FILE;
 
 import android.annotation.SuppressLint;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -40,37 +42,27 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
+import org.firstinspires.ftc.team24751.subsystems.vision.RandomizationProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+@Autonomous(name = "Test TFOD Team Prop", group = "Test")
+public class TestTFODTeamProp extends LinearOpMode {
 
-/*
- * This OpMode illustrates the basics of TensorFlow Object Detection, using
- * the easiest way.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
- */
-@TeleOp(name = "Test TFOD Pixel", group = "Test")
-public class TestTFODPixel extends LinearOpMode {
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
-    private TfodProcessor tfod;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+    private final Camera frontCam = new Camera(FRONT_CAMERA_NAME, this);
+    private RandomizationProcessor tfod = new RandomizationProcessor(frontCam, this);
 
     @Override
     public void runOpMode() {
 
-        initTfod();
+        tfod.initTfodProcessor();
+        frontCam.buildCamera();
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -81,60 +73,17 @@ public class TestTFODPixel extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
+                telemetry.addData("Team prop position", tfod.getTeamPropPositionFromTfod().toString());
                 telemetryTfod();
 
-                // Push telemetry to the Driver Station.
                 telemetry.update();
-
-                // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
-                }
 
                 // Share the CPU.
                 sleep(20);
             }
         }
+    }
 
-        // Save more CPU resources when camera is no longer needed.
-        visionPortal.close();
-
-    }   // end runOpMode()
-
-    /**
-     * Initialize the TensorFlow Object Detection processor.
-     */
-    @SuppressLint("SdCardPath")
-    private void initTfod() {
-
-        // Create the TensorFlow processor the easy way.
-        tfod = new TfodProcessor.Builder()
-                .setIsModelQuantized(true)
-                .setIsModelTensorFlow2(true)
-                .setModelInputSize(256)
-                .setNumExecutorThreads(4)
-                .setNumDetectorThreads(4)
-                .setModelFileName(TFOD_PIXEL_MODEL_FILE)
-                .build();
-
-        tfod.setMinResultConfidence(0.9f);
-
-        // Create the vision portal the easy way.
-        if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "frontCamera"), tfod);
-        } else {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                BuiltinCameraDirection.BACK, tfod);
-        }
-
-    }   // end method initTfod()
-
-    /**
-     * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-     */
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
@@ -142,10 +91,10 @@ public class TestTFODPixel extends LinearOpMode {
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            double x = (recognition.getLeft() + recognition.getRight()) / 2;
+            double y = (recognition.getTop() + recognition.getBottom()) / 2;
 
-            telemetry.addData(""," ");
+            telemetry.addData("", " ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());

@@ -116,14 +116,15 @@ public class Constants {
     public static class FIELD_PARAMETER {
         public static void initFieldParameters() {
             // TODO: Add Appropriate April Tag ID
-            if (!init) {
-                BIG_APRIL_TAG_ID.add(7);
-                BIG_APRIL_TAG_ID.add(10);
-                init = true;
+            if (init) return;
+            init = true;
 
-                // Add low speed coors
-                //LOW_SPEED_COORS.add(new ArrayList<Double>())
-            }
+            BIG_APRIL_TAG_ID.add(7);
+            BIG_APRIL_TAG_ID.add(10);
+
+            // Add low speed coors
+            //LOW_SPEED_COORS.add(new ArrayList<Double>())
+
         }
 
         private static boolean init = false;
@@ -243,19 +244,22 @@ public class Constants {
             //TODO: tune
             public static final double MARGIN_DECISION_THRESHOLD = 0.1;
             public static final double INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG = 0;
+
         }
 
+        @SuppressLint("SdCardPath")
         public static class TFOD {
-            public static final String TFOD_TEAM_PROP_MODEL_FILE = "TeamPropModelFile.tflite";
-            public static final String[] TFOD_TEAM_PROP_LABELS = {
-                    "BlueTeamProp",
-                    "RedTeamProp",
-            };
+
+            public static final String TFOD_TEAM_PROP_MODEL_FILE = "/sdcard/FIRST/tflitemodels/prop.tflite";
+            public static final String TFOD_PIXEL_MODEL_FILE = "/sdcard/FIRST/tflitemodels/pixel.tflite";
+
+            public static final String TEAM_PROP_RED_LABEL = "prop_red";
+            public static final String TEAM_PROP_BLUE_LABEL = "prop_blue";
             //TFOD Team prop position threshold
             // |    Left     |     Center    |      Right      |
             // min       left-center     center-right         max
-            public static final double TEAM_PROP_LEFT_CENTER = 100;
-            public static final double TEAM_PROP_CENTER_RIGHT = 200;
+            public static final double TEAM_PROP_LEFT_CENTER = 640.0 / 3;
+            public static final double TEAM_PROP_CENTER_RIGHT = 2 * 640.0 / 3;
         }
     }
 

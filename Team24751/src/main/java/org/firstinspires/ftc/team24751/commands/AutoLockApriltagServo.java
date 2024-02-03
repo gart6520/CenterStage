@@ -10,6 +10,8 @@ import static org.firstinspires.ftc.team24751.Utility.wrapAngle;
 
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -31,8 +33,8 @@ public class AutoLockApriltagServo {
         return servo;
     }
 
-    private final double ANGLE_WEIGHT = 1;
-    private final double DISTANCE_WEIGHT = 0;
+    private final double ANGLE_WEIGHT = 0;
+    private final double DISTANCE_WEIGHT = 1;
 
     public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
@@ -76,13 +78,12 @@ public class AutoLockApriltagServo {
      * @param globalTargetAngles_Distances list of potential target angle and distance
      * @param globalCameraAngle            Other param are for additional information that the compare algo might need
      */
-    private double selectAngle(ArrayList<Pair<Double, Double>> globalTargetAngles_Distances, double globalCameraAngle) {
+    private double selectAngle(@NonNull ArrayList<Pair<Double, Double>> globalTargetAngles_Distances, double globalCameraAngle) {
         //There's no fucking chance this ArrayList is empty, if it is somehow in testing I will cut my dick off
-        Double targetAngle = globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
+        return globalTargetAngles_Distances.stream().min(Comparator.comparingDouble(a ->
                 ANGLE_WEIGHT * wrapAngle(Math.abs(a.first - globalCameraAngle), WRAP_ANGLE_TYPE.zeroTo360) +
                         DISTANCE_WEIGHT * a.second
         )).get().first;
-        return targetAngle;
     }
 
     private void turnToAngle(double globalTargetAngle, double botAngle) {
