@@ -101,12 +101,7 @@ public class AutoLockApriltagServo {
         //Angle to set position
         double servoAngle = wrapAngle(globalTargetAngle - botAngle, WRAP_ANGLE_TYPE.zeroTo360);
         linearOpMode.telemetry.addData("Servo Angle", servoAngle);
-        if (Math.abs(servoAngle - 86.91384596744219) > 1)
-        {
-            linearOpMode.telemetry.addLine("WTF");
-        }
         servo.setAngle(servoAngle);
-        linearOpMode.telemetry.addData("Servo PWM", servo.getServo().getPosition());
     }
 
     private double angleToTurn(Vector2d apriltagPos, Vector2d cameraPos) {

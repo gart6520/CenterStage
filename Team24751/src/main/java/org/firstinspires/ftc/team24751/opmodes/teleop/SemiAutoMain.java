@@ -204,7 +204,7 @@ public class SemiAutoMain extends LinearOpMode {
                     else if (armButton) {
                         state = ArmState.arm_moving_up;
                         armMoveUpTimeout.reset();
-                        arm.setTargetAngle(ARM_PARALLEL_ANGLE);
+                        arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
                         arm.resetPID();
 
                         retractExtenderTimeout.reset();
@@ -230,7 +230,7 @@ public class SemiAutoMain extends LinearOpMode {
                     wrist.setAngle(FULL_BACKWARD_DEG);
 
                     // Use arm PID to move arm to desired angle
-                    if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
+                    if (arm.outakePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
                         arm.setPower(0);
                         state = ArmState.outaking;
                     }
@@ -264,7 +264,7 @@ public class SemiAutoMain extends LinearOpMode {
                     else if (armButton) {
                         state = ArmState.arm_moving_up;
                         armMoveUpTimeout.reset();
-                        arm.setTargetAngle(ARM_PARALLEL_ANGLE);
+                        arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
                         arm.resetPID();
 
                         retractExtenderTimeout.reset();
@@ -389,19 +389,18 @@ public class SemiAutoMain extends LinearOpMode {
 
             if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
                 grablt = !grablt;
-                grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
                 grabrt = !grabrt;
-                grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
+                grabber.setPosition(grablt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION, grabrt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
             } else {// Control left claw
                 if (curr1.right_bumper && !prev1.right_bumper) {
                     grablt = !grablt;
-                    grabber.leftClaw.setPosition(grablt ? 0.25 : 0);
+                    grabber.leftClaw.setPosition(grablt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
                 }
 
                 // Control right claw
                 if (curr1.left_bumper && !prev1.left_bumper) {
                     grabrt = !grabrt;
-                    grabber.rightClaw.setPosition(grabrt ? 0.25 : 0);
+                    grabber.rightClaw.setPosition(grabrt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
                 }
             }
 

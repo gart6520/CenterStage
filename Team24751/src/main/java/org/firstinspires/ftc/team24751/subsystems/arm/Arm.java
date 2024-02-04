@@ -23,22 +23,23 @@ public class Arm {
     public Encoder rightArmEncoder;
     VoltageSensor batteryVoltageSensor;
     LinearOpMode opMode;
-    PIDEx anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+    PIDEx outakePID = new PIDEx(ARM_OUTAKE_PID_COEFFICIENTS);
     PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
+    PIDEx autoIntakePID = new PIDEx(ARM_AUTO_INTAKE_PID_COEFFICIENTS);
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
     WPILibMotionProfile motionProfile = null;
     ElapsedTime timer = new ElapsedTime();
     FuseSensor armAngleEstimator = new FuseSensor(0, 1,
             new FuseSensor.FuseSensorParameter(3, 3, 1));
-    double angle = Double.NaN;
+    double currentAngle = Double.NaN;
 
     public Arm(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
     public void update() {
-        angle = armAngleEstimator.update(
+        currentAngle = armAngleEstimator.update(
                 tickToDeg(leftArmEncoder.getPosition()),
                 tickToDeg(rightArmEncoder.getPosition()));
     }
@@ -52,15 +53,16 @@ public class Arm {
      * @see #update()
      */
     public double getAngle() {
-        return angle;
+        return currentAngle;
     }
 
     /**
-     * @param targetAngle targetAngle to be rotated to by PID, null to disable PID
+     * @param targetAngle targetAngle to be rotated to by outake PID, null to disable PID
      */
     public void setTargetAngle(Double targetAngle) {
         this.targetAngle = targetAngle;
-        anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+        outakePID = new PIDEx(ARM_OUTAKE_PID_COEFFICIENTS);
+        autoIntakePID = new PIDEx(ARM_AUTO_INTAKE_PID_COEFFICIENTS);
         if (targetAngle != null)
             motionProfile = new WPILibMotionProfile(
                     ARM_VA_CONSTRAINT,
@@ -70,17 +72,17 @@ public class Arm {
     }
 
     public void resetPID() {
-        anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
+        outakePID = new PIDEx(ARM_OUTAKE_PID_COEFFICIENTS);
         distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
-    public boolean anglePIDLoop() {
+    public boolean outakePIDLoop() {
         if (targetAngle == null) {
-            anglePID.calculate(0, getAngle());
+            outakePID.calculate(0, getAngle());
             return true;
         }
         WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
-        double rawPIDPow = anglePID.calculate(targetState.position, getAngle());
+        double rawPIDPow = outakePID.calculate(targetState.position, getAngle());
         double pidPow = Math.max(Math.abs(rawPIDPow), ARM_ANGLE_MIN_PID_POW) * Math.signum(rawPIDPow);
         if (Math.abs(getAngle() - targetAngle) < ANGLE_TOLERANCE) {
             setPower(0);
@@ -111,6 +113,19 @@ public class Arm {
         opMode.telemetry.addLine("Distance PID output: " + vel);
         leftArmMotor.setPower(vel);
         rightArmMotor.setPower(vel);
+    }
+    public boolean autoIntakePIDLoop()
+    {
+        if (targetAngle == null) {
+            autoIntakePID.calculate(0, getAngle());
+            return true;
+        }
+        if (Math.abs(getAngle() - targetAngle) < ANGLE_TOLERANCE) {
+            setPower(0);
+            return true;
+        }
+        setPower(autoIntakePID.calculate(targetAngle, getAngle()));
+        return false;
     }
 
     public void setPower(double power) {

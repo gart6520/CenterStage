@@ -213,8 +213,8 @@ public class ManualMain extends LinearOpMode {
             telemetry.addData("Y", pose.getY());
             telemetry.addData("Heading", Math.toDegrees(pose.getHeading()));
 
-            telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
-            telemetry.addData("Current Arm Angle (R)", arm.getAngle());
+//            telemetry.addData("Current Arm Position (R)", arm.rightArmMotor.getCurrentPosition());
+//            telemetry.addData("Current Arm Angle (R)", arm.getAngle());
 //            telemetry.addData("Arm roll", navx_device.getRoll());
 
             telemetry.addData("Distance", distance.getDistanceCM());

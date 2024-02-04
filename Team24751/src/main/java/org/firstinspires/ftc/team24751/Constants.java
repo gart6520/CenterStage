@@ -177,11 +177,23 @@ public class Constants {
              *  base -> O-------------------------O  <- front
              */
             //TODO: tune/calculate
-            public static double ARM_PARALLEL_ANGLE = 130;
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
+            public static double ARM_BACKDROP_PARALLEL_ANGLE = 130;
+            /*
+             *                       grabber
+             *     arm        ======= || |++++++++|  grabber only
+             *        ========        || |++++++++|  intake top two
+             * =======                   |--------|  pixels while
+             *                           |-pixels-|  leaving the other
+             *                           |--------|  3 untouched
+             * */
+            public static double ARM_AUTO_INTAKING_ANGLE = 20;
             public static double ARM_ANGLE_MIN_PID_POW = 0;
-            public static PIDCoefficientsEx ARM_ANGLE_PID_COEFFICIENTS = new PIDCoefficientsEx(
+            public static PIDCoefficientsEx ARM_OUTAKE_PID_COEFFICIENTS = new PIDCoefficientsEx(
+                    0.0975, 5, 0.01,
+                    40, 100, 0.1);
+            public static PIDCoefficientsEx ARM_AUTO_INTAKE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.0975, 5, 0.01,
                     40, 100, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
@@ -229,6 +241,18 @@ public class Constants {
              * */
             //TODO Tune backdrop (lesser mean more far from arm)
             public static double BACKDROP_PARALLEL_DEG = 90;
+            /*
+            *                       grabber
+            *     arm        ======= || |++++++++|  grabber only
+            *        ========        || |++++++++|  intake top two
+            * =======                   |--------|  pixels while
+            *                           |-pixels-|  leaving the other
+            *                           |--------|  3 untouched
+            * */
+            public static double AUTO_INTAKING_DEG = 210;
+
+            public static double CLOSE_CLAW_POSITION = 0;
+            public static double OPEN_CLAW_POSITION = 0.25;
         }
 
         public static class Extender {
