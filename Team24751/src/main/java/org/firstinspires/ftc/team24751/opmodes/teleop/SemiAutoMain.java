@@ -171,6 +171,9 @@ public class SemiAutoMain extends LinearOpMode {
             // Control drivebase manually using joystick (field-oriented)
             this.manualDrive(aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(pose.getHeading()) + 180));
 
+            // Update the arm position with kalman filter
+            arm.update();
+
             // Check if these buttons are just newly pressed
             boolean grabberButton = curr2.cross && !prev2.cross;
             boolean armButton = curr2.triangle && !prev2.triangle;
@@ -435,8 +438,9 @@ public class SemiAutoMain extends LinearOpMode {
             prev2.copy(curr2);
 
             // Show telemetry
-            telemetry.addData("Current Arm Position (R)", arm.leftArmMotor.getCurrentPosition());
-            telemetry.addData("Current Arm Angle (R)", arm.getAngle());
+            telemetry.addData("Current Arm Position (L)", arm.leftArmEncoder.getPosition());
+            telemetry.addData("Current Arm Position (R)", arm.rightArmEncoder.getPosition());
+            telemetry.addData("Current Arm Angle (L + R)", arm.getAngle());
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Extend position", extender.getPosition());

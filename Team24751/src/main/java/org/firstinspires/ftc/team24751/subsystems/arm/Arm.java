@@ -13,9 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.Encoder;
+import org.firstinspires.ftc.team24751.subsystems.FuseSensor;
+
 public class Arm {
-    public DcMotorEx leftArmMotor;
-    public DcMotorEx rightArmMotor;
+    DcMotorEx leftArmMotor;
+    DcMotorEx rightArmMotor;
+    public Encoder leftArmEncoder;
+    public Encoder rightArmEncoder;
     VoltageSensor batteryVoltageSensor;
     LinearOpMode opMode;
     PIDEx anglePID = new PIDEx(ARM_ANGLE_PID_COEFFICIENTS);
@@ -24,27 +29,30 @@ public class Arm {
     Double targetAngle = null;
     WPILibMotionProfile motionProfile = null;
     ElapsedTime timer = new ElapsedTime();
-    double prevAngle = 0;
-    double prevTime = 0;
-    double angularVelocity = 0;
-    ElapsedTime derivativeTimer = new ElapsedTime();
+    FuseSensor armAngleEstimator = new FuseSensor(0, 1,
+            new FuseSensor.FuseSensorParameter(3, 3, 1));
+    double angle = Double.NaN;
 
     public Arm(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
     public void update() {
-        angularVelocity = (getAngle() - prevAngle) / (derivativeTimer.seconds() - prevTime);
-        prevAngle = getAngle();
-        prevTime = derivativeTimer.seconds();
+        angle = armAngleEstimator.update(
+                tickToDeg(leftArmEncoder.getPosition()),
+                tickToDeg(rightArmEncoder.getPosition()));
     }
 
-    private double degToTick(double deg) {
-        return (deg - MOTOR_DEG_AT_ZERO_TICK) / MOTOR_DEG_PER_TICK;
+    public double tickToDeg(int tick) {
+        return tick * MOTOR_DEG_PER_TICK + MOTOR_DEG_AT_ZERO_TICK;
     }
 
+    /**
+     * Call update() before this
+     * @see #update()
+     */
     public double getAngle() {
-        return leftArmMotor.getCurrentPosition() * MOTOR_DEG_PER_TICK + MOTOR_DEG_AT_ZERO_TICK;
+        return angle;
     }
 
     /**
@@ -121,15 +129,15 @@ public class Arm {
         leftArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //rightArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftArmEncoder = new Encoder(opMode.hardwareMap.get(DcMotorEx.class, LEFT_ARM_ENCODER));
+        rightArmEncoder = new Encoder(opMode.hardwareMap.get(DcMotorEx.class, RIGHT_ARM_ENCODER));
+        leftArmEncoder.setDirection(Encoder.Direction.REVERSE);
+
         batteryVoltageSensor = opMode.hardwareMap.voltageSensor.iterator().next();
     }
 
     public void resetEncoder() {
-        leftArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        rightArmMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        rightArmMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        prevAngle = 0;
+        leftArmEncoder.reset();
+        rightArmEncoder.reset();
     }
 }

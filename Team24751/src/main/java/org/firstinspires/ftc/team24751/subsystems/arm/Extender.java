@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.team24751.subsystems.Encoder;
+
 public class Extender {
     DcMotorEx extenderMotor;
+    Encoder extenderEncoder;
     LinearOpMode opMode;
 
     public Extender(LinearOpMode _opMode) {
@@ -20,7 +23,9 @@ public class Extender {
         extenderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extenderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.resetPosition();
+        extenderEncoder = new Encoder(opMode.hardwareMap.get(DcMotorEx.class, EXTENDER_ENCODER));
+        extenderEncoder.setDirection(Encoder.Direction.REVERSE);
+        resetPosition();
     }
 
     /**
@@ -34,11 +39,10 @@ public class Extender {
     }
 
     public int getPosition() {
-        return extenderMotor.getCurrentPosition();
+        return extenderEncoder.getPosition();
     }
 
     public void resetPosition() {
-        extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extenderEncoder.reset();
     }
 }

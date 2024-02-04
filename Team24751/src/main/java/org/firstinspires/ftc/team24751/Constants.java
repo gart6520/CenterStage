@@ -45,10 +45,14 @@ public class Constants {
         public static final String LIFT_MOTOR = "liftMotor";
 
 
-        //Odo pod encoder (could be the same name as other motors)
+        //Encoders (could be the same name as other motors)
         public static final String LEFT_ODO = RIGHT_FRONT;
         public static final String RIGHT_ODO = RIGHT_ARM_MOTOR;
         public static final String FRONT_ODO = RIGHT_BACK;
+        // TODO: Set encoder name to correct motor
+        public static final String LEFT_ARM_ENCODER = LEFT_ARM_MOTOR;
+        public static final String RIGHT_ARM_ENCODER = LIFT_MOTOR;
+        public static final String EXTENDER_ENCODER = EXTENDER_MOTOR;
 
         // Hand servos
         public static final String LEFT_WRIST = "leftWristServo";

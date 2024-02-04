@@ -9,19 +9,17 @@ import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 public class FullPoseEstimator {
-    private FuseSensor poseXFuse = new FuseSensor(0);
-    private FuseSensor poseYFuse = new FuseSensor(0);
-    private DoubleFunction<Vector2d> aprilTagResult;
-    private Supplier<Pose2d> odometryResult;
-
+    private final FuseSensor poseXFuse;
+    private final FuseSensor poseYFuse;
+    private final DoubleFunction<Vector2d> aprilTagResult;
+    private final Supplier<Pose2d> odometryResult;
     public double cameraAngle;
-    public FullPoseEstimator(DoubleFunction<Vector2d> aprilTagResult, Supplier<Pose2d> odometryResult) {
+
+    public FullPoseEstimator(DoubleFunction<Vector2d> aprilTagResult, Supplier<Pose2d> odometryResult, Pose2d initPose) {
         this.aprilTagResult = aprilTagResult;
         this.odometryResult = odometryResult;
-    }    public FullPoseEstimator(DoubleFunction<Vector2d> aprilTagResult, Supplier<Pose2d> odometryResult, double initCameraAngle) {
-        this.aprilTagResult = aprilTagResult;
-        this.odometryResult = odometryResult;
-        cameraAngle = initCameraAngle;
+        poseXFuse = new FuseSensor(initPose.getX(), 1);
+        poseYFuse = new FuseSensor(initPose.getY(), 1);
     }
 
     public Pose2d update() {
@@ -34,5 +32,9 @@ public class FullPoseEstimator {
                 poseXFuse.update(odoPose.getX(), xAprilTag),
                 poseYFuse.update(odoPose.getY(), yAprilTag),
                 odoPose.getHeading());
+    }
+
+    public void setCameraAngle(double cameraAngle) {
+        this.cameraAngle = cameraAngle;
     }
 }

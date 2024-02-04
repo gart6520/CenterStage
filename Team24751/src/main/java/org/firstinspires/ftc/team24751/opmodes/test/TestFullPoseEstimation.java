@@ -53,7 +53,8 @@ public class TestFullPoseEstimation extends LinearOpMode {
         drivebase = new Drivebase(this);
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
-        poseEstimator = new FullPoseEstimator(aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate);
+        poseEstimator = new FullPoseEstimator(
+                aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate, PoseStorage.getPose());
 
         // Load last pose from auto mode
         drivebase.setPoseEstimate(PoseStorage.getPose());
@@ -77,9 +78,9 @@ public class TestFullPoseEstimation extends LinearOpMode {
             // Show odoPose estimation
             Pose2d botPose = poseEstimator.update();
 
-            telemetry.addData("Pose", botPose.toString());
-            drivebase.setPoseEstimate(botPose);
+            drivebase.getLocalizer().setPoseEstimate(botPose);
 
+            telemetry.addData("Pose", botPose.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

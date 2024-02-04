@@ -129,6 +129,7 @@ public class ManualMain extends LinearOpMode {
             // RUN_WITHOUT_ENCODER mode (using drivebase.resetRunWithoutEncoder())
             // after finishing the trajectory
 
+            arm.update();
             // Hitler Arm gogo
             double slow = 1;
             if (arm.getAngle() > 90)

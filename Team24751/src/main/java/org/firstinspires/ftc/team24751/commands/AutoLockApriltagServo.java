@@ -51,7 +51,14 @@ public class AutoLockApriltagServo {
         servo.init(GOBILDA_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
-
+    /**
+     * @param angle Fix the camera angle to angle deg and not using the
+     * auto aim feature
+     * */
+    public void fixCamAngle(double angle)
+    {
+        servo.setAngle(angle);
+    }
     public void loop(Vector2d cameraPos, double botAngle) {
         //Raw angle from positive Ox
         ArrayList<Pair<Double, Double>> globalTargetAngles_Distances = new ArrayList<>();

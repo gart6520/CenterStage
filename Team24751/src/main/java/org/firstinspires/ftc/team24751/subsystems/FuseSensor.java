@@ -1,22 +1,35 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-
-import java.util.function.Supplier;
-
 public class FuseSensor {
-    private double prevX;
+    public static class FuseSensorParameter {
+        double Q, R, K;
+        /**
+         * @param Q covariance of the first sensor
+         * @param R covariance of the second sensor
+         * @param K kalman gain
+         * */
+        public FuseSensorParameter(double Q, double R, double K)
+        {
+            this.Q = Q;
+            this.R = R;
+            this.K = K;
+        }
+    }
+
     private double prevCovariance;
     double x; // your initial state
-    double Q = 0.1; // your model covariance (variance of first sensor)
-    double R = 0.4; // your sensor covariance (variance of second sensor)
-    double p = 1; // your initial covariance guess
-    double K = 1; // your initial Kalman gain guess
-
-
-    public FuseSensor(double x0) {
+    double p; // your initial covariance guess
+    FuseSensorParameter parameter = new FuseSensorParameter(0.1, 0.4, 1);
+    public FuseSensor(double x0, double p0) {
 
         x = x0;
+        p = p0;
+    }
+    public FuseSensor(double x0, double p0, FuseSensorParameter parameter) {
+
+        x = x0;
+        p = p0;
+        this.parameter = parameter;
     }
 
     /**
@@ -26,19 +39,18 @@ public class FuseSensor {
         if (secondarySensor != null) {
             // Secondary sensor available
             x = primarySensor;
-            p = prevCovariance + Q;
-            K = p / (p + R);
-            x = x + K * (secondarySensor - x);
-            p = (1 - K) * p;
+            p = prevCovariance + parameter.Q;
+            parameter.K = p / (p + parameter.R);
+            x = x + parameter.K * (secondarySensor - x);
+            p = (1 - parameter.K) * p;
 
         } else {
             //Secondary sensor NOT available
             x = primarySensor;
-            p = prevCovariance + Q;
+            p = prevCovariance + parameter.Q;
 //            K = p / (p + R);
 //            p = (1 - K) * p;
         }
-        prevX = x;
         prevCovariance = p;
         return x;
 
