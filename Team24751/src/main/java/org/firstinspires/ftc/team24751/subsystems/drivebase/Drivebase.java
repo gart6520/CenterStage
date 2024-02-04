@@ -433,7 +433,8 @@ public class Drivebase extends MecanumDrive {
     public void manualControlLimitSpeed(boolean fieldOriented) {
         // Control drivebase manually, using gamepad1's joystick
         // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
-        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.5 : 0.25;
+//        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.5 : 0.25;
+        double speed = 0.1;
 
         // Get joystick axis values
         // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot

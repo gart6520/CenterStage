@@ -174,7 +174,7 @@ public class ManualMain extends LinearOpMode {
 
             if (curr2.left_bumper && !prev2.left_bumper) {
                 if (wristDown) {
-                    wrist.setAngle(FULL_EXTEND_DEG);
+                    wrist.setAngle(FULL_BACKWARD_DEG);
                     wristDown = false;
                 } else {
                     wrist.setAngle(GROUND_PARALLEL_DEG);

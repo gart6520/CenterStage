@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.robotToCamera;
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -28,7 +27,7 @@ public class FullPoseEstimator {
     public Pose2d update() {
         final Pose2d odoPose = odometryResult.get();
         Vector2d aprilTagPos = aprilTagResult.apply(Math.toDegrees(odoPose.getHeading()) + cameraAngle);
-        if (aprilTagPos != null) aprilTagPos = aprilTagPos.minus(robotToCamera);
+        if (aprilTagPos != null) aprilTagPos = aprilTagPos.minus(ROBOT_TO_CAMERA);
         Double xAprilTag = aprilTagPos == null ? null : aprilTagPos.getX();
         Double yAprilTag = aprilTagPos == null ? null : aprilTagPos.getY();
         return new Pose2d(

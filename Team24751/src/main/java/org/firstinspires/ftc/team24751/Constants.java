@@ -119,18 +119,41 @@ public class Constants {
             if (init) return;
             init = true;
 
-            BIG_APRIL_TAG_ID.add(7);
-            BIG_APRIL_TAG_ID.add(10);
+            AUTO_AIM_APRIL_TAG_IDS.add(7);
+            AUTO_AIM_APRIL_TAG_IDS.add(10);
+            AUTO_AIM_APRIL_TAG_IDS.add(2);
+            AUTO_AIM_APRIL_TAG_IDS.add(5);
 
             // Add low speed coors
-            //LOW_SPEED_COORS.add(new ArrayList<Double>())
+            LOW_SPEED_COORDS.add(new Rect(24, -60, 72, -12.5));
+            LOW_SPEED_COORDS.add(new Rect(24, 12.5, 72, 60));
 
         }
 
         private static boolean init = false;
-        public static final ArrayList<Integer> BIG_APRIL_TAG_ID = new ArrayList<>();
+        public static final ArrayList<Integer> AUTO_AIM_APRIL_TAG_IDS = new ArrayList<>();
 
-        public static final ArrayList<ArrayList<Double>> LOW_SPEED_COORS = new ArrayList<>();
+        public static class Rect {
+            public double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+
+            public Rect() {
+            }
+
+            public Rect(double xMin, double yMin, double xMax, double yMax) {
+                x1 = xMin;
+                y1 = yMin;
+                x2 = xMax;
+                y2 = yMax;
+            }
+
+            public boolean isInside(Vector2d point) {
+                double x = point.getX();
+                double y = point.getY();
+                return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+            }
+        }
+
+        public static final ArrayList<Rect> LOW_SPEED_COORDS = new ArrayList<>();
     }
 
     /**
@@ -191,7 +214,7 @@ public class Constants {
              *      ====\
              * ===========\
              * */
-            public static double FULL_EXTEND_DEG = 60;
+            public static double FULL_BACKWARD_DEG = 30;
             /*                 //||
              *               //  ||
              *             //beta||
@@ -201,7 +224,7 @@ public class Constants {
              *  beta = BACKDROP_PARALLEL_DEG - alpha
              * */
             //TODO Tune backdrop (lesser mean more far from arm)
-            public static double BACKDROP_PARALLEL_DEG = 117;
+            public static double BACKDROP_PARALLEL_DEG = 90;
         }
 
         public static class Extender {
@@ -267,7 +290,7 @@ public class Constants {
      * Bot physical parameters
      */
     public static class BOT_PARAMETERS {
-        public static final Vector2d robotToCamera = new Vector2d(-6, 5.5);
+        public static final Vector2d ROBOT_TO_CAMERA = new Vector2d(-6, 5.5);
         public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
         //TODO: Change based on starting location
         public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;

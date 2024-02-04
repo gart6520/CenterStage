@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.team24751.commands;
 
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.BIG_APRIL_TAG_ID;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.AUTO_AIM_APRIL_TAG_IDS;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.initFieldParameters;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Utility.WRAP_ANGLE_TYPE;
@@ -41,14 +40,14 @@ public class AutoLockApriltagServo {
                 GOBILDA_SERVO_ANGLE_RANGE, linearOpMode);
         this.linearOpMode = linearOpMode;
         initFieldParameters();
-        for (int id : BIG_APRIL_TAG_ID) {
+        for (int id : AUTO_AIM_APRIL_TAG_IDS) {
             VectorF _pos = AprilTagGameDatabase.getCenterStageTagLibrary().lookupTag(id).fieldPosition;
             aprilTagPos.add(new Vector2d(_pos.get(0), _pos.get(1)));
         }
     }
 
     // Must call
-    public void initServo() {
+    public void init() {
         servo.init(GOBILDA_SERVO_PWM_RANGE);
         servo.getServo().setDirection(Servo.Direction.REVERSE);
     }
@@ -72,6 +71,11 @@ public class AutoLockApriltagServo {
         //Actually turn the servo
         linearOpMode.telemetry.addData("Global target angle", globalTargetAngle);
         turnToAngle(globalTargetAngle, botAngle);
+    }
+
+    public double getCameraAngleRel()
+    {
+        return servo.getAngle();
     }
 
     /**

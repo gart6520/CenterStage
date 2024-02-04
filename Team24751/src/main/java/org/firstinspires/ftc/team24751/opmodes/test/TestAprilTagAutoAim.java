@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.robotToCamera;
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
 
@@ -32,7 +32,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
         drive = new Drivebase(this);
-        autoLock.initServo();
+        autoLock.init();
 //        autoLock.getAngleServo().setAngle(0);
 
         waitForStart();
@@ -40,7 +40,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
             Pose2d odoPose = drive.getPoseEstimate();
             Vector2d odoPos = new Vector2d(odoPose.getX(), odoPose.getY());
             Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(odoPose.getHeading()));
-            autoLock.loop(odoPos.plus(robotToCamera), Math.toDegrees(odoPose.getHeading()));
+            autoLock.loop(odoPos.plus(ROBOT_TO_CAMERA), Math.toDegrees(odoPose.getHeading()));
 
             if (aprilTagPos == null) {
                 telemetry.addLine("No April Tag");

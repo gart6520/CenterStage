@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.commands.AutoLockApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
@@ -16,8 +17,13 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
-import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAutoAim;
+import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
+import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
@@ -25,9 +31,6 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extend
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
-
-import java.util.ArrayList;
-import java.util.Vector;
 
 @TeleOp(name = "Semi-auto Main", group = "Manual")
 public class SemiAutoMain extends LinearOpMode {
@@ -43,7 +46,10 @@ public class SemiAutoMain extends LinearOpMode {
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
     Lift lift = new Lift(this);
-    PoseEstimatorAutoAim apriltag = new PoseEstimatorAutoAim(this);
+    Camera frontCamera = new Camera(FRONT_CAMERA_NAME, this);
+    Camera backCamera = new Camera(BACK_CAMERA_NAME, this);
+    PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(backCamera, this);
+    AutoLockApriltagServo autoAimAprilTag = new AutoLockApriltagServo(CAMERA_SERVO, this);
 
     // States of the arm for FSM
     enum ArmState {
@@ -89,7 +95,7 @@ public class SemiAutoMain extends LinearOpMode {
                 arm.setPower(-0.02);
             }
         }
-        wrist.setAngle(FULL_EXTEND_DEG);
+        wrist.setAngle(FULL_BACKWARD_DEG);
         arm.resetEncoder();
         arm.setPower(0);
         extender.resetPosition();
@@ -115,7 +121,9 @@ public class SemiAutoMain extends LinearOpMode {
         distance.init();
         lift.init();
         droneLauncher.init();
-        apriltag.init();
+        autoAimAprilTag.init();
+        aprilTag.initAprilTagProcessor();
+        backCamera.buildCamera();
 
         // Enable bulk reads in auto mode
         enableBulkRead(hardwareMap);
@@ -139,6 +147,9 @@ public class SemiAutoMain extends LinearOpMode {
         // Wait for the driver to press PLAY
         waitForStart();
 
+        //Auto aim initially
+        autoAimAprilTag.loop(getCameraPos(), Math.toDegrees(drivebase.getPoseEstimate().getHeading()));
+
         // Reset runtime
         runtime.reset();
 
@@ -154,11 +165,11 @@ public class SemiAutoMain extends LinearOpMode {
             // Get pose from odometry pod
             Pose2d pose = drivebase.getPoseEstimate();
 
-            // Get position from apriltag
-            Vector2d tagPos = apriltag.getPosition(pose);
+            //Auto Aim apriltag
+            autoAimAprilTag.loop(getCameraPos(), Math.toDegrees(pose.getHeading()));
 
             // Control drivebase manually using joystick (field-oriented)
-            this.manualDrive(tagPos);
+            this.manualDrive(aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(pose.getHeading()) + 180));
 
             // Check if these buttons are just newly pressed
             boolean grabberButton = curr2.cross && !prev2.cross;
@@ -177,7 +188,7 @@ public class SemiAutoMain extends LinearOpMode {
                     arm.setPower(0);
 
                     // Move grabber up -> no longer blocking drivebase's movement
-                    wrist.setAngle(FULL_EXTEND_DEG);
+                    wrist.setAngle(FULL_BACKWARD_DEG);
 
                     // If grabber button is pressed -> change state from base_moving to intaking
                     // (Technically just move the grabber down to intake position)
@@ -213,7 +224,7 @@ public class SemiAutoMain extends LinearOpMode {
                     }
 
                     // Move grabber up
-                    wrist.setAngle(FULL_EXTEND_DEG);
+                    wrist.setAngle(FULL_BACKWARD_DEG);
 
                     // Use arm PID to move arm to desired angle
                     if (arm.anglePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
@@ -302,22 +313,21 @@ public class SemiAutoMain extends LinearOpMode {
                             // Hold the arm, waiting for extender and wrist to complete their job
                             //arm.setPower(0);
                         }
+                        arm.setPower(-0.1);
+                        if (angle <= 20) {
+                            arm.setPower(-0.05);
+                        }
 
                         // If extender is fully retracted
                         if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1) {
                             extender.setPower(0);
                             //extender.resetPosition();
                         }
-
-                        // If done retracting
-                        if (retractExtenderTimeout.seconds() > 0.3) {
-                            arm.setPower(-0.15);
-                        }
                     }
 
                     // If angle > 90 -> move arm down
                     else {
-                        arm.setPower(-0.6);
+                        arm.setPower(-0.7);
                     }
 
                     // If distance sensor reported touching ground or if arm is timeout
@@ -332,7 +342,7 @@ public class SemiAutoMain extends LinearOpMode {
                         isRetractExtenderTimeoutReset = false;
 
                         // Move wrist up
-                        wrist.setAngle(FULL_EXTEND_DEG);
+                        wrist.setAngle(FULL_BACKWARD_DEG);
 
                         // Switch to base_moving state
                         state = ArmState.base_moving;
@@ -449,14 +459,23 @@ public class SemiAutoMain extends LinearOpMode {
     }
 
     private void manualDrive(Vector2d aprilTagPos) {
-        for (ArrayList<Double> rect : LOW_SPEED_COORS) {
-            if (rect.get(0) <= aprilTagPos.getX() && aprilTagPos.getX() <= rect.get(2)
-             && rect.get(1) <= aprilTagPos.getY() && aprilTagPos.getY() <= rect.get(3)) {
+        //In case of no april tag
+        if (aprilTagPos == null) {
+            drivebase.manualControl(true);
+            return;
+        }
+        for (Rect rect : LOW_SPEED_COORDS) {
+            if (rect.isInside(aprilTagPos)) {
                 drivebase.manualControlLimitSpeed(true);
                 return;
             }
         }
 
         drivebase.manualControl(true);
+    }
+
+    Vector2d getCameraPos() {
+        Pose2d pose = drivebase.getPoseEstimate();
+        return new Vector2d(pose.getX(), pose.getY()).plus(ROBOT_TO_CAMERA);
     }
 }

@@ -54,11 +54,13 @@ public class AutoTrajectoryManager {
             return null; //Return sth u want to test or sth idk
         } else if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
             result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(46.50, -39.00, Math.toRadians(180)))
                     .lineTo(new Vector2d(-49.00, -39.00))
                     .lineTo(new Vector2d(46.50, -39.00))
                     .build();
         } else {
             result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(46.50, 39.00, Math.toRadians(180)))
                     .lineTo(new Vector2d(-49.00, 39.00))
                     .lineTo(new Vector2d(46.50, 39.00))
                     .build();
@@ -71,22 +73,26 @@ public class AutoTrajectoryManager {
                         .lineTo(new Vector2d(46.50, -39.00))
                         .setReversed(true)
                         .build();
+                break;
             case wingBlue:
                 result.first = drive.trajectorySequenceBuilder(new Pose2d(-36.43, 63.21, Math.toRadians(-90.00)))
                         .splineTo(new Vector2d(-49.00, 39), Math.toRadians(180.00))
                         .lineTo(new Vector2d(46.50, 39.00))
                         .setReversed(true)
                         .build();
+                break;
             case backdropRed:
                 result.first = drive.trajectorySequenceBuilder(new Pose2d(36.43, -63.21, Math.toRadians(90.00)))
                         .splineTo(new Vector2d(25.00, -39.00), Math.toRadians(-180))
                         .lineTo(new Vector2d(46.50, -39.00))
                         .build();
+                break;
             case backdropBlue:
                 result.first = drive.trajectorySequenceBuilder(new Pose2d(36.43, 63.21, Math.toRadians(-90.00)))
                         .splineTo(new Vector2d(25.00, 39.00), Math.toRadians(-180))
                         .lineTo(new Vector2d(46.50, 39.00))
                         .build();
+                break;
         }
         return result;
     }
