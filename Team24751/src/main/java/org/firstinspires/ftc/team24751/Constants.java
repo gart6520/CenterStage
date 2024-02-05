@@ -10,6 +10,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
+import org.opencv.core.Scalar;
+
 import java.util.ArrayList;
 
 public class Constants {
@@ -302,14 +304,30 @@ public class Constants {
         }
 
         @SuppressLint("SdCardPath")
-        public static class TFOD {
+        public static class CV {
+            // Team prop position
+            public enum TeamPropPosition {
+                NONE, LEFT, CENTER, RIGHT
+            }
 
+            // Color threshold
+
+            // Red team prop
+            public static final Scalar TEAM_PROP_RED_MIN = new Scalar(0, 115, 133);
+            public static final Scalar TEAM_PROP_RED_MAX = new Scalar(5, 228, 255);
+
+            // Blue team prop
+            public static final Scalar TEAM_PROP_BLUE_MIN = new Scalar(0, 115, 133);
+            public static final Scalar TEAM_PROP_BLUE_MAX = new Scalar(5, 228, 255);
+
+            // TFOD model file path
             public static final String TFOD_TEAM_PROP_MODEL_FILE = "/sdcard/FIRST/tflitemodels/prop.tflite";
             public static final String TFOD_PIXEL_MODEL_FILE = "/sdcard/FIRST/tflitemodels/pixel.tflite";
 
             public static final String TEAM_PROP_RED_LABEL = "prop_red";
             public static final String TEAM_PROP_BLUE_LABEL = "prop_blue";
-            //TFOD Team prop position threshold
+
+            // Team prop position threshold
             // |    Left     |     Center    |      Right      |
             // min       left-center     center-right         max
             public static final double TEAM_PROP_LEFT_CENTER = 640.0 / 3;
