@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team24751.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Encoder {
     public enum Direction {
@@ -16,7 +17,9 @@ public class Encoder {
     }
 
     public int getPosition() {
-        return motor.getCurrentPosition() * (direction == Direction.FORWARD ? 1 : -1);
+        return motor.getCurrentPosition()
+                * (direction == Direction.FORWARD ? 1 : -1)
+                * (motor.getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1);
     }
 
     public void setDirection(Direction direction) {

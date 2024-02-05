@@ -94,7 +94,7 @@ public class ManualMain extends LinearOpMode {
         ElapsedTime timing = new ElapsedTime();
         timing.reset();
         arm.resetEncoder();
-        wrist.setAngle(GROUND_PARALLEL_DEG);
+        wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
         while (timing.seconds() < 0.8) {
             arm.setPower(-0.5);
         }
@@ -175,10 +175,10 @@ public class ManualMain extends LinearOpMode {
 
             if (curr2.left_bumper && !prev2.left_bumper) {
                 if (wristDown) {
-                    wrist.setAngle(FULL_BACKWARD_DEG);
+                    wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                     wristDown = false;
                 } else {
-                    wrist.setAngle(GROUND_PARALLEL_DEG);
+                    wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                     wristDown = true;
                 }
             }

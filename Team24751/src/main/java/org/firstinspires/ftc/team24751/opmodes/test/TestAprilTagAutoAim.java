@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.team24751.commands.AutoLockApriltagServo;
+import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
@@ -24,7 +24,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
     Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
     Drivebase drive = null;
-    AutoLockApriltagServo autoLock = new AutoLockApriltagServo(CAMERA_SERVO, this);
+    AutoAimApriltagServo autoLock = new AutoAimApriltagServo(CAMERA_SERVO, this);
 
     @SuppressLint("DefaultLocale")
     @Override

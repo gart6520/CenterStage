@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.subsystems.arm;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.BACKDROP_PARALLEL_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_BACKDROP_PARALLEL_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.INIT_WRIST_SERVO_ANGLE_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.*;
 
@@ -67,6 +67,6 @@ public class Wrist {
 
     public void autoParallel(double armAngleDeg)
     {
-        setAngle(armAngleDeg - BACKDROP_PARALLEL_DEG);
+        setAngle(armAngleDeg - WRIST_BACKDROP_PARALLEL_DEG);
     }
 }

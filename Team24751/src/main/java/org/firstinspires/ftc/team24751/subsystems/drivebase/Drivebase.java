@@ -74,6 +74,7 @@ public class Drivebase extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
     private Localizer localizer;
+    private Pose2d deltaPose;
     private LinearOpMode opMode;
 
     public Drivebase(LinearOpMode _opMode) {
@@ -128,6 +129,8 @@ public class Drivebase extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
         setLocalizer(localizer);
+
+        this.deltaPose = new Pose2d(0, 0, 0);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
@@ -314,6 +317,23 @@ public class Drivebase extends MecanumDrive {
     }
 
     /**
+     * Get current pose
+     * @return current fused pose (= estimated pose2d + delta pose2d)
+     */
+    public Pose2d getPoseFuse() {
+        return this.getPoseEstimate().plus(deltaPose);
+    }
+
+    /**
+     * Set new pose for drivebase localizer
+     * @param newPose new Pose2d to set
+     * @return delta pose (from old pose2d to new pose2d)
+     */
+    public Pose2d setPoseFuse(Pose2d newPose) {
+        return this.deltaPose = newPose.minus(this.getPoseEstimate());
+    }
+
+    /**
      * Drive method for Drivebase class - Mecanum drive
      * Note: this method already include pose update, so you don't have to manually call update()
      *
@@ -433,8 +453,7 @@ public class Drivebase extends MecanumDrive {
     public void manualControlLimitSpeed(boolean fieldOriented) {
         // Control drivebase manually, using gamepad1's joystick
         // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed
-//        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.5 : 0.25;
-        double speed = 0.1;
+        double speed = opMode.gamepad1.right_trigger > SENSE_TRIGGER ? 0.3 : 0.2;
 
         // Get joystick axis values
         // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot

@@ -29,6 +29,7 @@ public class TestArmEncoder extends LinearOpMode {
         //Init all subsystems
         drivebase = new Drivebase(this);
         arm.init();
+        arm.resetEncoder();
 
 
         // Enable bulk reads in auto mode

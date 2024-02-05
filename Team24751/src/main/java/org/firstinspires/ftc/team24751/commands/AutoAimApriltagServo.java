@@ -23,7 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class AutoLockApriltagServo {
+public class AutoAimApriltagServo {
     LinearOpMode linearOpMode;
     AngleServo servo;
     ArrayList<Vector2d> aprilTagPos = new ArrayList<>();
@@ -35,7 +35,7 @@ public class AutoLockApriltagServo {
     private final double ANGLE_WEIGHT = 0;
     private final double DISTANCE_WEIGHT = 1;
 
-    public AutoLockApriltagServo(String servoName, LinearOpMode linearOpMode) {
+    public AutoAimApriltagServo(String servoName, LinearOpMode linearOpMode) {
         servo = new AngleServo(servoName, Constants.VISION.APRIL_TAG.INITIAL_AUTO_LOCK_APRIL_TAG_SERVO_ANGLE_DEG,
                 GOBILDA_SERVO_ANGLE_RANGE, linearOpMode);
         this.linearOpMode = linearOpMode;

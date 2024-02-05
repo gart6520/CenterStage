@@ -51,7 +51,7 @@ public class Constants {
         public static final String FRONT_ODO = RIGHT_BACK;
         // TODO: Set encoder name to correct motor
         public static final String LEFT_ARM_ENCODER = LEFT_ARM_MOTOR;
-        public static final String RIGHT_ARM_ENCODER = LIFT_MOTOR;
+        public static final String RIGHT_ARM_ENCODER = LEFT_FRONT;
         public static final String EXTENDER_ENCODER = EXTENDER_MOTOR;
 
         // Hand servos
@@ -60,9 +60,8 @@ public class Constants {
         public static final String LEFT_CLAW = "leftClawServo";
         public static final String RIGHT_CLAW = "rightClawServo";
         public static final String DRONE_LAUNCHER = "droneLauncherServo";
+        public static final String YELLOW_PIXEL_YEETER = "yellowPixelYeeterServo";
 
-        // Active intake servo
-        public static final String ACTIVE_INTAKE = "activeIntakeServo";
         // Misc servo
         public static final String CAMERA_SERVO = "cameraServo";
 
@@ -224,13 +223,13 @@ public class Constants {
              * ========\
              *           \====
              * */
-            public static double GROUND_PARALLEL_DEG = 192;
+            public static double WRIST_GROUND_PARALLEL_DEG = 192;
 
             /* Fully backward and touch arm (min/max angle)
              *      ====\
              * ===========\
              * */
-            public static double FULL_BACKWARD_DEG = 30;
+            public static double WRIST_FULL_BACKWARD_DEG = 30;
             /*                 //||
              *               //  ||
              *             //beta||
@@ -240,7 +239,7 @@ public class Constants {
              *  beta = BACKDROP_PARALLEL_DEG - alpha
              * */
             //TODO Tune backdrop (lesser mean more far from arm)
-            public static double BACKDROP_PARALLEL_DEG = 90;
+            public static double WRIST_BACKDROP_PARALLEL_DEG = 90;
             /*
             *                       grabber
             *     arm        ======= || |++++++++|  grabber only
@@ -249,7 +248,7 @@ public class Constants {
             *                           |-pixels-|  leaving the other
             *                           |--------|  3 untouched
             * */
-            public static double AUTO_INTAKING_DEG = 210;
+            public static double WRIST_AUTO_INTAKING_DEG = 210;
 
             public static double CLOSE_CLAW_POSITION = 0;
             public static double OPEN_CLAW_POSITION = 0.25;
@@ -263,6 +262,10 @@ public class Constants {
             public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
+        }
+        public static class YELLOW_PIXEL_YEETER {
+            public static final double LOAD_YELLOW_PIXEL_YEETER_POSITION = 0;
+            public static final double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.45;
 
         }
 

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class TestServo extends LinearOpMode {
         // Init servo
         AngleServo leftAngleServo = new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
         AngleServo rightAngleServo = new AngleServo(RIGHT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
-        ServoImplEx tuneServo = hardwareMap.get(ServoImplEx.class, DRONE_LAUNCHER);
+        ServoImplEx tuneServo = hardwareMap.get(ServoImplEx.class, YELLOW_PIXEL_YEETER);
         leftAngleServo.init(REV_SERVO_PWM_RANGE);
         rightAngleServo.init(REV_SERVO_PWM_RANGE);
         tuneServo.setPwmRange(GOBILDA_SERVO_PWM_RANGE);

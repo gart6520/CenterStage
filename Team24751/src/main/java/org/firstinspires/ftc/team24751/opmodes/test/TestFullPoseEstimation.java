@@ -8,14 +8,17 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 // Import modules
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
@@ -33,6 +36,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
     private Drivebase drivebase;
     private Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     private PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
+    AutoAimApriltagServo autoAim = new AutoAimApriltagServo(CAMERA_SERVO, this);
     private FullPoseEstimator poseEstimator;
 
 
@@ -50,15 +54,18 @@ public class TestFullPoseEstimation extends LinearOpMode {
         }
 
         // Init drivebase
+        autoAim.init();
         drivebase = new Drivebase(this);
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
         poseEstimator = new FullPoseEstimator(
-                aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseEstimate, PoseStorage.getPose());
+                aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseFuse, PoseStorage.getPose());
 
         // Load last pose from auto mode
         drivebase.setPoseEstimate(PoseStorage.getPose());
 
+        //Auto aim initially
+        autoAim.loop(getCameraPos(), Math.toDegrees(drivebase.getPoseEstimate().getHeading()));
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -75,14 +82,21 @@ public class TestFullPoseEstimation extends LinearOpMode {
             // Control drivebase manually
             drivebase.manualControl(true);
 
-            // Show odoPose estimation
+            // Get pose estimate
+            poseEstimator.cameraAngle = autoAim.getCameraAngleRel();
             Pose2d botPose = poseEstimator.update();
 
-            drivebase.getLocalizer().setPoseEstimate(botPose);
+            drivebase.setPoseFuse(botPose);
+            //Auto Aim apriltag
+            autoAim.loop(getCameraPos(), Math.toDegrees(botPose.getHeading()));
 
             telemetry.addData("Pose", botPose.toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
+    }
+    Vector2d getCameraPos() {
+        Pose2d pose = drivebase.getPoseEstimate();
+        return new Vector2d(pose.getX(), pose.getY()).plus(ROBOT_TO_CAMERA);
     }
 }

@@ -48,7 +48,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
-@Autonomous(name = "Test TFOD Team Prop", group = "Test")
+@TeleOp(name = "Test TFOD Team Prop", group = "Test")
 public class TestTFODTeamProp extends LinearOpMode {
 
 
