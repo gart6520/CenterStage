@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
@@ -20,6 +21,7 @@ import java.util.List;
 public class TestAprilTagPoseEstimator extends LinearOpMode {
     Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
+    AutoAimApriltagServo autoAim = new AutoAimApriltagServo(CAMERA_SERVO, this);
     Drivebase drive = null;
 
     @SuppressLint("DefaultLocale")
@@ -28,10 +30,12 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
         aprilTag.initAprilTagProcessor();
         fieldCamera.buildCamera();
         drive = new Drivebase(this);
+        autoAim.init();
         waitForStart();
+        autoAim.fixCamAngle(180);
         while (opModeIsActive()) {
             Pose2d odoPose = drive.getPoseEstimate();
-            Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(odoPose.getHeading()));
+            Vector2d aprilTagPos = aprilTag.getCurrentPosFromAprilTag(Math.toDegrees(odoPose.getHeading()) + autoAim.getCameraAngleRel());
 
             if (aprilTagPos == null) {
                 telemetry.addLine("No April Tag");

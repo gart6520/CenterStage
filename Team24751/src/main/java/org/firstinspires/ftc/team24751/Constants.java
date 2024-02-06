@@ -77,8 +77,8 @@ public class Constants {
         // WIP
 
         // LEDs
-        public static final String LED_RED = "led_red";
-        public static final String LED_GREEN = "led_green";
+        public static final String LED_RED = "ledRed";
+        public static final String LED_GREEN = "ledGreen";
     }
 
     /**
@@ -126,8 +126,8 @@ public class Constants {
 
             AUTO_AIM_APRIL_TAG_IDS.add(7);
             AUTO_AIM_APRIL_TAG_IDS.add(10);
-            AUTO_AIM_APRIL_TAG_IDS.add(2);
             AUTO_AIM_APRIL_TAG_IDS.add(5);
+            AUTO_AIM_APRIL_TAG_IDS.add(2);
 
             // Add low speed coors
             LOW_SPEED_COORDS.add(new Rect(24, -60, 72, -12.5));
@@ -261,7 +261,7 @@ public class Constants {
         }
 
         public static class DroneLauncher {
-            public static final double LOAD_DRONE_LAUNCHER_POSITION = 0;
+            public static final double LOAD_DRONE_LAUNCHER_POSITION = 0.1;
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
         }

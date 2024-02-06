@@ -77,4 +77,15 @@ public class LedIndicator {
         red.setState(false);
         green.setState(false);
     }
+
+    /**
+     *  Note: Opposite of the state of DIO
+     * @param redOn true if on, false is off
+     * @param greenOn true if on, false is off
+     * */
+    public void setColor (boolean redOn, boolean greenOn)
+    {
+        this.red.setState(!redOn);
+        this.green.setState(!greenOn);
+    }
 }

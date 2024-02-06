@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
 
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
 public class AutoTrajectoryManager {
@@ -35,13 +34,11 @@ public class AutoTrajectoryManager {
     }
 
     public static class AutoTrajectory {
-        public TrajectorySequence first = null;
-        public Supplier<TrajectorySequence> repeat = null;
-
-        public AutoTrajectory(TrajectorySequence firstTrajectory, Supplier<TrajectorySequence> repeatTrajectory) {
-            first = firstTrajectory;
-            repeat = repeatTrajectory;
-        }
+        /**
+         * Trajectory for randomization task
+         * */
+        public TrajectorySequence randomTraj = null;
+        public Supplier<TrajectorySequence> mainTraj = null;
 
         public AutoTrajectory() {
         }
@@ -53,13 +50,13 @@ public class AutoTrajectoryManager {
         if (pos == StartingPos.center) {
             return null; //Return sth u want to test or sth idk
         } else if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
-            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+            result.mainTraj = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(46.50, -39.00, Math.toRadians(180)))
                     .lineTo(new Vector2d(-49.00, -39.00))
                     .lineTo(new Vector2d(46.50, -39.00))
                     .build();
         } else {
-            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+            result.mainTraj = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(46.50, 39.00, Math.toRadians(180)))
                     .lineTo(new Vector2d(-49.00, 39.00))
                     .lineTo(new Vector2d(46.50, 39.00))
@@ -68,27 +65,27 @@ public class AutoTrajectoryManager {
         switch (pos)
         {
             case wingRed:
-                result.first = drive.trajectorySequenceBuilder(new Pose2d(-36.43, -63.21, Math.toRadians(90.00)))
+                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(-36.43, -63.21, Math.toRadians(90.00)))
                         .splineTo(new Vector2d(-49.00, -39), Math.toRadians(180.00))
                         .lineTo(new Vector2d(46.50, -39.00))
                         .setReversed(true)
                         .build();
                 break;
             case wingBlue:
-                result.first = drive.trajectorySequenceBuilder(new Pose2d(-36.43, 63.21, Math.toRadians(-90.00)))
+                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(-36.43, 63.21, Math.toRadians(-90.00)))
                         .splineTo(new Vector2d(-49.00, 39), Math.toRadians(180.00))
                         .lineTo(new Vector2d(46.50, 39.00))
                         .setReversed(true)
                         .build();
                 break;
             case backdropRed:
-                result.first = drive.trajectorySequenceBuilder(new Pose2d(36.43, -63.21, Math.toRadians(90.00)))
+                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(36.43, -63.21, Math.toRadians(90.00)))
                         .splineTo(new Vector2d(25.00, -39.00), Math.toRadians(-180))
                         .lineTo(new Vector2d(46.50, -39.00))
                         .build();
                 break;
             case backdropBlue:
-                result.first = drive.trajectorySequenceBuilder(new Pose2d(36.43, 63.21, Math.toRadians(-90.00)))
+                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(36.43, 63.21, Math.toRadians(-90.00)))
                         .splineTo(new Vector2d(25.00, 39.00), Math.toRadians(-180))
                         .lineTo(new Vector2d(46.50, 39.00))
                         .build();
@@ -100,13 +97,13 @@ public class AutoTrajectoryManager {
     {
         AutoTrajectory autoTrajectory = getAutoTrajectory();
         if (autoTrajectory == null) return;
-        drive.setPoseEstimate(autoTrajectory.first.start());
+        drive.setPoseEstimate(autoTrajectory.randomTraj.start());
         opMode.waitForStart();
         timer.reset();
-        drive.followTrajectorySequence(autoTrajectory.first);
+        drive.followTrajectorySequence(autoTrajectory.randomTraj);
         while (opMode.opModeIsActive())
         {
-            TrajectorySequence repeat = autoTrajectory.repeat.get();
+            TrajectorySequence repeat = autoTrajectory.mainTraj.get();
             if (30 - timer.seconds() <= repeat.duration()) break;
             drive.followTrajectorySequence(repeat);
         }

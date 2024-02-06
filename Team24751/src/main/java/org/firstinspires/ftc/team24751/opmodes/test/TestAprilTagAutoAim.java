@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 @TeleOp(name = "Test AprilTag Auto Aim", group = "Test")
+@Disabled
 public class TestAprilTagAutoAim extends LinearOpMode {
     Camera fieldCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(fieldCamera, this);
@@ -35,6 +37,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
         autoLock.init();
 //        autoLock.getAngleServo().setAngle(0);
 
+        //TODO rotate vector
         waitForStart();
         while (opModeIsActive()) {
             Pose2d odoPose = drive.getPoseEstimate();

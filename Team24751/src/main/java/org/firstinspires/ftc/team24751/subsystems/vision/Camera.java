@@ -25,26 +25,28 @@ public class Camera {
         this.cameraName = cameraName;
         this.linearOpMode = linearOpMode;
     }
+
     //Destructor to close the camera once this object goes out of scope
     @Override
-    protected void finalize()
-    {
+    protected void finalize() {
         close();
     }
+
     /**
      * Close the vision portal
-     * */
-    public void close()
-    {
+     */
+    public void close() {
         camera.close();
-    }public void stopStreaming()
-    {
+    }
+
+    public void stopStreaming() {
         camera.stopStreaming();
     }
-    public void disableProcessor(VisionProcessor processor)
-    {
+
+    public void disableProcessor(VisionProcessor processor) {
         camera.setProcessorEnabled(processor, false);
     }
+
     /**
      * Add a processor to the list of processor that will be added to this camera when
      * .buildCamera() happen
@@ -67,11 +69,11 @@ public class Camera {
         }
         camera = cameraBuilder.build();
     }
+
     /**
      * Custom init the VisionPortal, please manually add the processors as well
-     * */
-    public void buildCamera(VisionPortal visionPortal)
-    {
+     */
+    public void buildCamera(VisionPortal visionPortal) {
         camera = visionPortal;
     }
 

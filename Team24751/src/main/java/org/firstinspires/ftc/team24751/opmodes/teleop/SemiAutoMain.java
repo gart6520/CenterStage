@@ -20,6 +20,7 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
@@ -32,6 +33,10 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extend
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
+
+import android.annotation.SuppressLint;
+
+import java.util.List;
 
 @TeleOp(name = "Semi-auto Main", group = "Manual")
 public class SemiAutoMain extends LinearOpMode {
@@ -50,7 +55,7 @@ public class SemiAutoMain extends LinearOpMode {
     Camera frontCamera = new Camera(FRONT_CAMERA_NAME, this);
     Camera backCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(backCamera, this);
-    private FullPoseEstimator poseEstimator;
+    FullPoseEstimator poseEstimator;
     AutoAimApriltagServo autoAimAprilTag = new AutoAimApriltagServo(CAMERA_SERVO, this);
 
     // States of the arm for FSM
@@ -127,7 +132,9 @@ public class SemiAutoMain extends LinearOpMode {
         aprilTag.initAprilTagProcessor();
         backCamera.buildCamera();
         poseEstimator = new FullPoseEstimator(
-                aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseFuse, PoseStorage.getPose());
+//                this::getBotPosFromAprilTag,
+                (double deg) -> null,
+                drivebase::getPoseFuse, PoseStorage.getPose());
 
         // Enable bulk reads in auto mode
         enableBulkRead(hardwareMap);
@@ -152,7 +159,7 @@ public class SemiAutoMain extends LinearOpMode {
         waitForStart();
 
         //Auto aim initially
-        autoAimAprilTag.loop(getCameraPos(), Math.toDegrees(drivebase.getPoseEstimate().getHeading()));
+        autoAimAprilTag.loop(getCameraPos(), Math.toDegrees(drivebase.getPoseFuse().getHeading()));
 
         // Reset runtime
         runtime.reset();
@@ -444,14 +451,17 @@ public class SemiAutoMain extends LinearOpMode {
             prev2.copy(curr2);
 
             // Show telemetry
-            telemetry.addData("Current Arm Position (L)", arm.leftArmEncoder.getPosition());
-            telemetry.addData("Current Arm Position (R)", arm.rightArmEncoder.getPosition());
             telemetry.addData("Current Arm Angle (L + R)", arm.getAngle());
             telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
             telemetry.addData("FSM State", state.toString());
             telemetry.addData("Extend position", extender.getPosition());
-            telemetry.addData("Robot Yaw", Math.toDegrees(botPose.getHeading()));
+            telemetry.addData("Robot Pose", botPose.toString());
+            Vector2d botPosFromAprilTag = getBotPosFromAprilTag(Math.toDegrees(botPose.getHeading()) + autoAimAprilTag.getCameraAngleRel());
+            if (botPosFromAprilTag != null)
+                telemetry.addData("Robot Pose From April Tag", botPosFromAprilTag.toString());
+            telemetry.addData("Camera Pos", getCameraPos().toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetryAprilTag();
             telemetry.update();
         }
         droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
@@ -468,14 +478,9 @@ public class SemiAutoMain extends LinearOpMode {
         }
     }
 
-    private void manualDrive(Vector2d aprilTagPos) {
-        //In case of no april tag
-        if (aprilTagPos == null) {
-            drivebase.manualControl(true);
-            return;
-        }
+    private void manualDrive(Vector2d botPos) {
         for (Rect rect : LOW_SPEED_COORDS) {
-            if (rect.isInside(aprilTagPos)) {
+            if (rect.isInside(botPos)) {
                 drivebase.manualControlLimitSpeed(true);
                 return;
             }
@@ -485,7 +490,38 @@ public class SemiAutoMain extends LinearOpMode {
     }
 
     Vector2d getCameraPos() {
-        Pose2d pose = drivebase.getPoseEstimate();
-        return new Vector2d(pose.getX(), pose.getY()).plus(ROBOT_TO_CAMERA);
+        Pose2d pose = drivebase.getPoseFuse();
+        Vector2d rotatedRobotToCamera = rotateVector(ROBOT_TO_CAMERA, pose.getHeading());
+        return new Vector2d(pose.getX(), pose.getY()).plus(rotatedRobotToCamera);
+    }
+
+    Vector2d getBotPosFromAprilTag(double cameraAngle) {
+        Vector2d cameraPos = aprilTag.getCurrentPosFromAprilTag(cameraAngle);
+        if (cameraPos == null) return null;
+        Pose2d pose = drivebase.getPoseFuse();
+        Vector2d rotatedRobotToCamera = rotateVector(ROBOT_TO_CAMERA, pose.getHeading());
+        return cameraPos.minus(rotatedRobotToCamera);
+    }
+
+    Vector2d rotateVector(Vector2d v, double rad) {
+        return new Vector2d(v.getX() * Math.cos(rad) - v.getY() * Math.sin(rad),
+                v.getX() * Math.sin(rad) + v.getY() * Math.cos(rad));
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void telemetryAprilTag() {
+        List<AprilTagDetection> currentDetections = aprilTag.getCurrentDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XY %6.1f %6.1f (inch)", detection.ftcPose.x, detection.ftcPose.y));
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }   // end for() loop
     }
 }

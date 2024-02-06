@@ -29,7 +29,8 @@
 
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.VISION.TFOD.TFOD_PIXEL_MODEL_FILE;
+
+import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TFOD_PIXEL_MODEL_FILE;
 
 import android.annotation.SuppressLint;
 
