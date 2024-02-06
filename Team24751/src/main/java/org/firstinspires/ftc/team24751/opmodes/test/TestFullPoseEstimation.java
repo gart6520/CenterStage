@@ -84,7 +84,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
 
             // Get pose estimate
             poseEstimator.cameraAngle = autoAim.getCameraAngleRel();
-            Pose2d botPose = poseEstimator.update();
+            Pose2d botPose = poseEstimator.update(autoAim.getCameraAngleRel());
 
             drivebase.setPoseFuse(botPose);
             //Auto Aim apriltag

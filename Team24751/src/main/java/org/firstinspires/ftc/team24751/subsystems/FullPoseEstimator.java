@@ -22,7 +22,7 @@ public class FullPoseEstimator {
         poseYFuse = new FuseSensor(initPose.getY(), 1);
     }
 
-    public Pose2d update() {
+    public Pose2d update(double cameraAngle) {
         final Pose2d odoPose = odometryResult.get();
         Vector2d aprilTagPos = aprilTagResult.apply(Math.toDegrees(odoPose.getHeading()) + cameraAngle);
         if (aprilTagPos != null) aprilTagPos = aprilTagPos.minus(ROBOT_TO_CAMERA);

@@ -132,8 +132,9 @@ public class SemiAutoMain extends LinearOpMode {
         aprilTag.initAprilTagProcessor();
         backCamera.buildCamera();
         poseEstimator = new FullPoseEstimator(
-//                this::getBotPosFromAprilTag,
-                (double deg) -> null,
+                this::getBotPosFromAprilTag,
+//                (double deg) -> null,
+//                aprilTag::getCurrentPosFromAprilTag,
                 drivebase::getPoseFuse, PoseStorage.getPose());
 
         // Enable bulk reads in auto mode
@@ -175,7 +176,7 @@ public class SemiAutoMain extends LinearOpMode {
 
             // Get pose estimate
             poseEstimator.cameraAngle = autoAimAprilTag.getCameraAngleRel();
-            Pose2d botPose = poseEstimator.update();
+            Pose2d botPose = poseEstimator.update(autoAimAprilTag.getCameraAngleRel());
 
             drivebase.setPoseFuse(botPose);
             //Auto Aim apriltag
@@ -459,6 +460,7 @@ public class SemiAutoMain extends LinearOpMode {
             Vector2d botPosFromAprilTag = getBotPosFromAprilTag(Math.toDegrees(botPose.getHeading()) + autoAimAprilTag.getCameraAngleRel());
             if (botPosFromAprilTag != null)
                 telemetry.addData("Robot Pose From April Tag", botPosFromAprilTag.toString());
+            telemetry.addData("Robot Pose From Odo", drivebase.getPoseFuse());
             telemetry.addData("Camera Pos", getCameraPos().toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetryAprilTag();
@@ -490,7 +492,7 @@ public class SemiAutoMain extends LinearOpMode {
     }
 
     Vector2d getCameraPos() {
-        Pose2d pose = drivebase.getPoseFuse();
+        Pose2d pose = drivebase.getPoseEstimate();
         Vector2d rotatedRobotToCamera = rotateVector(ROBOT_TO_CAMERA, pose.getHeading());
         return new Vector2d(pose.getX(), pose.getY()).plus(rotatedRobotToCamera);
     }
@@ -504,7 +506,8 @@ public class SemiAutoMain extends LinearOpMode {
     }
 
     Vector2d rotateVector(Vector2d v, double rad) {
-        return new Vector2d(v.getX() * Math.cos(rad) - v.getY() * Math.sin(rad),
+        return new Vector2d(
+                v.getX() * Math.cos(rad) - v.getY() * Math.sin(rad),
                 v.getX() * Math.sin(rad) + v.getY() * Math.cos(rad));
     }
 
