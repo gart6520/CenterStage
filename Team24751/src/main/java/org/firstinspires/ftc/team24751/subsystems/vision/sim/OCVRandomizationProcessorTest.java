@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24751.subsystems.vision;
+package org.firstinspires.ftc.team24751.subsystems.vision.sim;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,15 +14,21 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.*;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.*;
-import static org.firstinspires.ftc.team24751.Constants.allianceColor;
-import static org.firstinspires.ftc.team24751.Constants.AllianceColor;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class OCVRandomizationProcessor implements VisionProcessor {
+public class OCVRandomizationProcessorTest implements VisionProcessor {
+    public enum AllianceColor {
+        //Test for code usage in testing
+        RED, BLUE, TEST
+    }
+
+    public AllianceColor allianceColor = AllianceColor.RED;
+
+    public enum TeamPropPosition {
+        NONE, LEFT, CENTER, RIGHT
+    }
+
     /**
      * Frame properties
      */
@@ -33,17 +39,17 @@ public class OCVRandomizationProcessor implements VisionProcessor {
      * Processing variables
      */
     // HSV color threshold. Default is red prop
-    private Scalar hsv_min = TEAM_PROP_RED_MIN;
-    private Scalar hsv_max = TEAM_PROP_RED_MAX;
+    private Scalar hsv_min = new Scalar(0, 115, 133);
+    private Scalar hsv_max = new Scalar(5, 228, 255);
 
     // Kernel for Imgproc.dilate. Created once, use each frame
     private Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(9, 9));
 
     // Bounding rect
-    private Rect boundingRect = new Rect(0, 0, 0, 0);
+    public Rect boundingRect = new Rect(0, 0, 0, 0);
 
     // Processed position
-    private TeamPropPosition pos = NONE;
+    public TeamPropPosition pos = TeamPropPosition.NONE;
 
     /**
      * Post-process variables
@@ -63,13 +69,15 @@ public class OCVRandomizationProcessor implements VisionProcessor {
         this.frameHeight = height;
 
         // Update HSV threshold
-        if (allianceColor == AllianceColor.BLUE) {
+        /*if (allianceColor == AllianceColor.BLUE) {
             hsv_min = TEAM_PROP_BLUE_MIN;
             hsv_max = TEAM_PROP_BLUE_MAX;
-        } // Else, no need to update, since default is red
+        }*/ // Else, no need to update, since default is red
 
         // Init paint
         paint.setColor(Color.RED);
+        //paint.setStyle(Paint.Style.STROKE);
+        //paint.setStrokeWidth(8);
         paint.setTextSize(36);
     }
 
@@ -111,7 +119,7 @@ public class OCVRandomizationProcessor implements VisionProcessor {
         // If no contours is found
         if (contours.size() < 1) {
             this.boundingRect = new Rect(0, 0, 0, 0);
-            return this.pos = NONE;
+            return this.pos = TeamPropPosition.NONE;
         }
 
         // Find contour with largest area
@@ -132,9 +140,9 @@ public class OCVRandomizationProcessor implements VisionProcessor {
         int center = this.boundingRect.x + this.boundingRect.width/2;
 
         // Decide the position
-        if (center < TEAM_PROP_LEFT_CENTER) return this.pos = LEFT;
-        if (center < TEAM_PROP_CENTER_RIGHT) return this.pos = CENTER;
-        return this.pos = RIGHT;
+        if (center < 640.0 / 3) return this.pos = TeamPropPosition.LEFT;
+        if (center < 2 * 640.0 / 3) return this.pos = TeamPropPosition.CENTER;
+        return this.pos = TeamPropPosition.RIGHT;
     }
 
     /**
@@ -148,7 +156,7 @@ public class OCVRandomizationProcessor implements VisionProcessor {
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         // If team prop is detected -> draw
-        if (this.pos != NONE) {
+        if (this.pos != TeamPropPosition.NONE) {
             // Draw bounding box
             paint.setColor(Color.RED);
             paint.setStyle(Paint.Style.STROKE);
