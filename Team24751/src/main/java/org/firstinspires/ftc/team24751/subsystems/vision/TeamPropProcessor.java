@@ -19,6 +19,8 @@ import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPositi
 import static org.firstinspires.ftc.team24751.Constants.allianceColor;
 import static org.firstinspires.ftc.team24751.Constants.AllianceColor;
 
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,8 @@ public class TeamPropProcessor implements VisionProcessor {
      * Post-process variables
      */
     private Paint paint = new Paint();
+    double center;
+    KalmanFilter kalmanFilter = new KalmanFilter(0.4, 0.1, 3);
 
     /**
      * Init processor
@@ -133,12 +137,8 @@ public class TeamPropProcessor implements VisionProcessor {
             this.boundingRect = Imgproc.boundingRect(max_contour);
 
             // Calculate the center
-            int center = this.boundingRect.x + this.boundingRect.width/2;
-
-            // Decide the position
-            if (center < TEAM_PROP_LEFT_CENTER) return this.pos = LEFT;
-            if (center < TEAM_PROP_CENTER_RIGHT) return this.pos = CENTER;
-            return this.pos = RIGHT;
+            center = kalmanFilter.estimate(this.boundingRect.x + this.boundingRect.width/2.0);
+            return center;
         }
 
         catch (Exception e) {
@@ -193,14 +193,17 @@ public class TeamPropProcessor implements VisionProcessor {
      * @return team prop position. If no team prop is found, return NONE
      */
     public TeamPropPosition getPos() {
-        return this.pos;
+        // Decide the position
+        if (center < TEAM_PROP_LEFT_CENTER) return this.pos = LEFT;
+        if (center < TEAM_PROP_CENTER_RIGHT) return this.pos = CENTER;
+        return this.pos = RIGHT;
     }
 
     /**
      * Get team prop's center
      * @return team prop's center. If no team prop is found, return 0
      */
-    public int getCenter() {
-        return this.boundingRect.x + this.boundingRect.width/2;
+    public double getCenter() {
+        return center;
     }
 }
