@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
+import static java.lang.Thread.sleep;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -34,11 +36,15 @@ public class AutoTrajectoryManager {
     }
 
     public static class AutoTrajectory {
-        /**
-         * Trajectory for randomization task
-         * */
-        public TrajectorySequence randomTraj = null;
-        public Supplier<TrajectorySequence> mainTraj = null;
+        public TrajectorySequence purplePixelDrop = null;
+        public TrajectorySequence yellowPixelDrop = null;
+        public Supplier<TrajectorySequence> repeat = null;
+
+        public AutoTrajectory(TrajectorySequence purple, TrajectorySequence yellow, Supplier<TrajectorySequence> repeatTrajectory) {
+            purplePixelDrop = purple;
+            yellowPixelDrop = yellow;
+            repeat = repeatTrajectory;
+        }
 
         public AutoTrajectory() {
         }
@@ -47,63 +53,75 @@ public class AutoTrajectoryManager {
 
     private AutoTrajectory getAutoTrajectory() {
         AutoTrajectory result = new AutoTrajectory();
-        if (pos == StartingPos.center) {
-            return null; //Return sth u want to test or sth idk
-        } else if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
-            result.mainTraj = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(46.50, -39.00, Math.toRadians(180)))
-                    .lineTo(new Vector2d(-49.00, -39.00))
-                    .lineTo(new Vector2d(46.50, -39.00))
-                    .build();
-        } else {
-            result.mainTraj = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(46.50, 39.00, Math.toRadians(180)))
-                    .lineTo(new Vector2d(-49.00, 39.00))
-                    .lineTo(new Vector2d(46.50, 39.00))
-                    .build();
-        }
+
+        // TODO: Purple pixel drop trajectory
+
+        // Yellow pixel drop trajectory
         switch (pos)
         {
             case wingRed:
-                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(-36.43, -63.21, Math.toRadians(90.00)))
-                        .splineTo(new Vector2d(-49.00, -39), Math.toRadians(180.00))
-                        .lineTo(new Vector2d(46.50, -39.00))
-                        .setReversed(true)
+                result.yellowPixelDrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(-22.00, -9.50), Math.toRadians(0.00))
+                        .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(0.00))
+                        .lineToConstantHeading(new Vector2d(50.65, -36.00), Math.toRadians(0.00))
+                        .turn(180)
                         .build();
                 break;
             case wingBlue:
-                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(-36.43, 63.21, Math.toRadians(-90.00)))
-                        .splineTo(new Vector2d(-49.00, 39), Math.toRadians(180.00))
-                        .lineTo(new Vector2d(46.50, 39.00))
-                        .setReversed(true)
+                result.yellowPixelDrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(-22.00, 9.50), Math.toRadians(0.00))
+                        .lineToConstantHeading(new Vector2d(30.00, 9.50), Math.toRadians(0.00))
+                        .lineToConstantHeading(new Vector2d(50.65, 36.00), Math.toRadians(0.00))
+                        .turn(180)
                         .build();
                 break;
             case backdropRed:
-                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(36.43, -63.21, Math.toRadians(90.00)))
-                        .splineTo(new Vector2d(25.00, -39.00), Math.toRadians(-180))
-                        .lineTo(new Vector2d(46.50, -39.00))
+                result.yellowPixelDrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(47.00, -36.00), Math.toRadians(0.00))
+                        .turn(180)
                         .build();
                 break;
             case backdropBlue:
-                result.randomTraj = drive.trajectorySequenceBuilder(new Pose2d(36.43, 63.21, Math.toRadians(-90.00)))
-                        .splineTo(new Vector2d(25.00, 39.00), Math.toRadians(-180))
-                        .lineTo(new Vector2d(46.50, 39.00))
+                result.yellowPixelDrop = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(47.00, 36.00), Math.toRadians(0.00))
+                        .turn(180)
                         .build();
                 break;
         }
+
+        // Repeat trajectory
+        if (pos == StartingPos.center) {
+            return null; //Return sth u want to test or sth idk
+        } else if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
+            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(-60.00, -9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(50.65, -36.00), Math.toRadians(180.00))
+                    .build();
+        } else {
+            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToConstantHeading(new Vector2d(30.00, 9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(-60.00, 9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(30.00, 9.50), Math.toRadians(180.00))
+                    .lineToConstantHeading(new Vector2d(50.65, 36.00), Math.toRadians(180.00))
+                    .build();
+        }
         return result;
     }
-    public void followTrajectory ()
-    {
+    public void followTrajectory() {
         AutoTrajectory autoTrajectory = getAutoTrajectory();
         if (autoTrajectory == null) return;
-        drive.setPoseEstimate(autoTrajectory.randomTraj.start());
+        drive.setPoseEstimate(autoTrajectory.purplePixelDrop.start());
         opMode.waitForStart();
         timer.reset();
-        drive.followTrajectorySequence(autoTrajectory.randomTraj);
+        drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
+        // TODO: Go to desired position after dropping purple pixel
+        drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop);
+        // TODO: Align robot according to desired AprilTag
         while (opMode.opModeIsActive())
         {
-            TrajectorySequence repeat = autoTrajectory.mainTraj.get();
+            TrajectorySequence repeat = autoTrajectory.repeat.get();
             if (30 - timer.seconds() <= repeat.duration()) break;
             drive.followTrajectorySequence(repeat);
         }
