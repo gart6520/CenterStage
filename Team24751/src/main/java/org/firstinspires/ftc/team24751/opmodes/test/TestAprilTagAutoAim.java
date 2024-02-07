@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
 
 import android.annotation.SuppressLint;
+import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -32,7 +33,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         aprilTag.initAprilTagProcessor();
-        fieldCamera.buildCamera();
+        fieldCamera.buildCamera(new Size(640, 480));
         drive = new Drivebase(this);
         autoLock.init();
 //        autoLock.getAngleServo().setAngle(0);

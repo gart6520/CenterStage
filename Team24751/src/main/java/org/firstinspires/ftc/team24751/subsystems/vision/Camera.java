@@ -59,14 +59,17 @@ public class Camera {
      * Convenient init for VisionPortal
      * Remember to add all processor (aka init all processor related class) before build the camera
      */
-    public void buildCamera() {
+    public void buildCamera(Size res) {
         VisionPortal.Builder cameraBuilder = new VisionPortal.Builder()
                 .setCamera(linearOpMode.hardwareMap.get(WebcamName.class, cameraName))
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(res)
+                .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+
         for (VisionProcessor processor : inQueueProcessors) {
             cameraBuilder.addProcessor(processor);
         }
+
         camera = cameraBuilder.build();
     }
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import android.annotation.SuppressLint;
+import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -28,7 +29,7 @@ public class TestAprilTagPoseEstimator extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         aprilTag.initAprilTagProcessor();
-        fieldCamera.buildCamera();
+        fieldCamera.buildCamera(new Size(640, 480));
         drive = new Drivebase(this);
         autoAim.init();
         waitForStart();
