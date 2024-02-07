@@ -21,15 +21,15 @@ public class TestTrajectory extends LinearOpMode {
 
         TrajectorySequence redFarAfterPurple = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -49.00, Math.toRadians(90.00)))
                 .splineToConstantHeading(new Vector2d(-60.00, -9.50), Math.toRadians(180.00))
-                .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(180.00))
-                .lineToConstantHeading(new Vector2d(50.65, -36.00), Math.toRadians(180.00))
+                .lineToConstantHeading(new Vector2d(30.00, -9.50))
+                .lineToConstantHeading(new Vector2d(50.65, -36.00))
                 .build();
 
         TrajectorySequence repeatRed = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(180.00))
-                .lineToConstantHeading(new Vector2d(-60.00, -9.50), Math.toRadians(180.00))
-                .lineToConstantHeading(new Vector2d(30.00, -9.50), Math.toRadians(180.00))
-                .lineToConstantHeading(new Vector2d(50.65, -36.00), Math.toRadians(180.00))
+                .lineToConstantHeading(new Vector2d(30.00, -9.50))
+                .lineToConstantHeading(new Vector2d(-60.00, -9.50))
+                .lineToConstantHeading(new Vector2d(30.00, -9.50))
+                .lineToConstantHeading(new Vector2d(50.65, -36.00))
                 .build();
 
         drive.setPoseEstimate(redFarAfterPurple.start());

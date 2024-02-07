@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team24751;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,10 +11,7 @@ import java.util.List;
  */
 public class Utility {
     public enum WRAP_ANGLE_TYPE {
-        zeroTo360,
-        minus180To180,
-        zeroTo2Pi,
-        minusPiToPi
+        zeroTo360, minus180To180, zeroTo2Pi, minusPiToPi
     }
 
     /**
@@ -43,6 +41,7 @@ public class Utility {
 
     /**
      * Enable bulk read for all hubs
+     *
      * @param hardwareMap hardwareMap object from opMode
      */
     public static void enableBulkRead(HardwareMap hardwareMap) {
@@ -55,7 +54,8 @@ public class Utility {
 
     /**
      * Apply sense to input
-     * @param input input value
+     *
+     * @param input     input value
      * @param threshold sense threshold
      * @return input if abs(input) > threshold, else 0
      */
@@ -65,5 +65,17 @@ public class Utility {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Rotate a vector by rad
+     *
+     * @param v   input vector
+     * @param rad rotation angle in radian
+     */
+    public static Vector2d rotateVector(Vector2d v, double rad) {
+        return new Vector2d(
+                v.getX() * Math.cos(rad) - v.getY() * Math.sin(rad),
+                v.getX() * Math.sin(rad) + v.getY() * Math.cos(rad));
     }
 }

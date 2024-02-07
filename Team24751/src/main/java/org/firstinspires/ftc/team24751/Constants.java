@@ -6,6 +6,7 @@ import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.ThermalEquilibrium.homeostasis.Utils.WPILibMotionProfile;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -243,13 +244,13 @@ public class Constants {
             //TODO Tune backdrop (lesser mean more far from arm)
             public static double WRIST_BACKDROP_PARALLEL_DEG = 90;
             /*
-            *                       grabber
-            *     arm        ======= || |++++++++|  grabber only
-            *        ========        || |++++++++|  intake top two
-            * =======                   |--------|  pixels while
-            *                           |-pixels-|  leaving the other
-            *                           |--------|  3 untouched
-            * */
+             *                       grabber
+             *     arm        ======= || |++++++++|  grabber only
+             *        ========        || |++++++++|  intake top two
+             * =======                   |--------|  pixels while
+             *                           |-pixels-|  leaving the other
+             *                           |--------|  3 untouched
+             * */
             public static double WRIST_AUTO_INTAKING_DEG = 210;
 
             public static double CLOSE_CLAW_POSITION = 0;
@@ -265,6 +266,7 @@ public class Constants {
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
         }
+
         public static class YELLOW_PIXEL_YEETER {
             public static final double LOAD_YELLOW_PIXEL_YEETER_POSITION = 0;
             public static final double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.45;
@@ -340,9 +342,17 @@ public class Constants {
      */
     public static class BOT_PARAMETERS {
         public static final Vector2d ROBOT_TO_CAMERA = new Vector2d(-6, 5.5);
-        public static final double INITIAL_BOT_ANGLE_DEG_BLUE = -90;
-        //TODO: Change based on starting location
-        public static final double INITIAL_BOT_ANGLE_DEG_TEST = 0;
-        public static final double INITIAL_BOT_ANGLE_DEG_RED = 90;
+    }
+
+    public static class AUTONOMOUS {
+        // TODO tune/measure these number
+        public static final Vector2d LEFT_SPIKE_MARK = new Vector2d(10, 6);
+        public static final Vector2d CENTER_SPIKE_MARK = new Vector2d(10, 0);
+        public static final Vector2d RIGHT_SPIKE_MARK = new Vector2d(10, -6);
+        public static final Pose2d WING_RED_START_POSE = new Pose2d(-36, -64, Math.toRadians(90));
+        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(36, -64, Math.toRadians(90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(36, 64, Math.toRadians(-90));
+
     }
 }

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+
+
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
@@ -33,6 +35,8 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extend
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
+
+import static org.firstinspires.ftc.team24751.Utility.*;
 
 import android.annotation.SuppressLint;
 
@@ -503,12 +507,6 @@ public class SemiAutoMain extends LinearOpMode {
         Pose2d pose = drivebase.getPoseFuse();
         Vector2d rotatedRobotToCamera = rotateVector(ROBOT_TO_CAMERA, pose.getHeading());
         return cameraPos.minus(rotatedRobotToCamera);
-    }
-
-    Vector2d rotateVector(Vector2d v, double rad) {
-        return new Vector2d(
-                v.getX() * Math.cos(rad) - v.getY() * Math.sin(rad),
-                v.getX() * Math.sin(rad) + v.getY() * Math.cos(rad));
     }
 
     @SuppressLint("DefaultLocale")
