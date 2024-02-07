@@ -133,7 +133,7 @@ public class TrajectorySequenceBuilder {
         return addPath(() -> currentTrajectoryBuilder.lineTo(endPosition, velConstraint, accelConstraint));
     }
 
-    public TrajectorySequenceBuilder lineToConstantHeading(Vector2d endPosition) {
+    public TrajectorySequenceBuilder lineToConstantHeading(Vector2d endPosition, double radians) {
         return addPath(() -> currentTrajectoryBuilder.lineToConstantHeading(endPosition, currentVelConstraint, currentAccelConstraint));
     }
 
