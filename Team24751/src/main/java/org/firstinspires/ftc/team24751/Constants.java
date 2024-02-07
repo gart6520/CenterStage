@@ -317,21 +317,14 @@ public class Constants {
             public static final Scalar TEAM_PROP_RED_MAX = new Scalar(5, 228, 255);
 
             // Blue team prop
-            public static final Scalar TEAM_PROP_BLUE_MIN = new Scalar(0, 115, 133);
-            public static final Scalar TEAM_PROP_BLUE_MAX = new Scalar(5, 228, 255);
-
-            // TFOD model file path
-            public static final String TFOD_TEAM_PROP_MODEL_FILE = "/sdcard/FIRST/tflitemodels/prop.tflite";
-            public static final String TFOD_PIXEL_MODEL_FILE = "/sdcard/FIRST/tflitemodels/pixel.tflite";
-
-            public static final String TEAM_PROP_RED_LABEL = "prop_red";
-            public static final String TEAM_PROP_BLUE_LABEL = "prop_blue";
+            public static final Scalar TEAM_PROP_BLUE_MIN = new Scalar(90, 68, 75);
+            public static final Scalar TEAM_PROP_BLUE_MAX = new Scalar(108, 246, 255);
 
             // Team prop position threshold
             // |    Left     |     Center    |      Right      |
             // min       left-center     center-right         max
-            public static final double TEAM_PROP_LEFT_CENTER = 640.0 / 3;
-            public static final double TEAM_PROP_CENTER_RIGHT = 2 * 640.0 / 3;
+            public static final double TEAM_PROP_LEFT_CENTER = 320.0 / 3;
+            public static final double TEAM_PROP_CENTER_RIGHT = 2 * 320.0 / 3;
         }
     }
 

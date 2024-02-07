@@ -11,6 +11,8 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -57,7 +59,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
         autoAim.init();
         drivebase = new Drivebase(this);
         aprilTag.initAprilTagProcessor();
-        fieldCamera.buildCamera();
+        fieldCamera.buildCamera(new Size(640, 480));
         poseEstimator = new FullPoseEstimator(
                 aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseFuse, PoseStorage.getPose());
 

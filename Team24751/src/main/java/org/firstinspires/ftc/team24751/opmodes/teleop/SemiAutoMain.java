@@ -35,6 +35,7 @@ import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
 
 import android.annotation.SuppressLint;
+import android.util.Size;
 
 import java.util.List;
 
@@ -130,7 +131,7 @@ public class SemiAutoMain extends LinearOpMode {
         droneLauncher.init();
         autoAimAprilTag.init();
         aprilTag.initAprilTagProcessor();
-        backCamera.buildCamera();
+        backCamera.buildCamera(new Size(640, 480));
         poseEstimator = new FullPoseEstimator(
                 this::getBotPosFromAprilTag,
 //                (double deg) -> null,
@@ -472,9 +473,9 @@ public class SemiAutoMain extends LinearOpMode {
     private void extenderControl() {
         // Control extender
         if (gamepad2.left_bumper || gamepad2.dpad_down) {
-            extender.setPower(0.7);
+            extender.setPower(0.9);
         } else if (gamepad2.left_trigger > SENSE_TRIGGER || gamepad2.dpad_up) {
-            extender.setPower(-0.7);
+            extender.setPower(-0.9);
         } else if (!isRetractExtenderTimeoutReset) {
             extender.setPower(0);
         }

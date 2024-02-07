@@ -13,8 +13,8 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 import java.util.List;
 
-@TeleOp(name = "Test Pixel Recognition", group = "Test")
-public class TestPixelRecog extends LinearOpMode {
+@TeleOp(name = "Test OCV pixel", group = "Test")
+public class TestOCVPixel extends LinearOpMode {
     private VisionPortal visionPortal;
     private PixelProcessor pixelProcessor;
 
