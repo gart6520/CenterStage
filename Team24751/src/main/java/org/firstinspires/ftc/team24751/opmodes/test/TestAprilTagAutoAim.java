@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
+import static org.firstinspires.ftc.team24751.Constants.VISION.BACK_CAMERA_RESOLUTION;
 
 import android.annotation.SuppressLint;
 import android.util.Size;
@@ -33,7 +34,7 @@ public class TestAprilTagAutoAim extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         aprilTag.initAprilTagProcessor();
-        fieldCamera.buildCamera(new Size(640, 480));
+        fieldCamera.buildCamera(BACK_CAMERA_RESOLUTION);
         drive = new Drivebase(this);
         autoLock.init();
 //        autoLock.getAngleServo().setAngle(0);

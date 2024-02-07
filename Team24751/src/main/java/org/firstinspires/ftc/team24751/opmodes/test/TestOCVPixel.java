@@ -10,6 +10,7 @@ import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Rect;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class TestOCVPixel extends LinearOpMode {
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(CameraName.class, FRONT_CAMERA_NAME))
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(FRONT_CAMERA_RESOLUTION)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)

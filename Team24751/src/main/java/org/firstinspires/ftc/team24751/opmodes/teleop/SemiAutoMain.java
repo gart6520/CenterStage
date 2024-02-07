@@ -33,6 +33,7 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
+import static org.firstinspires.ftc.team24751.Constants.VISION.BACK_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
 
@@ -135,7 +136,7 @@ public class SemiAutoMain extends LinearOpMode {
         droneLauncher.init();
         autoAimAprilTag.init();
         aprilTag.initAprilTagProcessor();
-        backCamera.buildCamera(new Size(640, 480));
+        backCamera.buildCamera(BACK_CAMERA_RESOLUTION);
         poseEstimator = new FullPoseEstimator(
                 this::getBotPosFromAprilTag,
 //                (double deg) -> null,

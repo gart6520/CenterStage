@@ -10,6 +10,7 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.VISION.BACK_CAMERA_RESOLUTION;
 
 import android.util.Size;
 
@@ -59,7 +60,7 @@ public class TestFullPoseEstimation extends LinearOpMode {
         autoAim.init();
         drivebase = new Drivebase(this);
         aprilTag.initAprilTagProcessor();
-        fieldCamera.buildCamera(new Size(640, 480));
+        fieldCamera.buildCamera(BACK_CAMERA_RESOLUTION);
         poseEstimator = new FullPoseEstimator(
                 aprilTag::getCurrentPosFromAprilTag, drivebase::getPoseFuse, PoseStorage.getPose());
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.auto;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
 import android.util.Size;
@@ -39,7 +40,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
         frontCam.addProcessorToQueue(teamPropProcessor);
-        frontCam.buildCamera(new Size(320, 240));
+        frontCam.buildCamera(FRONT_CAMERA_RESOLUTION);
         // Set starting pos
         initStartingCondition();
 

@@ -12,6 +12,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
 import org.opencv.core.Scalar;
+import android.util.Size;
 
 import java.util.ArrayList;
 
@@ -295,6 +296,8 @@ public class Constants {
      * Constant used for Vision
      */
     public static class VISION {
+        public static final Size FRONT_CAMERA_RESOLUTION = new Size(320, 240);
+        public static final Size BACK_CAMERA_RESOLUTION = new Size(640, 480);
 
         public static class APRIL_TAG {
 

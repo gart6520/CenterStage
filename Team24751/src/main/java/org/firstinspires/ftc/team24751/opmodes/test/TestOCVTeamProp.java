@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Constants.allianceColor;
 
 import android.util.Size;
@@ -27,7 +28,7 @@ public class TestOCVTeamProp extends LinearOpMode {
         allianceColor = Constants.AllianceColor.BLUE;
 
         frontCam.addProcessorToQueue(teamPropProcessor);
-        frontCam.buildCamera(new Size(320, 240));
+        frontCam.buildCamera(FRONT_CAMERA_RESOLUTION);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
