@@ -99,7 +99,7 @@ public class AutoTrajectoryManager {
         switch (pos) {
             case wingRed:
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-22.00, -9.50), Math.toRadians(0.00))
+                        .splineToConstantHeading(new Vector2d(-54.00, -9.50), Math.toRadians(0.00))
                         .lineToConstantHeading(new Vector2d(30.00, -9.50))
                         .lineToConstantHeading(new Vector2d(50.65, -36.00))
                         .turn(180)
@@ -107,7 +107,7 @@ public class AutoTrajectoryManager {
                 break;
             case wingBlue:
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-22.00, 9.50), Math.toRadians(0.00))
+                        .splineToConstantHeading(new Vector2d(-54.00, 9.50), Math.toRadians(0.00))
                         .lineToConstantHeading(new Vector2d(30.00, 9.50))
                         .lineToConstantHeading(new Vector2d(50.65, 36.00))
                         .turn(180)
