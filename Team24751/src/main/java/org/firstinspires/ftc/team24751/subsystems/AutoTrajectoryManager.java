@@ -99,31 +99,41 @@ public class AutoTrajectoryManager {
         switch (pos) {
             case wingRed:
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-54.00, -9.50), Math.toRadians(0.00))
+                        .splineToConstantHeading(new Vector2d(-54.00, -9.50), Math.toRadians(180.00))
                         .lineToConstantHeading(new Vector2d(30.00, -9.50))
                         .lineToConstantHeading(new Vector2d(50.65, -36.00))
-                        .turn(180)
                         .build();
                 break;
             case wingBlue:
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-54.00, 9.50), Math.toRadians(0.00))
+                        .splineToConstantHeading(new Vector2d(-54.00, 9.50), Math.toRadians(180.00))
                         .lineToConstantHeading(new Vector2d(30.00, 9.50))
                         .lineToConstantHeading(new Vector2d(50.65, 36.00))
-                        .turn(180)
                         .build();
                 break;
             case backdropRed:
+                // Test both cases
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(47.00, -36.00), Math.toRadians(0.00))
                         .turn(180)
                         .build();
+                /*
+                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(47.00, -36.00), Math.toRadians(180.00))
+                        .build();
+                */
                 break;
             case backdropBlue:
+                // Test both cases
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(47.00, 36.00), Math.toRadians(0.00))
                         .turn(180)
                         .build();
+                /*
+                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(47.00, 36.00), Math.toRadians(180.00))
+                        .build();
+                */
                 break;
         }
 
