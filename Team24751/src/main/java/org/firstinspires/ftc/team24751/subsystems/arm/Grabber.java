@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team24751.subsystems.arm;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LEFT_CLAW;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.RIGHT_CLAW;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,7 +18,10 @@ public class Grabber {
 
     public void init() {
         leftClaw = opMode.hardwareMap.get(ServoImplEx.class, LEFT_CLAW);
+        leftClaw.setPwmRange(REV_SERVO_PWM_RANGE);
+
         rightClaw = opMode.hardwareMap.get(ServoImplEx.class, RIGHT_CLAW);
+        rightClaw.setPwmRange(REV_SERVO_PWM_RANGE);
         rightClaw.setDirection(Servo.Direction.REVERSE);
     }
 
