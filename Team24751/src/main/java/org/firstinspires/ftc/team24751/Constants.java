@@ -227,13 +227,13 @@ public class Constants {
              * ========\
              *           \====
              * */
-            public static double WRIST_GROUND_PARALLEL_DEG = 192;
+            public static double WRIST_GROUND_PARALLEL_DEG = 270;
 
             /* Fully backward and touch arm (min/max angle)
              *      ====\
              * ===========\
              * */
-            public static double WRIST_FULL_BACKWARD_DEG = 30;
+            public static double WRIST_FULL_BACKWARD_DEG = 120;
             /*                 //||
              *               //  ||
              *             //beta||
@@ -259,7 +259,7 @@ public class Constants {
         }
 
         public static class Extender {
-            public static final double EXTENDER_FULLY_IN_THRESHOLD = 50;
+            public static final double EXTENDER_FULLY_IN_THRESHOLD = 20;
         }
 
         public static class DroneLauncher {
@@ -272,11 +272,6 @@ public class Constants {
             public static final double LOAD_YELLOW_PIXEL_YEETER_POSITION = 0;
             public static final double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.45;
 
-        }
-
-        public static class POTENTIOMETER {
-            @SuppressLint("SdCardPath")
-            public static final String LUT_DATA_FILE_NAME = "/sdcard/FIRST/Potentiometer_LUT_data.txt";
         }
 
         @Config

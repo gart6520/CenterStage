@@ -214,6 +214,9 @@ public class SemiAutoMain extends LinearOpMode {
                     // Move grabber up -> no longer blocking drivebase's movement
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
 
+                    // Allow extender control
+                    extenderControl();
+
                     // If grabber button is pressed -> change state from base_moving to intaking
                     // (Technically just move the grabber down to intake position)
                     if (grabberButton) {
@@ -238,7 +241,7 @@ public class SemiAutoMain extends LinearOpMode {
                     // If arm is extended -> retract it before moving
                     // Or the arm's PID will get crazy
                     if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && armMoveUpTimeout.seconds() < 1) {
-                        extender.setPower(0.7);
+                        extender.setPower(1);
                         isRetractExtenderTimeoutReset = true;
                     }
                     // When done retracing the arm's extender -> stop extender motor
@@ -265,7 +268,10 @@ public class SemiAutoMain extends LinearOpMode {
 
                     // Set wrist angle to intake position (fully touch the ground)
                     wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+
+                    // Allow extender control
                     extenderControl();
+
                     // If grabber's reset button is pressed -> switch to quick_reset state
                     // Used to force the grabber to fully touch the ground
                     if (quickResetButton) {
@@ -322,36 +328,39 @@ public class SemiAutoMain extends LinearOpMode {
                     // Get current arm angle
                     double angle = arm.getAngle();
 
+                    // If arm angle is < 20
+                    if (angle < 20) {
+                        arm.setPower(-0.05);
+                    }
+
                     // If arm angle is < 90
-                    if (angle < 90) {
+                    else if (angle < 90) {
                         // If just enter 90 degree state
                         if (!isRetractExtenderTimeoutReset) {
                             // Retract extender
                             retractExtenderTimeout.reset();
                             isRetractExtenderTimeoutReset = true;
-                            extender.setPower(0.7);
+                            extender.setPower(1);
 
                             // Move wrist up to allow base moving
                             wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
 
-                            // Hold the arm, waiting for extender and wrist to complete their job
-                            //arm.setPower(0);
-                        }
-                        arm.setPower(-0.1);
-                        if (angle <= 20) {
-                            arm.setPower(-0.05);
+                            // Stop the arm a little bit
+                            arm.setPower(0);
                         }
 
+                        // Continue to move arm down
+                        arm.setPower(-0.1);
+
                         // If extender is fully retracted
-                        if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1) {
+                        if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1.5) {
                             extender.setPower(0);
-                            //extender.resetPosition();
                         }
                     }
 
                     // If angle > 90 -> move arm down
                     else {
-                        arm.setPower(-0.7);
+                        arm.setPower(-0.4);
                     }
 
                     // If distance sensor reported touching ground or if arm is timeout
@@ -458,29 +467,30 @@ public class SemiAutoMain extends LinearOpMode {
             prev2.copy(curr2);
 
             // Show telemetry
-            telemetry.addData("Current Arm Angle (L + R)", arm.getAngle());
-            telemetry.addData("Current Distance to Backdrop", distance.getDistanceCM());
-            telemetry.addData("FSM State", state.toString());
+            telemetry.addData("Current arm angle (L + R)", arm.getAngle());
+            telemetry.addData("Current distance", distance.getDistanceCM());
+            telemetry.addData("FSM state", state.toString());
             telemetry.addData("Extend position", extender.getPosition());
             telemetry.addData("Robot Pose", botPose.toString());
             Vector2d botPosFromAprilTag = getBotPosFromAprilTag(Math.toDegrees(botPose.getHeading()) + autoAimAprilTag.getCameraAngleRel());
             if (botPosFromAprilTag != null)
-                telemetry.addData("Robot Pose From April Tag", botPosFromAprilTag.toString());
-            telemetry.addData("Robot Pose From Odo", drivebase.getPoseFuse());
-            telemetry.addData("Camera Pos", getCameraPos().toString());
+                telemetry.addData("Robot pose from AprilTag", botPosFromAprilTag.toString());
+            telemetry.addData("Robot pose from odo", drivebase.getPoseFuse());
+            telemetry.addData("Camera pos", getCameraPos().toString());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetryAprilTag();
             telemetry.update();
         }
-        droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
+
+        //droneLauncher.setPosition(LOAD_DRONE_LAUNCHER_POSITION);
     }
 
     private void extenderControl() {
         // Control extender
         if (gamepad2.left_bumper || gamepad2.dpad_down) {
-            extender.setPower(0.9);
+            extender.setPower(1);
         } else if (gamepad2.left_trigger > SENSE_TRIGGER || gamepad2.dpad_up) {
-            extender.setPower(-0.9);
+            extender.setPower(-0.7);
         } else if (!isRetractExtenderTimeoutReset) {
             extender.setPower(0);
         }
