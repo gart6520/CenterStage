@@ -13,6 +13,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
+import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
+import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
+import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
+import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
@@ -29,7 +33,10 @@ public abstract class BaseAuto extends LinearOpMode {
     TeamPropProcessor teamPropProcessor = new TeamPropProcessor();
     protected AutoTrajectoryManager.StartingPos startingPos;
     ElapsedTime timer = new ElapsedTime();
-
+    protected Arm arm = new Arm(this);
+    protected Extender extender = new Extender(this);
+    protected Grabber grabber = new Grabber(this);
+    protected Wrist wrist = new Wrist(this);
     /**
      * Extends this function and set the allianceColor to appropriate color
      */
@@ -48,6 +55,11 @@ public abstract class BaseAuto extends LinearOpMode {
         enableBulkRead(hardwareMap);
         // Init subsystems
         drivebase = new Drivebase(this);
+        arm.init();
+        extender.init();
+        grabber.init();
+        wrist.init();
+
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -55,7 +67,8 @@ public abstract class BaseAuto extends LinearOpMode {
         // Give time for the Team Prop Processor to process the image
         sleep(3000);
 
-        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, this);
+        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, this,
+                extender, arm, grabber, wrist);
 
         // Follow trajectory
         autoTrajectoryManager.followTrajectory();

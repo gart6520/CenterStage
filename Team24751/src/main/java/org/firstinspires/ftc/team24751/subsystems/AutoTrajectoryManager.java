@@ -7,6 +7,9 @@ import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.LEFT_SPIKE_MA
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.RIGHT_SPIKE_MARK;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_BLUE_START_POSE;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_RED_START_POSE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,8 +18,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
+import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
+import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
+import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
+import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.function.Supplier;
 
@@ -37,12 +45,21 @@ public class AutoTrajectoryManager {
     Drivebase drive;
     LinearOpMode opMode;
     ElapsedTime timer = new ElapsedTime();
+    Extender extender;
+    Arm arm;
+    Grabber grabber;
+    Wrist wrist;
 
-    public AutoTrajectoryManager(StartingPos startingPos, Constants.VISION.CV.TeamPropPosition teamPropPos, Drivebase drivebase, LinearOpMode _opMode) {
+    public AutoTrajectoryManager(StartingPos startingPos, Constants.VISION.CV.TeamPropPosition teamPropPos, Drivebase drivebase, LinearOpMode _opMode,
+                                 Extender extender, Arm arm, Grabber grabber, Wrist wrist) {
         pos = startingPos;
         teamPropPosition = teamPropPos;
         drive = drivebase;
         opMode = _opMode;
+        this.extender = extender;
+        this.arm = arm;
+        this.grabber = grabber;
+        this.wrist = wrist;
     }
 
     public static class AutoTrajectory {
@@ -53,12 +70,30 @@ public class AutoTrajectoryManager {
 
         public AutoTrajectory() {
         }
+
+        public AutoTrajectory(TrajectorySequence traj) {
+            purplePixelDrop = traj;
+        }
     }
 
 
     private AutoTrajectory getAutoTrajectory() {
         if (pos == StartingPos.center) {
-            return null; //Return sth u want to test or sth idk
+            return new AutoTrajectory(
+                    drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                            .addDisplacementMarker(() ->
+                            {
+                                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                                grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                            })
+                            .lineTo(new Vector2d(5, 0))
+                            .addDisplacementMarker(() ->
+                            {
+                                grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                            })
+                            .lineTo(new Vector2d(0, 0))
+                            .build()
+            );
         }
         AutoTrajectory result = new AutoTrajectory();
         Pose2d initPose = null;
@@ -162,6 +197,10 @@ public class AutoTrajectoryManager {
         drive.setPoseEstimate(autoTrajectory.purplePixelDrop.start());
         opMode.waitForStart();
         timer.reset();
+        if (pos == StartingPos.center) {
+            drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
+            return;
+        }
         drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
         // TODO: Go to desired position after dropping purple pixel
         drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());

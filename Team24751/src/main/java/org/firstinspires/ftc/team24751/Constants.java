@@ -221,19 +221,19 @@ public class Constants {
         //Constant for wrist and grabber
         @Config
         public static class Hand {
-            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 10;
+            public static final double INIT_WRIST_SERVO_ANGLE_DEG = 0;
 
             /* Parallel to the ground
              * ========\
              *           \====
              * */
-            public static double WRIST_GROUND_PARALLEL_DEG = 270;
+            public static double WRIST_GROUND_PARALLEL_DEG = 180;
 
             /* Fully backward and touch arm (min/max angle)
              *      ====\
              * ===========\
              * */
-            public static double WRIST_FULL_BACKWARD_DEG = 120;
+            public static double WRIST_FULL_BACKWARD_DEG = 30;
             /*                 //||
              *               //  ||
              *             //beta||
