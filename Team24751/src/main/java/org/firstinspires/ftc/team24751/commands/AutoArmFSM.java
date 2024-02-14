@@ -61,7 +61,7 @@ public class AutoArmFSM {
 
     public void update() {
         arm.update();
-        
+
         switch (state) {
             case none: // Impossible state
             case roadrunner:
