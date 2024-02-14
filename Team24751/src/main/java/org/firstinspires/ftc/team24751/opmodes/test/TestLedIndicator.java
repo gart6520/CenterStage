@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_LEFT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_LEFT;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.team24751.subsystems.AngleServo;
 import org.firstinspires.ftc.team24751.subsystems.LedIndicator;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class TestLedIndicator extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Init servo
-        LedIndicator led = new LedIndicator(this);
+        LedIndicator led = new LedIndicator(this, LED_RED_LEFT, LED_GREEN_LEFT);
         led.init();
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);

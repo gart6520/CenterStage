@@ -71,7 +71,6 @@ public class Constants {
 
         // Sensors
         public static final String DISTANCE_SENSOR = "distanceSensor";
-        public static final String POTENTIOMETER = "potentiometer";
 
         // Camera
         public static final String BACK_CAMERA_NAME = "backCamera"; // fieldCamera
@@ -79,8 +78,10 @@ public class Constants {
         // WIP
 
         // LEDs
-        public static final String LED_RED = "ledRed";
-        public static final String LED_GREEN = "ledGreen";
+        public static final String LED_RED_LEFT = "leftRedLed";
+        public static final String LED_GREEN_LEFT = "rightGreenLed";
+        public static final String LED_RED_RIGHT = "rightRedLed";
+        public static final String LED_GREEN_RIGHT = "rightGreenLed";
     }
 
     /**
@@ -254,8 +255,8 @@ public class Constants {
              * */
             public static double WRIST_AUTO_INTAKING_DEG = 210;
 
-            public static double CLOSE_CLAW_POSITION = 0;
-            public static double OPEN_CLAW_POSITION = 0.25;
+            public static double OPEN_CLAW_POSITION = 0;
+            public static double CLOSE_CLAW_POSITION = 0.25;
         }
 
         public static class Extender {

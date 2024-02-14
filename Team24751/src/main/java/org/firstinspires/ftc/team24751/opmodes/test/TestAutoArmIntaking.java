@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team24751.opmodes.test;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_AUTO_INTAKING_ANGLE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_BACKDROP_PARALLEL_ANGLE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_AUTO_INTAKING_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
 
@@ -67,7 +66,7 @@ public class TestAutoArmIntaking extends LinearOpMode {
                     }
                     break;
                 case outaking:
-                    grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                    grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
                     break;
                 case base_moving:
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);

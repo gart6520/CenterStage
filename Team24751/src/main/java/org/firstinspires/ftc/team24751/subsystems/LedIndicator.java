@@ -7,18 +7,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 
 public class LedIndicator {
-    // Hardware map
-    private HardwareMap hardwareMap = null;
+    // OpMode
+    private LinearOpMode opMode;
+
+    // Led name
+    String redName, greenName;
+
     // Digital channels
     private DigitalChannel red = null;
     private DigitalChannel green = null;
 
     /**
      * Led indicator object for handling REV digital led indicator
-     * @param opMode
+     * @param _opMode
      */
-    public LedIndicator(LinearOpMode opMode) {
-        hardwareMap = opMode.hardwareMap;
+    public LedIndicator(LinearOpMode _opMode, String _redName, String _greenName) {
+        this.opMode = _opMode;
+        this.redName = _redName;
+        this.greenName = _greenName;
     }
 
     /**
@@ -26,8 +32,8 @@ public class LedIndicator {
      */
     public void init() {
         // Get DigitalChannel object
-        red = hardwareMap.get(DigitalChannel.class, LED_RED);
-        green = hardwareMap.get(DigitalChannel.class, LED_GREEN);
+        red = this.opMode.hardwareMap.get(DigitalChannel.class, this.redName);
+        green = this.opMode.hardwareMap.get(DigitalChannel.class, this.greenName);
 
         // Set output mode
         red.setMode(DigitalChannel.Mode.OUTPUT);

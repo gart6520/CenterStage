@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
+import org.firstinspires.ftc.team24751.subsystems.LedIndicator;
 import org.firstinspires.ftc.team24751.subsystems.Lift;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
@@ -28,6 +29,10 @@ import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_LEFT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_RIGHT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_LEFT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_RIGHT;
 import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
@@ -40,7 +45,6 @@ import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
 import static org.firstinspires.ftc.team24751.Utility.*;
 
 import android.annotation.SuppressLint;
-import android.util.Size;
 
 import java.util.List;
 
@@ -58,6 +62,8 @@ public class SemiAutoMain extends LinearOpMode {
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
     Lift lift = new Lift(this);
+    LedIndicator leftLED = new LedIndicator(this, LED_RED_LEFT, LED_GREEN_LEFT);
+    LedIndicator rightLED = new LedIndicator(this, LED_RED_RIGHT, LED_GREEN_RIGHT);
     Camera frontCamera = new Camera(FRONT_CAMERA_NAME, this);
     Camera backCamera = new Camera(BACK_CAMERA_NAME, this);
     PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(backCamera, this);
@@ -75,8 +81,8 @@ public class SemiAutoMain extends LinearOpMode {
     // Gamepad 1
     Gamepad prev1 = null;
     Gamepad curr1 = null;
-    boolean grablt = true;
-    boolean grabrt = true;
+    boolean grabLeftClose = true;
+    boolean grabRightClose = true;
 
     // Gamepad 2
     Gamepad prev2 = null;
@@ -135,6 +141,8 @@ public class SemiAutoMain extends LinearOpMode {
         lift.init();
         droneLauncher.init();
         autoAimAprilTag.init();
+        leftLED.init();
+        rightLED.init();
         aprilTag.initAprilTagProcessor();
         backCamera.buildCamera(BACK_CAMERA_RESOLUTION);
         poseEstimator = new FullPoseEstimator(
@@ -418,21 +426,25 @@ public class SemiAutoMain extends LinearOpMode {
              */
 
             if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
-                grablt = !grablt;
-                grabrt = !grabrt;
-                grabber.setPosition(grablt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION, grabrt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
+                grabLeftClose = !grabLeftClose;
+                grabRightClose = !grabRightClose;
+                grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
             } else {// Control left claw
-                if (curr1.right_bumper && !prev1.right_bumper) {
-                    grablt = !grablt;
-                    grabber.leftClaw.setPosition(grablt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
+                if (curr1.left_bumper && !prev1.left_bumper) {
+                    grabLeftClose = !grabLeftClose;
+                    grabber.leftClaw.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
                 }
 
                 // Control right claw
-                if (curr1.left_bumper && !prev1.left_bumper) {
-                    grabrt = !grabrt;
-                    grabber.rightClaw.setPosition(grabrt ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
+                if (curr1.right_bumper && !prev1.right_bumper) {
+                    grabRightClose = !grabRightClose;
+                    grabber.rightClaw.setPosition(grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
                 }
             }
+
+            // Back LED indicator
+            if (!grabLeftClose) leftLED.setAmber(); else leftLED.turnOff();
+            if (!grabRightClose) rightLED.setAmber(); else rightLED.turnOff();
 
             // Reset yaw
             if (curr1.share && !prev1.share) {
