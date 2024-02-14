@@ -18,10 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
-import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
-import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
-import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
-import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
+import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
 
@@ -44,28 +41,22 @@ public class AutoTrajectoryManager {
     Drivebase drive;
     LinearOpMode opMode;
     ElapsedTime timer = new ElapsedTime();
-    Extender extender;
-    Arm arm;
-    Grabber grabber;
-    Wrist wrist;
+    AutoArmFSM autoArmFSM;
 
-    public AutoTrajectoryManager(StartingPos startingPos, Constants.VISION.CV.TeamPropPosition teamPropPos, Drivebase drivebase, LinearOpMode _opMode,
-                                 Extender extender, Arm arm, Grabber grabber, Wrist wrist) {
+    public AutoTrajectoryManager(StartingPos startingPos, Constants.VISION.CV.TeamPropPosition teamPropPos, Drivebase drivebase, LinearOpMode _opMode) {
         pos = startingPos;
         teamPropPosition = teamPropPos;
         drive = drivebase;
         opMode = _opMode;
-        this.extender = extender;
-        this.arm = arm;
-        this.grabber = grabber;
-        this.wrist = wrist;
+        autoArmFSM = new AutoArmFSM(opMode);
     }
 
     public static class AutoTrajectory {
         public TrajectorySequence purplePixelDrop = null;
         // Use supplier to update init pose
         public Supplier<TrajectorySequence> yellowPixelDrop = null;
-        public Supplier<TrajectorySequence> repeat = null;
+        public Supplier<TrajectorySequence> repeatToStack = null;
+        public Supplier<TrajectorySequence> repeatToBackdrop = null;
 
         public AutoTrajectory() {
         }
@@ -77,18 +68,19 @@ public class AutoTrajectoryManager {
 
 
     private AutoTrajectory getAutoTrajectory() {
+        // TODO Refactor all these to new framework
         if (pos == StartingPos.center) {
             return new AutoTrajectory(
                     drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                             .addDisplacementMarker(() ->
                             {
-                                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-                                grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                                autoArmFSM.wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                                autoArmFSM.grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                             })
                             .lineTo(new Vector2d(5, 0))
                             .addDisplacementMarker(() ->
                             {
-                                grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                                autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
                             })
                             .lineTo(new Vector2d(0, 0))
                             .build()
@@ -173,14 +165,14 @@ public class AutoTrajectoryManager {
 
         // Repeat trajectory
         if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
-            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+            result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(-60.00, -9.50))
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(50.65, -36.00))
                     .build();
         } else {
-            result.repeat = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+            result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
                     .lineToConstantHeading(new Vector2d(-60.00, 9.50))
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
@@ -205,7 +197,7 @@ public class AutoTrajectoryManager {
         drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());
         // TODO: Align robot according to desired AprilTag
         while (opMode.opModeIsActive()) {
-            TrajectorySequence repeat = autoTrajectory.repeat.get();
+            TrajectorySequence repeat = autoTrajectory.repeatToStack.get();
             if (30 - timer.seconds() <= repeat.duration()) break;
             drive.followTrajectorySequence(repeat);
         }

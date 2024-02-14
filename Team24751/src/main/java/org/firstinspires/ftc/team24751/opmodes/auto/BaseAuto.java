@@ -4,13 +4,9 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAM
 import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
-import android.util.Size;
-
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
@@ -20,8 +16,6 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
-
-import java.util.List;
 
 public abstract class BaseAuto extends LinearOpMode {
     // Total run time
@@ -67,8 +61,8 @@ public abstract class BaseAuto extends LinearOpMode {
         // Give time for the Team Prop Processor to process the image
         sleep(3000);
 
-        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, this,
-                extender, arm, grabber, wrist);
+        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, this
+        );
 
         // Follow trajectory
         autoTrajectoryManager.followTrajectory();

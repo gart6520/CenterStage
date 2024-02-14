@@ -76,6 +76,9 @@ public class Arm {
         distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
+    /**
+     * @return whether the PID loop has finished
+     * */
     public boolean outakePIDLoop() {
         if (targetAngle == null) {
             outakePID.calculate(0, getAngle());
