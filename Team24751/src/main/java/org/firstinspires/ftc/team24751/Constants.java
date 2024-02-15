@@ -184,6 +184,7 @@ public class Constants {
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static double ARM_BACKDROP_PARALLEL_ANGLE = 130;
+            public static double ARM_BACKDROP_PARALLEL_ANGLE_AUTO = 130;
             /*
              *                       grabber
              *     arm        ======= || |++++++++|  grabber only
@@ -338,9 +339,9 @@ public class Constants {
 
     public static class AUTONOMOUS {
         // TODO tune/measure these number
-        public static final Vector2d LEFT_SPIKE_MARK = new Vector2d(10, 6);
-        public static final Vector2d CENTER_SPIKE_MARK = new Vector2d(10, 0);
-        public static final Vector2d RIGHT_SPIKE_MARK = new Vector2d(10, -6);
+        public static final Pose2d LEFT_SPIKE_MARK = new Pose2d(2, 0, Math.toRadians(30));
+        public static final Pose2d CENTER_SPIKE_MARK = new Pose2d(2, 0, 0);
+        public static final Pose2d RIGHT_SPIKE_MARK = new Pose2d(2, 0, Math.toRadians(-30));
         public static final Pose2d WING_RED_START_POSE = new Pose2d(-36, -64, Math.toRadians(90));
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
         public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(36, -64, Math.toRadians(90));

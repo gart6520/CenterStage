@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team24751.commands;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.EXTENDER_FULLY_IN_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
@@ -12,7 +11,6 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.opmodes.teleop.SemiAutoMain;
 import org.firstinspires.ftc.team24751.subsystems.YellowPixelYeeter;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
@@ -32,8 +30,8 @@ public class AutoArmFSM {
     public ElapsedTime timeoutTimer = new ElapsedTime();
 
     public enum ArmState {
-        none, roadrunner, intaking, yellow_pixel, purple_pixel, outaking,
-        arm_moving_up, arm_moving_down, prepare_intake
+        none, roadrunner, prepare_intaking, yellow_pixel, purple_pixel, outaking,
+        arm_moving_up, arm_moving_down, intaking, after_intake
     }
 
     public ArmState state;
@@ -87,19 +85,24 @@ public class AutoArmFSM {
                     state = ArmState.roadrunner;
                 }
                 break;
-            case intaking: // Special case do this while moving
+            case prepare_intaking: // Special case do this while moving
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-                grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                 break;
                 /*
                 * Must reset waitServoTimer
                 * */
-            case prepare_intake:
+            case intaking:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
                 if (waitServoTimer.seconds() >= 1) {
                     state = ArmState.roadrunner;
                 }
+                break;
+            case after_intake:
+                grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
+                state = ArmState.roadrunner;
                 break;
                 /*
                 * Must reset waitServoTimer
@@ -107,7 +110,8 @@ public class AutoArmFSM {
             case outaking:
                 wrist.autoParallel(arm.getAngle());
                 if (waitServoTimer.seconds() >= 1) {
-                    state = ArmState.roadrunner;
+                    timeoutTimer.reset();
+                    state = ArmState.arm_moving_down;
                 } else if (waitServoTimer.seconds() >= 0.5) {
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                 }

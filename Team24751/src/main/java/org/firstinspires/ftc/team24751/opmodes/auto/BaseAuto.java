@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
@@ -27,10 +28,8 @@ public abstract class BaseAuto extends LinearOpMode {
     TeamPropProcessor teamPropProcessor = new TeamPropProcessor();
     protected AutoTrajectoryManager.StartingPos startingPos;
     ElapsedTime timer = new ElapsedTime();
-    protected Arm arm = new Arm(this);
-    protected Extender extender = new Extender(this);
-    protected Grabber grabber = new Grabber(this);
-    protected Wrist wrist = new Wrist(this);
+    protected AutoArmFSM autoArmFSM = new AutoArmFSM(this);
+
     /**
      * Extends this function and set the allianceColor to appropriate color
      */
@@ -49,10 +48,7 @@ public abstract class BaseAuto extends LinearOpMode {
         enableBulkRead(hardwareMap);
         // Init subsystems
         drivebase = new Drivebase(this);
-        arm.init();
-        extender.init();
-        grabber.init();
-        wrist.init();
+        autoArmFSM.init();
 
         // Update status
         telemetry.addData("Status", "Initialized");
@@ -61,8 +57,7 @@ public abstract class BaseAuto extends LinearOpMode {
         // Give time for the Team Prop Processor to process the image
         sleep(3000);
 
-        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, this
-        );
+        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, autoArmFSM, this);
 
         // Follow trajectory
         autoTrajectoryManager.followTrajectory();
