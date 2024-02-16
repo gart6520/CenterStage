@@ -59,6 +59,7 @@ public class AutoTrajectoryManager {
 
     public static class AutoTrajectory {
         public TrajectorySequence purplePixelDrop = null;
+        public TrajectorySequence afterPurplePixel = null;
         // Use supplier to update init pose
         public Supplier<TrajectorySequence> yellowPixelDrop = null;
         public Supplier<TrajectorySequence> repeatToStack = null;
@@ -134,53 +135,60 @@ public class AutoTrajectoryManager {
                 .build();
         // Yellow pixel drop trajectory
         switch (pos) {
-            // TODO: Make all start of yellow traj go to a point
+            // TODO: Make all start of yellow traj go to a point (may not be necessary)
             case wingRed:
+                /*
+                result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(-36.00, -48.00, Math.toRadians(90.00)))
+                        .build();
+                 */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-54.00, -9.50), Math.toRadians(180.00))
-                        .lineToConstantHeading(new Vector2d(30.00, -9.50))
+                        .lineToLinearHeading(new Pose2d(-36.00, -60.00, Math.toRadians(180.00)))
+                        .lineToConstantHeading(new Vector2d(20.00, -60.00))
                         .lineToConstantHeading(new Vector2d(50.65, -36.00))
                         .build();
                 break;
             case wingBlue:
+                /*
+                result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(-36.00, 48.00, Math.toRadians(90.00)))
+                        .build();
+                 */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-54.00, 9.50), Math.toRadians(180.00))
-                        .lineToConstantHeading(new Vector2d(30.00, 9.50))
+                        .lineToLinearHeading(new Pose2d(-36.00, 60.00, Math.toRadians(180.00)))
+                        .lineToConstantHeading(new Vector2d(20.00, 60.00))
                         .lineToConstantHeading(new Vector2d(50.65, 36.00))
                         .build();
                 break;
             case backdropRed:
-                // Test both cases
-                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(47.00, -36.00), Math.toRadians(0.00))
-                        .turn(180)
-                        .build();
                 /*
-                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(47.00, -36.00), Math.toRadians(180.00))
+                result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(12.00, -48.00, Math.toRadians(90.00)))
                         .build();
-                */
+                 */
+                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(50.65, -36.00, Math.toRadians(180.00)))
+                        .build();
                 break;
             case backdropBlue:
-                // Test both cases
-                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(47.00, 36.00), Math.toRadians(0.00))
-                        .turn(180)
-                        .build();
                 /*
-                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(47.00, 36.00), Math.toRadians(180.00))
+                result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(12.00, 48.00, Math.toRadians(90.00)))
                         .build();
-                */
+                 */
+                result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(50.65, 36.00, Math.toRadians(180.00)))
+                        .build();
                 break;
         }
 
         // Repeat trajectory
         if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
-            // TODO split
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(-60.00, -9.50))
+                    .build();
+            result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(50.65, -36.00))
                     .build();
@@ -188,6 +196,8 @@ public class AutoTrajectoryManager {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
                     .lineToConstantHeading(new Vector2d(-60.00, 9.50))
+                    .build();
+            result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
                     .lineToConstantHeading(new Vector2d(50.65, 36.00))
                     .build();
@@ -212,7 +222,11 @@ public class AutoTrajectoryManager {
         while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
             autoArmFSM.update();
         }
-        // Go to desired position after dropping purple pixel
+
+        // Go to allocated position (may not be necessary but still keep here just in case)
+        // drive.followTrajectorySequence(autoTrajectory.afterPurplePixel);
+
+        // Drop yellow Pixel
         drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());
 
         autoArmFSM.waitServoTimer.reset();
