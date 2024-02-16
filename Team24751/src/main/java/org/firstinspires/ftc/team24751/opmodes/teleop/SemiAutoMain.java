@@ -2,6 +2,9 @@ package org.firstinspires.ftc.team24751.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.commands.standard.LynxSetModuleLEDColorCommand;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -24,6 +27,7 @@ import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
@@ -95,6 +99,9 @@ public class SemiAutoMain extends LinearOpMode {
     ElapsedTime droneLauncherHoldingTimer = new ElapsedTime();
     boolean isRetractExtenderTimeoutReset = false;
 
+    // Hubs objects
+    List<LynxModule> allHubs = null;
+
     // Helper function for dropping the arm down and reset
     private void dropArmAndReset() {
         ElapsedTime timer = new ElapsedTime();
@@ -152,7 +159,7 @@ public class SemiAutoMain extends LinearOpMode {
                 drivebase::getPoseFuse, PoseStorage.getPose());
 
         // Enable bulk reads in auto mode
-        enableBulkRead(hardwareMap);
+        allHubs = enableBulkRead(hardwareMap);
 
         // Init gamepad objects
         prev1 = new Gamepad();
@@ -178,6 +185,9 @@ public class SemiAutoMain extends LinearOpMode {
 
         // Reset runtime
         runtime.reset();
+
+        // Update Lynx LED
+        lynxLEDUpdate();
 
         // Drop the arm down and reset arm angle
         dropArmAndReset();
@@ -222,8 +232,19 @@ public class SemiAutoMain extends LinearOpMode {
                     // Move grabber up -> no longer blocking drivebase's movement
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
 
-                    // Allow extender control
-                    extenderControl();
+                    // If arm is extended -> retract it before moving
+                    if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && retractExtenderTimeout.seconds() < 1) {
+                        extender.setPower(1);
+                        isRetractExtenderTimeoutReset = true;
+                    }
+
+                    // When done retracing the arm's extender -> stop extender motor
+                    else if (retractExtenderTimeout.seconds() < 1.5){
+                        isRetractExtenderTimeoutReset = false;
+
+                        // Allow extender control
+                        extenderControl();
+                    }
 
                     // If grabber button is pressed -> change state from base_moving to intaking
                     // (Technically just move the grabber down to intake position)
@@ -253,7 +274,7 @@ public class SemiAutoMain extends LinearOpMode {
                         isRetractExtenderTimeoutReset = true;
                     }
                     // When done retracing the arm's extender -> stop extender motor
-                    else if (armMoveUpTimeout.seconds() < 1.5 || extender.getPosition() <= EXTENDER_FULLY_IN_THRESHOLD) {
+                    else if (armMoveUpTimeout.seconds() < 1.5) {
                         extender.setPower(0);
                         isRetractExtenderTimeoutReset = false;
                     }
@@ -291,7 +312,7 @@ public class SemiAutoMain extends LinearOpMode {
                     // (Technically just move the grabber up to avoid touching the ground)
                     else if (grabberButton) {
                         state = ArmState.base_moving;
-                        armMoveDownTimeout.reset();
+                        retractExtenderTimeout.reset();
                     }
 
                     // If arm switch state button is pressed -> switch to arm_moving_up state
@@ -368,7 +389,7 @@ public class SemiAutoMain extends LinearOpMode {
 
                     // If angle > 90 -> move arm down
                     else {
-                        arm.setPower(-0.4);
+                        arm.setPower(-0.55);
                     }
 
                     // If distance sensor reported touching ground or if arm is timeout
@@ -500,7 +521,7 @@ public class SemiAutoMain extends LinearOpMode {
     private void extenderControl() {
         // Control extender
         if (gamepad2.left_bumper || gamepad2.dpad_down) {
-            extender.setPower(1);
+            extender.setPower(0.7);
         } else if (gamepad2.left_trigger > SENSE_TRIGGER || gamepad2.dpad_up) {
             extender.setPower(-0.7);
         } else if (!isRetractExtenderTimeoutReset) {
@@ -548,5 +569,27 @@ public class SemiAutoMain extends LinearOpMode {
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }   // end for() loop
+    }
+
+    private void lynxLEDUpdate() {
+        // Command for the first hub
+        LynxSetModuleLEDColorCommand cmd0 = new LynxSetModuleLEDColorCommand(allHubs.get(0),
+                (byte) 255,
+                (byte) 0,
+                (byte) 255);
+
+        // Command for the second hub
+        LynxSetModuleLEDColorCommand cmd1 = new LynxSetModuleLEDColorCommand(allHubs.get(1),
+                (byte) 255,
+                (byte) 0,
+                (byte) 255);
+
+        // Send command
+        try {
+            cmd0.send();
+            cmd1.send();
+        } catch (InterruptedException | LynxNackException e) {
+            e.printStackTrace();
+        }
     }
 }

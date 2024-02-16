@@ -2,8 +2,11 @@ package org.firstinspires.ftc.team24751.subsystems;
 
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.BACKDROP_BLUE_START_POSE;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.BACKDROP_RED_START_POSE;
+import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.CENTER_BACKDROP;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.CENTER_SPIKE_MARK;
+import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.LEFT_BACKDROP;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.LEFT_SPIKE_MARK;
+import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.RIGHT_BACKDROP;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.RIGHT_SPIKE_MARK;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_BLUE_START_POSE;
 import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_RED_START_POSE;
@@ -217,7 +220,23 @@ public class AutoTrajectoryManager {
         while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
             autoArmFSM.update();
         }
-        // TODO: Align robot according to desired AprilTag
+        Vector2d toCorrectBackdropPos = new Vector2d();
+        switch (teamPropPosition) {
+            case LEFT:
+                toCorrectBackdropPos = LEFT_BACKDROP;
+                break;
+            case RIGHT:
+                toCorrectBackdropPos = RIGHT_BACKDROP;
+                break;
+            case CENTER:
+                toCorrectBackdropPos = CENTER_BACKDROP;
+                break;
+        }
+        Pose2d pose0 = drive.getPoseEstimate();
+        drive.followTrajectorySequence(drive.trajectorySequenceBuilder(pose0)
+                .lineTo(new Vector2d(pose0.getX(), pose0.getY()).plus(toCorrectBackdropPos))
+                .build()
+        );
         while (opMode.opModeIsActive()) {
             TrajectorySequence repeatToStack = autoTrajectory.repeatToStack.get();
             drive.followTrajectorySequence(repeatToStack);
@@ -234,8 +253,7 @@ public class AutoTrajectoryManager {
 
             autoArmFSM.waitServoTimer.reset();
             autoArmFSM.state = AutoArmFSM.ArmState.intaking;
-            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner)
-            {
+            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
                 autoArmFSM.update();
             }
             Pose2d pose2 = drive.getPoseEstimate();
@@ -251,11 +269,11 @@ public class AutoTrajectoryManager {
             autoArmFSM.timeoutTimer.reset();
             autoArmFSM.arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE_AUTO);
             autoArmFSM.state = AutoArmFSM.ArmState.arm_moving_up;
-            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner)
-            {
+            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
                 autoArmFSM.update();
             }
-            if (30 - timer.seconds() <= repeatToStack.duration() + repeatToBackdrop.duration() + 5) break;
+            if (30 - timer.seconds() <= repeatToStack.duration() + repeatToBackdrop.duration() + 5)
+                break;
         }
     }
 }

@@ -183,7 +183,7 @@ public class Constants {
             //TODO: tune/calculate
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
-            public static double ARM_BACKDROP_PARALLEL_ANGLE = 130;
+            public static double ARM_BACKDROP_PARALLEL_ANGLE = 139;
             public static double ARM_BACKDROP_PARALLEL_ANGLE_AUTO = 130;
             /*
              *                       grabber
@@ -245,7 +245,7 @@ public class Constants {
              *  beta = BACKDROP_PARALLEL_DEG - alpha
              * */
             //TODO Tune backdrop (lesser mean more far from arm)
-            public static double WRIST_BACKDROP_PARALLEL_DEG = 90;
+            public static double WRIST_BACKDROP_PARALLEL_DEG = 120;
             /*
              *                       grabber
              *     arm        ======= || |++++++++|  grabber only
@@ -346,6 +346,9 @@ public class Constants {
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
         public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(36, -64, Math.toRadians(90));
         public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(36, 64, Math.toRadians(-90));
+        public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6);
+        public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
+        public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6);
 
     }
 }

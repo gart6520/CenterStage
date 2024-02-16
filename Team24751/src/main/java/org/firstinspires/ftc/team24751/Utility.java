@@ -44,12 +44,14 @@ public class Utility {
      *
      * @param hardwareMap hardwareMap object from opMode
      */
-    public static void enableBulkRead(HardwareMap hardwareMap) {
+    public static List<LynxModule> enableBulkRead(HardwareMap hardwareMap) {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        return allHubs;
     }
 
     /**
