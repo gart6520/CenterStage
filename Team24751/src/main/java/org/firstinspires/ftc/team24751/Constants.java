@@ -346,8 +346,8 @@ public class Constants {
         public static final Pose2d RIGHT_SPIKE_MARK = new Pose2d(0, 2, Math.toRadians(-30));
         public static final Pose2d WING_RED_START_POSE = new Pose2d(-36, -64, Math.toRadians(90));
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
-        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(36, -64, Math.toRadians(90));
-        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(36, 64, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(12, -64, Math.toRadians(90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(12, 64, Math.toRadians(-90));
         public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6);
         public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
         public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6);
