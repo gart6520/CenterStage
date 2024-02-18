@@ -82,6 +82,8 @@ public class Constants {
         public static final String LED_GREEN_LEFT = "rightGreenLed";
         public static final String LED_RED_RIGHT = "rightRedLed";
         public static final String LED_GREEN_RIGHT = "rightGreenLed";
+        public static final String LED_RED_WRIST = "wristRedLed";
+        public static final String LED_GREEN_WRIST = "wristGreenLed";
     }
 
     /**
@@ -256,7 +258,7 @@ public class Constants {
              * */
             public static double WRIST_AUTO_INTAKING_DEG = 210;
 
-            public static double OPEN_CLAW_POSITION = 0;
+            public static double OPEN_CLAW_POSITION = 0.011111111111111112;
             public static double CLOSE_CLAW_POSITION = 0.25;
         }
 
@@ -339,9 +341,9 @@ public class Constants {
 
     public static class AUTONOMOUS {
         // TODO tune/measure these number
-        public static final Pose2d LEFT_SPIKE_MARK = new Pose2d(2, 0, Math.toRadians(30));
-        public static final Pose2d CENTER_SPIKE_MARK = new Pose2d(2, 0, 0);
-        public static final Pose2d RIGHT_SPIKE_MARK = new Pose2d(2, 0, Math.toRadians(-30));
+        public static final Pose2d LEFT_SPIKE_MARK = new Pose2d(0, 2, Math.toRadians(30));
+        public static final Pose2d CENTER_SPIKE_MARK = new Pose2d(0, 2, 0);
+        public static final Pose2d RIGHT_SPIKE_MARK = new Pose2d(0, 2, Math.toRadians(-30));
         public static final Pose2d WING_RED_START_POSE = new Pose2d(-36, -64, Math.toRadians(90));
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
         public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(36, -64, Math.toRadians(90));

@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequenceRunner;
@@ -75,6 +76,7 @@ public class Drivebase extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
     private Localizer localizer;
     private Pose2d deltaPose;
+    private double driverAngle = 0;
     private LinearOpMode opMode;
 
     public Drivebase(LinearOpMode _opMode) {
@@ -334,6 +336,14 @@ public class Drivebase extends MecanumDrive {
     }
 
     /**
+     * Set driver angle
+     * Field-oriented drive will depend on this angle
+     */
+    public void setDriverAngle(double angle) {
+        this.driverAngle = angle;
+    }
+
+    /**
      * Drive method for Drivebase class - Mecanum drive
      * Note: this method already include pose update, so you don't have to manually call update()
      *
@@ -359,8 +369,8 @@ public class Drivebase extends MecanumDrive {
      */
     public void driveFieldOriented(double xSpeed, double ySpeed, double zSpeed) {
         // Get bot heading (from odometry pods)
-        update(); //Update before get pose
-        double botHeading = this.getPoseEstimate().getHeading();
+        update(); // Update before getting pose
+        double botHeading = this.getPoseEstimate().getHeading() - this.driverAngle;
 
         // Get the rotated velocity
         double rotX = xSpeed * Math.cos(-botHeading) - ySpeed * Math.sin(-botHeading);
