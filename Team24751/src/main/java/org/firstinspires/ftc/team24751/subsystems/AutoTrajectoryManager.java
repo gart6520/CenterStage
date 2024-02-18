@@ -215,6 +215,7 @@ public class AutoTrajectoryManager {
             drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
             return;
         }
+        autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
         drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
 
         autoArmFSM.timeoutTimer.reset();

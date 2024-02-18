@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.team24751.opmodes.auto;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.LOAD_YELLOW_PIXEL_YEETER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
@@ -53,11 +56,13 @@ public abstract class BaseAuto extends LinearOpMode {
         // Update status
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+        autoArmFSM.yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
         // Give time for the Team Prop Processor to process the image
         sleep(3000);
 
-        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, autoArmFSM, this);
+//        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, autoArmFSM, this);
+        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, Constants.VISION.CV.TeamPropPosition.LEFT, drivebase, autoArmFSM, this);
 
         // Follow trajectory
         autoTrajectoryManager.followTrajectory();

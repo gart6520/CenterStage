@@ -258,8 +258,8 @@ public class Constants {
              * */
             public static double WRIST_AUTO_INTAKING_DEG = 210;
 
-            public static double OPEN_CLAW_POSITION = 0.011111111111111112;
-            public static double CLOSE_CLAW_POSITION = 0.25;
+            public static double OPEN_CLAW_POSITION = 0.25;
+            public static double CLOSE_CLAW_POSITION =  0.011111111111111112;
         }
 
         public static class Extender {

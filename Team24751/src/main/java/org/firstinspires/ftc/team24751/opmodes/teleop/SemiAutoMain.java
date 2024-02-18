@@ -484,8 +484,8 @@ public class SemiAutoMain extends LinearOpMode {
             }
 
             // Back LED indicator
-            if (!grabLeftClose) leftLED.setAmber(); else leftLED.turnOff();
-            if (!grabRightClose) rightLED.setAmber(); else rightLED.turnOff();
+            if (grabLeftClose) leftLED.setAmber(); else leftLED.turnOff();
+            if (grabRightClose) rightLED.setAmber(); else rightLED.turnOff();
 
             // Reset yaw
             if (curr1.share && !prev1.share) {

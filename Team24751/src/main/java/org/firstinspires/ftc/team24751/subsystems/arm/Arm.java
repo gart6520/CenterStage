@@ -30,6 +30,7 @@ public class Arm {
     Double targetAngle = null;
     WPILibMotionProfile motionProfile = null;
     ElapsedTime timer = new ElapsedTime();
+    public WPILibMotionProfile.State targetState;
     FuseSensor armAngleEstimator = new FuseSensor(0, 1,
             new FuseSensor.FuseSensorParameter(3, 3, 1));
     double currentAngle = Double.NaN;
@@ -50,6 +51,7 @@ public class Arm {
 
     /**
      * Call update() before this
+     *
      * @see #update()
      */
     public double getAngle() {
@@ -78,13 +80,14 @@ public class Arm {
 
     /**
      * @return whether the PID loop has finished
-     * */
+     */
     public boolean outakePIDLoop() {
         if (targetAngle == null) {
             outakePID.calculate(0, getAngle());
             return true;
         }
         WPILibMotionProfile.State targetState = motionProfile.calculate(timer.seconds());
+        this.targetState = targetState;
         double rawPIDPow = outakePID.calculate(targetState.position, getAngle());
         double pidPow = Math.max(Math.abs(rawPIDPow), ARM_ANGLE_MIN_PID_POW) * Math.signum(rawPIDPow);
         if (Math.abs(getAngle() - targetAngle) < ANGLE_TOLERANCE) {
@@ -117,8 +120,8 @@ public class Arm {
         leftArmMotor.setPower(vel);
         rightArmMotor.setPower(vel);
     }
-    public boolean autoIntakePIDLoop()
-    {
+
+    public boolean autoIntakePIDLoop() {
         if (targetAngle == null) {
             autoIntakePID.calculate(0, getAngle());
             return true;
