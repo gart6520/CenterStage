@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.opmodes.test.roadrunner;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.T
  * These coefficients can be tuned live in dashboard.
  */
 @Config
+@Disabled
 @Autonomous(name = "FollowerPIDTuner", group = "roadrunner")
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
