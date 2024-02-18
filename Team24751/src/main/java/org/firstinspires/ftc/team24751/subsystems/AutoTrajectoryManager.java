@@ -151,7 +151,7 @@ public class AutoTrajectoryManager {
             case wingBlue:
                 /*
                 result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-36.00, 48.00, Math.toRadians(90.00)))
+                        .lineToLinearHeading(new Pose2d(-36.00, 48.00, Math.toRadians(-90.00)))
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -173,7 +173,7 @@ public class AutoTrajectoryManager {
             case backdropBlue:
                 /*
                 result.afterPurplePixel = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(12.00, 48.00, Math.toRadians(90.00)))
+                        .lineToLinearHeading(new Pose2d(12.00, 48.00, Math.toRadians(-90.00)))
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
