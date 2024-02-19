@@ -247,7 +247,7 @@ public class Constants {
              *  beta = BACKDROP_PARALLEL_DEG - alpha
              * */
             //TODO Tune backdrop (lesser mean more far from arm)
-            public static double WRIST_BACKDROP_PARALLEL_DEG = 120;
+            public static double WRIST_BACKDROP_PARALLEL_DEG = 105;
             /*
              *                       grabber
              *     arm        ======= || |++++++++|  grabber only

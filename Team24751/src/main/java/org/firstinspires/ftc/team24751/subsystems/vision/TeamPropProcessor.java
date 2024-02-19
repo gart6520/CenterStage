@@ -142,7 +142,8 @@ public class TeamPropProcessor implements VisionProcessor {
         }
 
         catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return center; // I know it's bad but we have to do something instead of crashing
         }
     }
 
