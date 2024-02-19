@@ -88,8 +88,8 @@ public class SemiAutoMain extends LinearOpMode {
     // Gamepad 1
     Gamepad prev1 = null;
     Gamepad curr1 = null;
-    boolean grabLeftClose = true;
-    boolean grabRightClose = true;
+    boolean grabLeftClose = false;
+    boolean grabRightClose = false;
 
     // Gamepad 2
     Gamepad prev2 = null;
@@ -138,6 +138,8 @@ public class SemiAutoMain extends LinearOpMode {
         // Set initial state to intaking
         // After drop arm and reset, the arm now should be at intake position
         state = ArmState.base_moving;
+        grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+
     }
 
     @Override
@@ -254,7 +256,7 @@ public class SemiAutoMain extends LinearOpMode {
                     }
 
                     // When done retracing the arm's extender -> stop extender motor
-                    else if (retractExtenderTimeout.seconds() < 1.5){
+                    else if (retractExtenderTimeout.seconds() < 1.5) {
                         isRetractExtenderTimeoutReset = false;
 
                         // Allow extender control
@@ -484,8 +486,10 @@ public class SemiAutoMain extends LinearOpMode {
             }
 
             // Back LED indicator
-            if (grabLeftClose) leftLED.setAmber(); else leftLED.turnOff();
-            if (grabRightClose) rightLED.setAmber(); else rightLED.turnOff();
+            if (grabLeftClose) leftLED.setAmber();
+            else leftLED.turnOff();
+            if (grabRightClose) rightLED.setAmber();
+            else rightLED.turnOff();
 
             // Reset yaw
             if (curr1.share && !prev1.share) {

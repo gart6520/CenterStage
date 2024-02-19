@@ -37,14 +37,17 @@ public class TestOCVTeamProp extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
+            sleep(1500);
+            //while(opModeIsActive())
+            {
                 telemetry.addData("Team prop position", teamPropProcessor.getPos().toString());
+                telemetry.addData("Contour area", teamPropProcessor.getArea());
+                telemetry.addData("Center (X)", teamPropProcessor.getCenter());
                 telemetry.update();
-
-                // Share the CPU.
-                sleep(100);
             }
+
+            // Share the CPU.
+            frontCam.close();
         }
     }
 }
