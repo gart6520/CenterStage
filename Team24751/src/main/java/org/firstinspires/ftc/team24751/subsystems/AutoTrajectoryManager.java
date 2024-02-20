@@ -18,12 +18,17 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.W
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
 import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstants;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
 
@@ -210,15 +215,37 @@ public class AutoTrajectoryManager {
         if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
+                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
+                    .addDisplacementMarker(() ->
+                    {
+                        autoArmFSM.state = AutoArmFSM.ArmState.prepare_intaking;
+                        autoArmFSM.update();
+                    })
                     .lineToConstantHeading(new Vector2d(-60.00, -9.50))
                     .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .setConstraints(
+                            new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
+                            new ProfileAccelerationConstraint(1000))
+                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
+                    .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(50.65, -36.00))
                     .build();
         } else {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .setConstraints(
+                            new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
+                            new ProfileAccelerationConstraint(1000))
+                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
+                    .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
+                    .lineToConstantHeading(new Vector2d(-55.00, 9.50))
+                    .addDisplacementMarker(() ->
+                    {
+                        autoArmFSM.state = AutoArmFSM.ArmState.prepare_intaking;
+                        autoArmFSM.update();
+                    })
                     .lineToConstantHeading(new Vector2d(-60.00, 9.50))
                     .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -231,17 +258,21 @@ public class AutoTrajectoryManager {
 
     public void followTrajectory() {
         AutoTrajectory autoTrajectory = getAutoTrajectory();
-        if (autoTrajectory == null) return;
+        if (autoTrajectory == null) return; // Just in case
         drive.setPoseEstimate(autoTrajectory.purplePixelDrop.start());
 
         timer.reset();
+        // For testing only
         if (pos == StartingPos.center) {
             drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
             return;
         }
+
+        // Go to spike mark appropriately
         autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
         drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
 
+        // Drop purple Pixel
         autoArmFSM.timeoutTimer.reset();
         autoArmFSM.state = AutoArmFSM.ArmState.purple_pixel;
         while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
@@ -251,43 +282,42 @@ public class AutoTrajectoryManager {
         // Go to allocated position (may not be necessary but still keep here just in case)
         // drive.followTrajectorySequence(autoTrajectory.afterPurplePixel);
 
-        // Drop yellow Pixel
+        // Go to backdrop for yellow pixel drop
         drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());
 
+        // Drop yellow Pixel
         autoArmFSM.waitServoTimer.reset();
         autoArmFSM.state = AutoArmFSM.ArmState.yellow_pixel;
         while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
             autoArmFSM.update();
         }
         while (opMode.opModeIsActive()) {
+            // Go to stack
             TrajectorySequence repeatToStack = autoTrajectory.repeatToStack.get();
             drive.followTrajectorySequence(repeatToStack);
-            autoArmFSM.state = AutoArmFSM.ArmState.prepare_intaking;
-            Pose2d pose1 = drive.getPoseEstimate();
-            drive.followTrajectorySequenceAsync(
-                    drive.trajectorySequenceBuilder(pose1)
-                            .lineTo(new Vector2d(pose1.getX() - 5, pose1.getY()))
-                            .build());
-            while (drive.isBusy()) {
-                autoArmFSM.update();
-                drive.update();
-            }
 
+            // Intaking
             autoArmFSM.waitServoTimer.reset();
             autoArmFSM.state = AutoArmFSM.ArmState.intaking;
             while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
                 autoArmFSM.update();
             }
+
+            // Go back FAST
             Pose2d pose2 = drive.getPoseEstimate();
             drive.followTrajectorySequenceAsync(
                     drive.trajectorySequenceBuilder(pose2)
+//                            .setConstraints(new MecanumVelocityConstraint(), new Meca)
                             .lineTo(new Vector2d(pose2.getX() + 5, pose2.getY()))
                             .build());
+
+            // Go to backdrop
             autoArmFSM.state = AutoArmFSM.ArmState.after_intake;
             autoArmFSM.update();
             TrajectorySequence repeatToBackdrop = autoTrajectory.repeatToBackdrop.get();
             drive.followTrajectorySequence(repeatToBackdrop);
 
+            // Outtake Pixels
             autoArmFSM.timeoutTimer.reset();
             autoArmFSM.arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE_AUTO);
             autoArmFSM.state = AutoArmFSM.ArmState.arm_moving_up;

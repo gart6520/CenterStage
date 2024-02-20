@@ -89,9 +89,10 @@ public class AutoArmFSM {
                     state = ArmState.roadrunner;
                 }
                 break;
-            case prepare_intaking: // Special case do this while moving
+            case prepare_intaking:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                state = ArmState.roadrunner;
                 break;
             /*
              * Must reset waitServoTimer

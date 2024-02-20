@@ -49,14 +49,13 @@ public class Constants {
         public static final String LEFT_ARM_MOTOR = "leftArmMotor";
         public static final String RIGHT_ARM_MOTOR = "rightArmMotor";
         public static final String EXTENDER_MOTOR = "extendMotor";
-        public static final String LIFT_MOTOR = "liftMotor";
+        public static final String CLIMBER_MOTOR = "liftMotor";
 
 
         //Encoders (could be the same name as other motors)
         public static final String LEFT_ODO = RIGHT_FRONT;
         public static final String RIGHT_ODO = RIGHT_ARM_MOTOR;
         public static final String FRONT_ODO = RIGHT_BACK;
-        // TODO: Set encoder name to correct motor
         public static final String LEFT_ARM_ENCODER = LEFT_ARM_MOTOR;
         public static final String RIGHT_ARM_ENCODER = LEFT_FRONT;
         public static final String EXTENDER_ENCODER = EXTENDER_MOTOR;

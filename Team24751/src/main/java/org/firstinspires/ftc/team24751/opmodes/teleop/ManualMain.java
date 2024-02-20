@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
-import org.firstinspires.ftc.team24751.subsystems.Lift;
+import org.firstinspires.ftc.team24751.subsystems.Climber;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
@@ -36,7 +36,7 @@ public class ManualMain extends LinearOpMode {
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
 
-    Lift lift = new Lift(this);
+    Climber climber = new Climber(this);
 
     // Gamepad
     Gamepad prev1 = null;
@@ -60,7 +60,7 @@ public class ManualMain extends LinearOpMode {
         grabber.init();
         extender.init();
         distance.init();
-        lift.init();
+        climber.init();
         droneLauncher.init();
 
         // Enable bulk reads in auto mode
@@ -148,7 +148,7 @@ public class ManualMain extends LinearOpMode {
             if (gamepad2.dpad_left) liftPower = -0.8;
             if (gamepad2.dpad_right) liftPower = 0.8;
 
-            lift.setPower(liftPower);
+            climber.setPower(liftPower);
 
             if (gamepad2.triangle) {
                 extender.setPower(0.6);

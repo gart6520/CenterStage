@@ -14,7 +14,7 @@ import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
 import org.firstinspires.ftc.team24751.subsystems.LedIndicator;
-import org.firstinspires.ftc.team24751.subsystems.Lift;
+import org.firstinspires.ftc.team24751.subsystems.Climber;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 
@@ -27,7 +27,6 @@ import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
@@ -67,7 +66,7 @@ public class SemiAutoMain extends LinearOpMode {
     Extender extender = new Extender(this);
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
-    Lift lift = new Lift(this);
+    Climber climber = new Climber(this);
     LedIndicator leftLED = new LedIndicator(this, LED_RED_LEFT, LED_GREEN_LEFT);
     LedIndicator rightLED = new LedIndicator(this, LED_RED_RIGHT, LED_GREEN_RIGHT);
     LedIndicator wristLED = new LedIndicator(this, LED_RED_WRIST, LED_GREEN_WRIST);
@@ -156,7 +155,7 @@ public class SemiAutoMain extends LinearOpMode {
         grabber.init();
         extender.init();
         distance.init();
-        lift.init();
+        climber.init();
         droneLauncher.init();
         autoAimAprilTag.init();
         leftLED.init();
@@ -509,13 +508,13 @@ public class SemiAutoMain extends LinearOpMode {
             // Hang
             if (gamepad1.triangle) {
                 // Up
-                lift.setPower(1);
+                climber.setPower(1);
             } else if (gamepad1.cross && !gamepad1.options) {
                 // Down
-                lift.setPower(-1);
+                climber.setPower(-1);
             } else {
                 // Stop
-                lift.setPower(0);
+                climber.setPower(0);
             }
 
             // Update prev1 gamepad
