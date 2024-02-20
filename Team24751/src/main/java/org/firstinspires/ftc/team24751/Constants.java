@@ -353,13 +353,14 @@ public class Constants {
         public static final Mat.Tuple3<Double> LEFT_SPIKE_MARK = new Mat.Tuple3<>(18.0, -3.0, Math.toRadians(52));
         public static final Mat.Tuple3<Double> CENTER_SPIKE_MARK = new Mat.Tuple3<>(22.0, 0.0, Math.toRadians(0));
         public static final Mat.Tuple3<Double> RIGHT_SPIKE_MARK = new Mat.Tuple3<>(18.0, 0.0, Math.toRadians(-47));
-        public static final Pose2d WING_RED_START_POSE = new Pose2d(-37, -64, Math.toRadians(90));
-        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-33, 64, Math.toRadians(-90));
-        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(11, -64, Math.toRadians(90));
-        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(15, 64, Math.toRadians(-90));
-        public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6);
-        public static final Vector2d CENTER_BACKDROP = new Vector2d(0, -2);
-        public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6);
+        // TODO: DON'T FUCKING CHANGE INIT POSE OR I WILL PLAY SKIBIDI TOILET FOR AN HOUR WHILE TRAPPING YOU IN EP MEETING WITH PROF DUNG
+        public static final Pose2d WING_RED_START_POSE = new Pose2d(-32.09375, -63.46875, Math.toRadians(90));
+        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-39.90625, 63.46875, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(15.90625, -63.46875, Math.toRadians(90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(8.09375, 63.46875, Math.toRadians(-90));
+        public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6.5);
+        public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
+        public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6.5);
 
     }
 }

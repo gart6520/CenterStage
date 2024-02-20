@@ -181,7 +181,7 @@ public class AutoTrajectoryManager {
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-36.00, 62.00, Math.toRadians(180.00)))
                         .lineToConstantHeading(new Vector2d(25.00, 62.00))
-                        .lineToConstantHeading(new Vector2d(50.65, 30.00).plus(finalToCorrectBackdropPos))
+                        .lineToConstantHeading(new Vector2d(50.65, 28.00).plus(finalToCorrectBackdropPos))
                         .build();
                 break;
             case backdropRed:
@@ -201,7 +201,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), 30.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
+                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), 28.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
         }
