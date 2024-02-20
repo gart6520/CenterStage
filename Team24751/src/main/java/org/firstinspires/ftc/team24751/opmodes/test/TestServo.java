@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_PWM_RANGE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.LOAD_YELLOW_PIXEL_YEETER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.YEET_YELLOW_PIXEL_YEETER_POSITION;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -71,20 +73,20 @@ public class TestServo extends LinearOpMode {
 
             // Delay 50ms
             //sleep(50);
-            if (gamepad1.dpad_left) {
-                leftAngleServo.setAngle(0);
-                rightAngleServo.setAngle(270);
-            }
-
-            if (gamepad1.dpad_right) {
-                leftAngleServo.setAngle(270);
-                rightAngleServo.setAngle(0);
-            }
+//            if (gamepad1.dpad_left) {
+//                leftAngleServo.setAngle(0);
+//                rightAngleServo.setAngle(270);
+//            }
+//
+//            if (gamepad1.dpad_right) {
+//                leftAngleServo.setAngle(270);
+//                rightAngleServo.setAngle(0);
+//            }
             if (gamepad1.dpad_up) {
-                tuneServo.setPosition(0);
+                tuneServo.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
             }
             if (gamepad1.dpad_down) {
-                tuneServo.setPosition(1);
+                tuneServo.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
             }
 
             telemetry.update();

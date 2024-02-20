@@ -64,24 +64,28 @@ public class AutoArmFSM {
             case none: // Impossible state
             case roadrunner:
                 break;
-                /*
-                * Must reset timeoutTimer
-                * */
+            /*
+             * Must reset timeoutTimer
+             * */
             case purple_pixel:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 if (distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD || timeoutTimer.seconds() >= 2) {
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                    wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                     state = ArmState.roadrunner;
                 }
                 break;
-                /*
-                * Must reset waitServoTimer
-                * */
+            /*
+             * Must reset waitServoTimer
+             * */
             case yellow_pixel:
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 yellowPixelYeeter.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
-                if (waitServoTimer.seconds() >= 1) {
+                if (waitServoTimer.seconds() >= 0.8) {
                     yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
+                }
+                if (waitServoTimer.seconds() >= 1.5) {
+                    yellowPixelYeeter.getServo().setPwmDisable();
                     state = ArmState.roadrunner;
                 }
                 break;
@@ -89,9 +93,9 @@ public class AutoArmFSM {
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                 break;
-                /*
-                * Must reset waitServoTimer
-                * */
+            /*
+             * Must reset waitServoTimer
+             * */
             case intaking:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
@@ -104,9 +108,9 @@ public class AutoArmFSM {
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 state = ArmState.roadrunner;
                 break;
-                /*
-                * Must reset waitServoTimer
-                * */
+            /*
+             * Must reset waitServoTimer
+             * */
             case outaking:
                 wrist.autoParallel(arm.getAngle());
                 if (waitServoTimer.seconds() >= 1) {
@@ -116,9 +120,9 @@ public class AutoArmFSM {
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                 }
                 break;
-                /*
-                * Must setTarget arm and reset timeoutTimer
-                * */
+            /*
+             * Must setTarget arm and reset timeoutTimer
+             * */
             case arm_moving_up:
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 if (arm.outakePIDLoop() || timeoutTimer.seconds() >= 1.75) {
@@ -126,9 +130,9 @@ public class AutoArmFSM {
                     state = ArmState.outaking;
                 }
                 break;
-                /*
-                * Must reset timeoutTimer
-                * */
+            /*
+             * Must reset timeoutTimer
+             * */
             case arm_moving_down:
                 // Get current arm angle
                 double angle = arm.getAngle();

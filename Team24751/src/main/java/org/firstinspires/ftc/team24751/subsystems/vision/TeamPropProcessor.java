@@ -52,6 +52,8 @@ public class TeamPropProcessor implements VisionProcessor {
      */
     private Paint paint = new Paint();
     double center;
+    double area = 0;
+    long nanCount = 0;
     KalmanFilter kalmanFilter = new KalmanFilter(0.4, 0.1, 3);
 
     /**
@@ -119,8 +121,10 @@ public class TeamPropProcessor implements VisionProcessor {
             // If no contours is found
             if (contours.size() < 1) {
                 this.boundingRect = new Rect(0, 0, 0, 0);
+                nanCount++;
                 return this.pos = NONE;
             }
+            nanCount--;
 
             // Find contour with largest area
             double max_area = 0;
@@ -131,6 +135,15 @@ public class TeamPropProcessor implements VisionProcessor {
                     max_area = area;
                     max_contour = contour;
                 }
+            }
+
+            this.area = max_area;
+
+            // Check if largest area is smaller than threshold
+            if (this.area < TEAM_PROP_AREA_THRESHOLD) {
+                this.boundingRect = new Rect(0, 0, 0, 0);
+                this.center = Double.NaN;
+                return this.pos = NONE;
             }
 
             // Get contour's bounding rect
@@ -197,6 +210,7 @@ public class TeamPropProcessor implements VisionProcessor {
         // Decide the position
         if (center < TEAM_PROP_LEFT_CENTER) return this.pos = LEFT;
         if (center < TEAM_PROP_CENTER_RIGHT) return this.pos = CENTER;
+        if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = LEFT;
         return this.pos = RIGHT;
     }
 
@@ -206,5 +220,9 @@ public class TeamPropProcessor implements VisionProcessor {
      */
     public double getCenter() {
         return center;
+    }
+
+    public double getArea() {
+        return this.area;
     }
 }

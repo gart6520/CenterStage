@@ -95,23 +95,28 @@ public class AutoTrajectoryManager {
         }
         AutoTrajectory result = new AutoTrajectory();
         Pose2d initPose = null;
-        Vector2d toSpikeMark = null;
+        double toSpikeMarkY = 0; //Forward
+        double toSpikeMarkX = 0; //Right
         double toSpikeMarkRot = 0;
         switch (teamPropPosition) {
             case LEFT:
-                toSpikeMark = new Vector2d(LEFT_SPIKE_MARK.getX(), LEFT_SPIKE_MARK.getY());
-                toSpikeMarkRot = LEFT_SPIKE_MARK.getHeading();
+                toSpikeMarkY = LEFT_SPIKE_MARK.get_0();
+                toSpikeMarkX = LEFT_SPIKE_MARK.get_1();
+                toSpikeMarkRot = LEFT_SPIKE_MARK.get_2();
                 break;
             case RIGHT:
-                toSpikeMark = new Vector2d(RIGHT_SPIKE_MARK.getX(), RIGHT_SPIKE_MARK.getY());
-                toSpikeMarkRot = RIGHT_SPIKE_MARK.getHeading();
+                toSpikeMarkY = RIGHT_SPIKE_MARK.get_0();
+                toSpikeMarkX = RIGHT_SPIKE_MARK.get_1();
+                toSpikeMarkRot = RIGHT_SPIKE_MARK.get_2();
                 break;
             case CENTER:
-                toSpikeMark = new Vector2d(CENTER_SPIKE_MARK.getX(), CENTER_SPIKE_MARK.getY());
-                toSpikeMarkRot = CENTER_SPIKE_MARK.getHeading();
+                toSpikeMarkY = CENTER_SPIKE_MARK.get_0();
+                toSpikeMarkX = CENTER_SPIKE_MARK.get_1();
+                toSpikeMarkRot = CENTER_SPIKE_MARK.get_2();
                 break;
             case NONE:
-                toSpikeMark = new Vector2d();
+                toSpikeMarkY = 0;
+                toSpikeMarkRot = 0;
         }
         switch (pos) {
             case wingRed:
@@ -127,13 +132,32 @@ public class AutoTrajectoryManager {
                 initPose = BACKDROP_BLUE_START_POSE;
                 break;
         }
-        toSpikeMark = Utility.rotateVector(toSpikeMark, initPose.getHeading());
-        Pose2d toSpikeMarkWorld = new Pose2d(initPose.getX() + toSpikeMark.getX(), initPose.getY() + toSpikeMark.getY(),
-                initPose.getHeading() + toSpikeMarkRot);
-        result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
-                .lineToLinearHeading(toSpikeMarkWorld)
-                .build();
+        if (toSpikeMarkX != 0) {
+            result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
+                    .forward(toSpikeMarkY)
+                    .strafeRight(toSpikeMarkX)
+                    .turn(toSpikeMarkRot)
+                    .build();
+        } else {
+            result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
+                    .forward(toSpikeMarkY)
+                    .turn(toSpikeMarkRot)
+                    .build();
+        }
+        Vector2d toCorrectBackdropPos = new Vector2d();
+        switch (teamPropPosition) {
+            case LEFT:
+                toCorrectBackdropPos = LEFT_BACKDROP;
+                break;
+            case RIGHT:
+                toCorrectBackdropPos = RIGHT_BACKDROP;
+                break;
+            case CENTER:
+                toCorrectBackdropPos = CENTER_BACKDROP;
+                break;
+        }
         // Yellow pixel drop trajectory
+        Vector2d finalToCorrectBackdropPos = toCorrectBackdropPos;
         switch (pos) {
             // TODO: Make all start of yellow traj go to a point (may not be necessary)
             case wingRed:
@@ -143,9 +167,9 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-36.00, -60.00, Math.toRadians(180.00)))
-                        .lineToConstantHeading(new Vector2d(20.00, -60.00))
-                        .lineToConstantHeading(new Vector2d(50.65, -36.00))
+                        .lineToLinearHeading(new Pose2d(-36.00, -62.00, Math.toRadians(180.00)))
+                        .lineToConstantHeading(new Vector2d(25.00, -62.00))
+                        .lineToConstantHeading(new Vector2d(50.65, -44.00).plus(finalToCorrectBackdropPos))
                         .build();
                 break;
             case wingBlue:
@@ -155,9 +179,9 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-36.00, 60.00, Math.toRadians(180.00)))
-                        .lineToConstantHeading(new Vector2d(20.00, 60.00))
-                        .lineToConstantHeading(new Vector2d(50.65, 36.00))
+                        .lineToLinearHeading(new Pose2d(-36.00, 62.00, Math.toRadians(180.00)))
+                        .lineToConstantHeading(new Vector2d(25.00, 62.00))
+                        .lineToConstantHeading(new Vector2d(50.65, 30.00).plus(finalToCorrectBackdropPos))
                         .build();
                 break;
             case backdropRed:
@@ -167,7 +191,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50.65, -36.00, Math.toRadians(180.00)))
+                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), -44.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
             case backdropBlue:
@@ -177,7 +201,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50.65, 36.00, Math.toRadians(180.00)))
+                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), 30.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
         }
@@ -209,7 +233,7 @@ public class AutoTrajectoryManager {
         AutoTrajectory autoTrajectory = getAutoTrajectory();
         if (autoTrajectory == null) return;
         drive.setPoseEstimate(autoTrajectory.purplePixelDrop.start());
-        opMode.waitForStart();
+
         timer.reset();
         if (pos == StartingPos.center) {
             drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
@@ -235,23 +259,6 @@ public class AutoTrajectoryManager {
         while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
             autoArmFSM.update();
         }
-        Vector2d toCorrectBackdropPos = new Vector2d();
-        switch (teamPropPosition) {
-            case LEFT:
-                toCorrectBackdropPos = LEFT_BACKDROP;
-                break;
-            case RIGHT:
-                toCorrectBackdropPos = RIGHT_BACKDROP;
-                break;
-            case CENTER:
-                toCorrectBackdropPos = CENTER_BACKDROP;
-                break;
-        }
-        Pose2d pose0 = drive.getPoseEstimate();
-        drive.followTrajectorySequence(drive.trajectorySequenceBuilder(pose0)
-                .lineTo(new Vector2d(pose0.getX(), pose0.getY()).plus(toCorrectBackdropPos))
-                .build()
-        );
         while (opMode.opModeIsActive()) {
             TrajectorySequence repeatToStack = autoTrajectory.repeatToStack.get();
             drive.followTrajectorySequence(repeatToStack);

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERA
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.LOAD_YELLOW_PIXEL_YEETER_POSITION;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class YellowPixelYeeter {
@@ -24,6 +25,9 @@ public class YellowPixelYeeter {
     {
         servo.setPosition(position);
     }
-
+    public ServoImplEx getServo ()
+    {
+        return servo;
+    }
     public void reset() {servo.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);}
 }

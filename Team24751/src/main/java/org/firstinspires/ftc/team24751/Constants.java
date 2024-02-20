@@ -11,10 +11,13 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
+import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
+
 import android.util.Size;
 
 import java.util.ArrayList;
+
 
 public class Constants {
     // Some general constants
@@ -259,7 +262,7 @@ public class Constants {
             public static double WRIST_AUTO_INTAKING_DEG = 210;
 
             public static double OPEN_CLAW_POSITION = 0.25;
-            public static double CLOSE_CLAW_POSITION =  0.011111111111111112;
+            public static double CLOSE_CLAW_POSITION = 0.011111111111111112;
         }
 
         public static class Extender {
@@ -272,9 +275,10 @@ public class Constants {
 
         }
 
+        @Config
         public static class YELLOW_PIXEL_YEETER {
-            public static final double LOAD_YELLOW_PIXEL_YEETER_POSITION = 0;
-            public static final double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.45;
+            public static double LOAD_YELLOW_PIXEL_YEETER_POSITION = 1;
+            public static double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.5; // 0.5
 
         }
 
@@ -307,6 +311,7 @@ public class Constants {
 
         }
 
+        @Config
         @SuppressLint("SdCardPath")
         public static class CV {
             // Team prop position
@@ -315,6 +320,10 @@ public class Constants {
             }
 
             // Color threshold
+
+            //Area threshold
+            public static double TEAM_PROP_AREA_THRESHOLD = 550; //px^2
+            public static double TEAM_PROP_NAN_COUNT_THRESHOLD = 15; //px^2
 
             // Red team prop
             public static final Scalar TEAM_PROP_RED_MIN = new Scalar(0, 115, 133);
@@ -327,8 +336,8 @@ public class Constants {
             // Team prop position threshold
             // |    Left     |     Center    |      Right      |
             // min       left-center     center-right         max
-            public static final double TEAM_PROP_LEFT_CENTER = 320.0 / 3;
-            public static final double TEAM_PROP_CENTER_RIGHT = 2 * 320.0 / 3;
+            public static double TEAM_PROP_LEFT_CENTER = 5;
+            public static double TEAM_PROP_CENTER_RIGHT = 264;
         }
     }
 
@@ -341,15 +350,15 @@ public class Constants {
 
     public static class AUTONOMOUS {
         // TODO tune/measure these number
-        public static final Pose2d LEFT_SPIKE_MARK = new Pose2d(0, 2, Math.toRadians(30));
-        public static final Pose2d CENTER_SPIKE_MARK = new Pose2d(0, 2, 0);
-        public static final Pose2d RIGHT_SPIKE_MARK = new Pose2d(0, 2, Math.toRadians(-30));
-        public static final Pose2d WING_RED_START_POSE = new Pose2d(-36, -64, Math.toRadians(90));
-        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36, 64, Math.toRadians(-90));
-        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(12, -64, Math.toRadians(90));
-        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(12, 64, Math.toRadians(-90));
+        public static final Mat.Tuple3<Double> LEFT_SPIKE_MARK = new Mat.Tuple3<>(18.0, -3.0, Math.toRadians(52));
+        public static final Mat.Tuple3<Double> CENTER_SPIKE_MARK = new Mat.Tuple3<>(22.0, 0.0, Math.toRadians(0));
+        public static final Mat.Tuple3<Double> RIGHT_SPIKE_MARK = new Mat.Tuple3<>(18.0, 0.0, Math.toRadians(-47));
+        public static final Pose2d WING_RED_START_POSE = new Pose2d(-37, -64, Math.toRadians(90));
+        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-33, 64, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(11, -64, Math.toRadians(90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(15, 64, Math.toRadians(-90));
         public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6);
-        public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
+        public static final Vector2d CENTER_BACKDROP = new Vector2d(0, -2);
         public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6);
 
     }
