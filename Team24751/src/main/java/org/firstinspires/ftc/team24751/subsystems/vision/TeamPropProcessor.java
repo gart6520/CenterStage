@@ -28,8 +28,8 @@ public class TeamPropProcessor implements VisionProcessor {
     /**
      * Frame properties
      */
-    private int frameWidth = 640;
-    private int frameHeight = 480;
+    private int frameWidth = 320;
+    private int frameHeight = 240;
 
     /**
      * Processing variables

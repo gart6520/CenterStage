@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
-import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelProcessor;
+import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelAlignProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Rect;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
@@ -17,11 +15,11 @@ import java.util.List;
 @TeleOp(name = "Test OCV pixel", group = "Test")
 public class TestOCVPixel extends LinearOpMode {
     private VisionPortal visionPortal;
-    private PixelProcessor pixelProcessor;
+    private PixelAlignProcessor pixelProcessor;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        pixelProcessor = new PixelProcessor();
+        pixelProcessor = new PixelAlignProcessor();
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(CameraName.class, FRONT_CAMERA_NAME))
@@ -34,13 +32,19 @@ public class TestOCVPixel extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            List<Rect> recognitions = pixelProcessor.getRecognitions();
+            List<Rect> recognitions = pixelProcessor.getRecognition();
 
             for (Rect obj : recognitions) {
                 if (obj == null) continue;
                 telemetry.addData("", " ");
                 telemetry.addData("- Position", "%d / %d", obj.x, obj.y);
                 telemetry.addData("- Size", "%d x %d", obj.width, obj.height);
+                telemetry.addLine();
+            }
+
+            List<Double> angs = pixelProcessor.getObjectAngles();
+            for (Double a : angs) {
+                telemetry.addData("- Ang", a);
             }
 
             telemetry.update();
