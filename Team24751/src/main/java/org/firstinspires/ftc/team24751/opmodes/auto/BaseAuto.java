@@ -3,25 +3,17 @@ package org.firstinspires.ftc.team24751.opmodes.auto;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.LOAD_YELLOW_PIXEL_YEETER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YellowPixelYeeter.LOAD_YELLOW_PIXEL_YEETER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
-import org.firstinspires.ftc.team24751.opmodes.teleop.SemiAutoMain;
 import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
-import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
-import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
-import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
-import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
 import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;

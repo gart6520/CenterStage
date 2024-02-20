@@ -68,6 +68,7 @@ public class Constants {
         public static final String RIGHT_CLAW = "rightClawServo";
         public static final String DRONE_LAUNCHER = "droneLauncherServo";
         public static final String YELLOW_PIXEL_YEETER = "yellowPixelYeeterServo";
+        public static final String CLIMBER_HOLDER = "climberHolderServo";
 
         // Misc servo
         public static final String CAMERA_SERVO = "cameraServo";
@@ -274,9 +275,15 @@ public class Constants {
             public static final double SHOOT_DRONE_LAUNCHER_POSITION = 0.45;
 
         }
+        @Config
+        public static class ClimberHolder
+        {
+            public static double HOLD_CLIMBER_HOLDER_POSITION = 0.2;
+            public static double RELEASE_CLIMBER_HOLDER_POSITION = 0;
+        }
 
         @Config
-        public static class YELLOW_PIXEL_YEETER {
+        public static class YellowPixelYeeter {
             public static double LOAD_YELLOW_PIXEL_YEETER_POSITION = 1;
             public static double YEET_YELLOW_PIXEL_YEETER_POSITION = 0.5; // 0.5
 

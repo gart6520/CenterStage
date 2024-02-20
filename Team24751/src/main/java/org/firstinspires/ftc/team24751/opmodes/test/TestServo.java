@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.HOLD_CLIMBER_HOLDER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.RELEASE_CLIMBER_HOLDER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.GOBILDA_SERVO_PWM_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_ANGLE_RANGE;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.GENERAL_SERVO.REV_SERVO_PWM_RANGE;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.LOAD_YELLOW_PIXEL_YEETER_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YELLOW_PIXEL_YEETER.YEET_YELLOW_PIXEL_YEETER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YellowPixelYeeter.LOAD_YELLOW_PIXEL_YEETER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YellowPixelYeeter.YEET_YELLOW_PIXEL_YEETER_POSITION;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.subsystems.AngleServo;
+import org.firstinspires.ftc.team24751.subsystems.ClimberHolder;
+import org.firstinspires.ftc.team24751.subsystems.YellowPixelYeeter;
 
 import java.util.List;
 
@@ -30,13 +33,8 @@ public class TestServo extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Init servo
-        AngleServo leftAngleServo = new AngleServo(LEFT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
-        AngleServo rightAngleServo = new AngleServo(RIGHT_WRIST, 0, REV_SERVO_ANGLE_RANGE, this);
-        ServoImplEx tuneServo = hardwareMap.get(ServoImplEx.class, YELLOW_PIXEL_YEETER);
-        leftAngleServo.init(REV_SERVO_PWM_RANGE);
-        rightAngleServo.init(REV_SERVO_PWM_RANGE);
-        tuneServo.setPwmRange(GOBILDA_SERVO_PWM_RANGE);
-
+        YellowPixelYeeter yellowPixelYeeter = new YellowPixelYeeter(this);
+        ClimberHolder climberHolder = new ClimberHolder(this);
         // Enable bulk reads in auto mode
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -46,47 +44,21 @@ public class TestServo extends LinearOpMode {
 
         // Wait for the driver to press PLAY
         waitForStart();
-
-        // Init angle
-        // Angle range is from 0 -> 300
-        double angle = 0;
-        double rate = 1;
-
-        // Loop, run until driver presses STOP
         while (opModeIsActive()) {
-            // Display current target angle
-
-
-            // Set angle
-            //servo.setPosition(angle/270.0);
-            //servo.setPosition(0);
-
-            // Overflow
-            //if (angle >= 270) {
-            //    rate = -1;
-            //} else if (angle <= 0) {
-            //    rate = 1;
-            //}
-
-            // Increase by rate
-            //angle += rate;
-
-            // Delay 50ms
-            //sleep(50);
-//            if (gamepad1.dpad_left) {
-//                leftAngleServo.setAngle(0);
-//                rightAngleServo.setAngle(270);
-//            }
-//
-//            if (gamepad1.dpad_right) {
-//                leftAngleServo.setAngle(270);
-//                rightAngleServo.setAngle(0);
-//            }
             if (gamepad1.dpad_up) {
-                tuneServo.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
+                yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
             }
             if (gamepad1.dpad_down) {
-                tuneServo.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
+                yellowPixelYeeter.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
+            }
+
+            if (gamepad1.dpad_left)
+            {
+                climberHolder.setPosition(HOLD_CLIMBER_HOLDER_POSITION);
+            }
+            if (gamepad1.dpad_right)
+            {
+                climberHolder.setPosition(RELEASE_CLIMBER_HOLDER_POSITION);
             }
 
             telemetry.update();
