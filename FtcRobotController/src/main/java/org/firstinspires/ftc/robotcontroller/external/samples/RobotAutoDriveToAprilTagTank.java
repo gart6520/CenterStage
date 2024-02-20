@@ -79,7 +79,7 @@ import java.util.concurrent.TimeUnit;
  *  Use DESIRED_DISTANCE to set how close you want the robot to get to the target.
  * Speed and Turn sensitivity can be adjusted using the SPEED_GAIN and TURN_GAIN constants.
  *
- * Use Android Studio to Copy this Class, and Paste it into the TeamCode/src/main/java/org/firstinspires/ftc/team24751 folder.
+ * Use Android Studio to Copy this Class, and Paste it into the TeamCode/src/main/java/org/firstinspires/ftc/teamcode folder.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  *
  */
