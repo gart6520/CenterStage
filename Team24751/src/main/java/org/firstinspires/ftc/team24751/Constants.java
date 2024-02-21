@@ -277,8 +277,8 @@ public class Constants {
         @Config
         public static class ClimberHolder
         {
-            public static double HOLD_CLIMBER_HOLDER_POSITION = 0.2;
-            public static double RELEASE_CLIMBER_HOLDER_POSITION = 0;
+            public static double HOLD_CLIMBER_HOLDER_POSITION = 0;
+            public static double RELEASE_CLIMBER_HOLDER_POSITION = 1;
         }
 
         @Config

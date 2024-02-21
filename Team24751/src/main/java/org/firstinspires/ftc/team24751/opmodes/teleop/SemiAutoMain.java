@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
+import org.firstinspires.ftc.team24751.subsystems.ClimberHolder;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
 import org.firstinspires.ftc.team24751.subsystems.LedIndicator;
@@ -40,6 +41,8 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_RIGHT;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_WRIST;
 import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.HOLD_CLIMBER_HOLDER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.RELEASE_CLIMBER_HOLDER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
@@ -67,6 +70,7 @@ public class SemiAutoMain extends LinearOpMode {
     Distance distance = new Distance(this);
     DroneLauncher droneLauncher = new DroneLauncher(this);
     Climber climber = new Climber(this);
+    ClimberHolder climberHolder = new ClimberHolder(this);
     LedIndicator leftLED = new LedIndicator(this, LED_RED_LEFT, LED_GREEN_LEFT);
     LedIndicator rightLED = new LedIndicator(this, LED_RED_RIGHT, LED_GREEN_RIGHT);
     LedIndicator wristLED = new LedIndicator(this, LED_RED_WRIST, LED_GREEN_WRIST);
@@ -94,11 +98,12 @@ public class SemiAutoMain extends LinearOpMode {
     Gamepad prev2 = null;
     Gamepad curr2 = null;
 
-    // Timers for FSM
+    // Timers
     ElapsedTime armMoveDownTimeout = new ElapsedTime();
     ElapsedTime armMoveUpTimeout = new ElapsedTime();
     ElapsedTime retractExtenderTimeout = new ElapsedTime();
     ElapsedTime droneLauncherHoldingTimer = new ElapsedTime();
+    ElapsedTime climberHolderHoldingTimer = new ElapsedTime();
     boolean isRetractExtenderTimeoutReset = false;
 
     // Hubs objects
@@ -156,6 +161,7 @@ public class SemiAutoMain extends LinearOpMode {
         extender.init();
         distance.init();
         climber.init();
+        climberHolder.init();
         droneLauncher.init();
         autoAimAprilTag.init();
         leftLED.init();
@@ -508,8 +514,15 @@ public class SemiAutoMain extends LinearOpMode {
             // Hang
             if (gamepad1.triangle) {
                 // Up
-                climber.setPower(1);
-            } else if (gamepad1.cross && !gamepad1.options) {
+                //climber.setPower(1);
+                if (climberHolderHoldingTimer.seconds() >= 0.69) {
+                    climberHolder.setPosition(RELEASE_CLIMBER_HOLDER_POSITION);
+                }
+            } else if (!gamepad1.triangle) {
+                climberHolderHoldingTimer.reset();
+            }
+
+            if (gamepad1.cross && !gamepad1.options) {
                 // Down
                 climber.setPower(-1);
             } else {

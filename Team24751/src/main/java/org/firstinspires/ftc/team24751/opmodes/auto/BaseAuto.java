@@ -90,7 +90,7 @@ public abstract class BaseAuto extends LinearOpMode {
         }
         dropArmAndReset();
         autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, autoArmFSM, this);
-        frontCam.close();
+        //frontCam.close();
 //        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, Constants.VISION.CV.TeamPropPosition.LEFT, drivebase, autoArmFSM, this);
 
         // Follow trajectory
