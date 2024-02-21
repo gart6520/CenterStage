@@ -104,6 +104,7 @@ public class SemiAutoMain extends LinearOpMode {
     ElapsedTime retractExtenderTimeout = new ElapsedTime();
     ElapsedTime droneLauncherHoldingTimer = new ElapsedTime();
     ElapsedTime climberHolderHoldingTimer = new ElapsedTime();
+    boolean isClimberHolderReleased = false;
     boolean isRetractExtenderTimeoutReset = false;
 
     // Hubs objects
@@ -512,22 +513,27 @@ public class SemiAutoMain extends LinearOpMode {
             }
 
             // Hang
-            if (gamepad1.triangle) {
-                // Up
-                //climber.setPower(1);
-                if (climberHolderHoldingTimer.seconds() >= 0.69) {
-                    climberHolder.setPosition(RELEASE_CLIMBER_HOLDER_POSITION);
+            if (!this.isClimberHolderReleased) {
+                if (gamepad1.triangle) {
+                    // Up
+                    if (climberHolderHoldingTimer.seconds() >= 0.69) {
+                        climberHolder.setPosition(RELEASE_CLIMBER_HOLDER_POSITION);
+                        this.isClimberHolderReleased = true;
+                    }
+                } else {
+                    climberHolderHoldingTimer.reset();
                 }
-            } else if (!gamepad1.triangle) {
-                climberHolderHoldingTimer.reset();
-            }
-
-            if (gamepad1.cross && !gamepad1.options) {
-                // Down
-                climber.setPower(-1);
             } else {
-                // Stop
-                climber.setPower(0);
+                if (gamepad1.triangle) {
+                    // Up
+                    climber.setPower(1);
+                } else if (gamepad1.cross && !gamepad1.options) {
+                    // Down
+                    climber.setPower(-1);
+                } else {
+                    // Stop
+                    climber.setPower(0);
+                }
             }
 
             // Update prev1 gamepad
@@ -557,9 +563,9 @@ public class SemiAutoMain extends LinearOpMode {
 
     private void extenderControl() {
         // Control extender
-        if (gamepad2.left_bumper || gamepad2.dpad_down) {
+        if (gamepad2.left_bumper) {
             extender.setPower(0.7);
-        } else if (gamepad2.left_trigger > SENSE_TRIGGER || gamepad2.dpad_up) {
+        } else if (gamepad2.left_trigger > SENSE_TRIGGER) {
             extender.setPower(-0.7);
         } else if (!isRetractExtenderTimeoutReset) {
             extender.setPower(0);

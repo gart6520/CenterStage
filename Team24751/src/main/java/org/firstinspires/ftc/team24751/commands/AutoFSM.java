@@ -18,7 +18,7 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 
-public class AutoArmFSM {
+public class AutoFSM {
     public Extender extender;
     public Arm arm;
     public Wrist wrist;
@@ -29,6 +29,33 @@ public class AutoArmFSM {
     public ElapsedTime waitServoTimer = new ElapsedTime();
     public ElapsedTime timeoutTimer = new ElapsedTime();
 
+    public void dropArmAndReset() {
+        ElapsedTime timer = new ElapsedTime();
+
+        wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+
+        timer.reset();
+        opMode.telemetry.addLine("Resetting arm and extender");
+        opMode.telemetry.update();
+
+        while (timer.seconds() <= 5 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
+            if (timer.seconds() >= 1) {
+                arm.setPower(-0.05);
+            }
+        }
+
+
+        arm.resetEncoder();
+        arm.setPower(0);
+        extender.resetPosition();
+
+        // Set initial state to intaking
+        // After drop arm and reset, the arm now should be at intake position
+        grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+        yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
+        wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+    }
+
     public enum ArmState {
         none, roadrunner, prepare_intaking, yellow_pixel, purple_pixel, outaking,
         arm_moving_up, arm_moving_down, intaking, after_intake
@@ -36,7 +63,7 @@ public class AutoArmFSM {
 
     public ArmState state;
 
-    public AutoArmFSM(LinearOpMode _opMode) {
+    public AutoFSM(LinearOpMode _opMode) {
         opMode = _opMode;
         extender = new Extender(opMode);
         arm = new Arm(opMode);

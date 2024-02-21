@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.opencv.core.Scalar;
 
 import android.util.Size;
@@ -24,6 +24,7 @@ public class Constants {
     public static final double INCH_TO_MM = 25.4;
     public static final double MM_TO_INCH = 1 / INCH_TO_MM;
     public static final double M_TO_INCH = MM_TO_INCH * 1000;
+    public static AutoTrajectoryManager.StartingPos startingPos;
 
     //Really important constants
     public enum AllianceColor {
@@ -277,8 +278,8 @@ public class Constants {
         @Config
         public static class ClimberHolder
         {
-            public static double HOLD_CLIMBER_HOLDER_POSITION = 0;
-            public static double RELEASE_CLIMBER_HOLDER_POSITION = 1;
+            public static double HOLD_CLIMBER_HOLDER_POSITION = 0.32666666666666666;
+            public static double RELEASE_CLIMBER_HOLDER_POSITION = 0;
         }
 
         @Config
@@ -322,14 +323,14 @@ public class Constants {
         public static class CV {
             // Team prop position
             public enum TeamPropPosition {
-                NONE, LEFT, CENTER, RIGHT
+                NONE, CLOSE, CENTER, FAR
             }
 
-            // Color threshold
-
-            //Area threshold
+            // Area threshold
             public static double TEAM_PROP_AREA_THRESHOLD = 550; //px^2
             public static double TEAM_PROP_NAN_COUNT_THRESHOLD = 15; //px^2
+
+            // Color threshold
 
             // Red team prop
             public static final Scalar TEAM_PROP_RED_MIN = new Scalar(0, 115, 133);
@@ -340,10 +341,21 @@ public class Constants {
             public static final Scalar TEAM_PROP_BLUE_MAX = new Scalar(108, 246, 255);
 
             // Team prop position threshold
+            public static class TeamPropRegion {
+                public double LEFT_CENTER_POS, CENTER_RIGHT_POS;
+                public TeamPropRegion(double left_center, double center_right)
+                {
+                    LEFT_CENTER_POS = left_center;
+                    CENTER_RIGHT_POS = center_right;
+                }
+            }
+
             // |    Left     |     Center    |      Right      |
             // min       left-center     center-right         max
-            public static double TEAM_PROP_LEFT_CENTER = 5;
-            public static double TEAM_PROP_CENTER_RIGHT = 264;
+            // For case when left side is the close side
+            public static final TeamPropRegion LEFT_CLOSE_TEAM_PROP_REGION = new TeamPropRegion(55, 315);
+            // For case when right side is the close side
+            public static final TeamPropRegion RIGHT_CLOSE_TEAM_PROP_REGION = new TeamPropRegion(5, 265);
         }
     }
 
@@ -356,14 +368,11 @@ public class Constants {
 
     public static class AUTONOMOUS {
         // TODO tune/measure these number
-        public static final Mat.Tuple3<Double> LEFT_SPIKE_MARK = new Mat.Tuple3<>(18.0, -3.0, Math.toRadians(52));
-        public static final Mat.Tuple3<Double> CENTER_SPIKE_MARK = new Mat.Tuple3<>(22.0, 0.0, Math.toRadians(0));
-        public static final Mat.Tuple3<Double> RIGHT_SPIKE_MARK = new Mat.Tuple3<>(18.0, 0.0, Math.toRadians(-47));
         // TODO: DON'T FUCKING CHANGE INIT POSE OR I WILL PLAY SKIBIDI TOILET FOR AN HOUR WHILE TRAPPING YOU IN EP MEETING WITH PROF DUNG
-        public static final Pose2d WING_RED_START_POSE = new Pose2d(-32.09375, -63.46875, Math.toRadians(90));
+        public static final Pose2d WING_RED_START_POSE = new Pose2d(-39.90625, -63.46875, Math.toRadians(90));
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-39.90625, 63.46875, Math.toRadians(-90));
         public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(15.90625, -63.46875, Math.toRadians(90));
-        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(8.09375, 63.46875, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(15.90625, 63.46875, Math.toRadians(-90));
         public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6.5);
         public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
         public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6.5);

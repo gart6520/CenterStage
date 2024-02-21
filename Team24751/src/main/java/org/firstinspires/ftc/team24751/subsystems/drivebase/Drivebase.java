@@ -320,6 +320,7 @@ public class Drivebase extends MecanumDrive {
 
     /**
      * Get current pose
+     *
      * @return current fused pose (= estimated pose2d + delta pose2d)
      */
     public Pose2d getPoseFuse() {
@@ -328,6 +329,7 @@ public class Drivebase extends MecanumDrive {
 
     /**
      * Set new pose for drivebase localizer
+     *
      * @param newPose new Pose2d to set
      * @return delta pose (from old pose2d to new pose2d)
      */
@@ -412,10 +414,10 @@ public class Drivebase extends MecanumDrive {
         // Hopefully we will never have to switch back to drive bot-oriented
         if (fieldOriented) {
             // Dpad buttons state
-            boolean dpad_up = opMode.gamepad1.dpad_up;
-            boolean dpad_down = opMode.gamepad1.dpad_down;
-            boolean dpad_left = opMode.gamepad1.dpad_left;
-            boolean dpad_right = opMode.gamepad1.dpad_right;
+            boolean dpad_up = opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up;
+            boolean dpad_down = opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down;
+            boolean dpad_left = opMode.gamepad1.dpad_left || opMode.gamepad2.dpad_left;
+            boolean dpad_right = opMode.gamepad1.dpad_right ||opMode.gamepad2.dpad_right;
 
             if (!dpad_up && !dpad_down && !dpad_left && !dpad_right) {
                 // No dpad is pressed -> normal field-oriented driving using joystick
@@ -484,10 +486,10 @@ public class Drivebase extends MecanumDrive {
         // Hopefully we will never have to switch back to drive bot-oriented
         if (fieldOriented) {
             // Dpad buttons state
-            boolean dpad_up = opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up;
-            boolean dpad_down = opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down;
-            boolean dpad_left = opMode.gamepad1.dpad_left;
-            boolean dpad_right = opMode.gamepad1.dpad_right;
+            boolean dpad_up = opMode.gamepad2.dpad_up;
+            boolean dpad_down = opMode.gamepad2.dpad_down;
+            boolean dpad_left = opMode.gamepad2.dpad_left;
+            boolean dpad_right = opMode.gamepad2.dpad_right;
 
             if (!dpad_up && !dpad_down && !dpad_left && !dpad_right) {
                 // No dpad is pressed -> normal field-oriented driving using joystick

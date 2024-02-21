@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.team24751.Constants;
+import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -207,11 +209,31 @@ public class TeamPropProcessor implements VisionProcessor {
      * @return team prop position. If no team prop is found, return NONE
      */
     public TeamPropPosition getPos() {
-        // Decide the position
-        if (center < TEAM_PROP_LEFT_CENTER) return this.pos = LEFT;
-        if (center < TEAM_PROP_CENTER_RIGHT) return this.pos = CENTER;
-        if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = LEFT;
-        return this.pos = RIGHT;
+        // Get the correct threshold object
+        AutoTrajectoryManager.StartingPos startingPos = Constants.startingPos;
+        TeamPropRegion regionData;
+
+        // Bot is placed on the right edge of the grid
+        if (startingPos == AutoTrajectoryManager.StartingPos.wingBlue || startingPos == AutoTrajectoryManager.StartingPos.backdropRed) {
+            regionData = RIGHT_CLOSE_TEAM_PROP_REGION;
+
+            // Decide the position
+            if (center < regionData.LEFT_CENTER_POS) return this.pos = FAR;
+            if (center < regionData.CENTER_RIGHT_POS) return this.pos = CENTER;
+            if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = FAR;
+            return this.pos = CLOSE;
+        }
+
+        // Bot is placed on the left edge of the grid
+        else {
+            regionData = LEFT_CLOSE_TEAM_PROP_REGION;
+
+            // Decide the position
+            if (center < regionData.LEFT_CENTER_POS) return this.pos = CLOSE;
+            if (center < regionData.CENTER_RIGHT_POS) return this.pos = CENTER;
+            if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = FAR;
+            return this.pos = FAR;
+        }
     }
 
     /**

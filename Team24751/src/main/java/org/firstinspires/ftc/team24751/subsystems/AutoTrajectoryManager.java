@@ -1,33 +1,20 @@
 package org.firstinspires.ftc.team24751.subsystems;
 
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.BACKDROP_BLUE_START_POSE;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.BACKDROP_RED_START_POSE;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.CENTER_BACKDROP;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.CENTER_SPIKE_MARK;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.LEFT_BACKDROP;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.LEFT_SPIKE_MARK;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.RIGHT_BACKDROP;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.RIGHT_SPIKE_MARK;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_BLUE_START_POSE;
-import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.WING_RED_START_POSE;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_BACKDROP_PARALLEL_ANGLE;
+import static org.firstinspires.ftc.team24751.Constants.AUTONOMOUS.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_BACKDROP_PARALLEL_ANGLE_AUTO;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
+import static org.firstinspires.ftc.team24751.Constants.startingPos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
-import org.firstinspires.ftc.team24751.commands.AutoArmFSM;
+import org.firstinspires.ftc.team24751.commands.AutoFSM;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstants;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
@@ -46,20 +33,19 @@ public class AutoTrajectoryManager {
         center, wingBlue, wingRed, backdropBlue, backdropRed
     }
 
-    StartingPos pos;
     Constants.VISION.CV.TeamPropPosition teamPropPosition;
     Drivebase drive;
     LinearOpMode opMode;
     ElapsedTime timer = new ElapsedTime();
-    AutoArmFSM autoArmFSM;
+    AutoFSM autoFSM;
 
     public AutoTrajectoryManager(StartingPos startingPos, Constants.VISION.CV.TeamPropPosition teamPropPos,
-                                 Drivebase drivebase, AutoArmFSM autoArm, LinearOpMode _opMode) {
-        pos = startingPos;
+                                 Drivebase drivebase, AutoFSM autoArm, LinearOpMode _opMode) {
+        Constants.startingPos = startingPos;
         teamPropPosition = teamPropPos;
         drive = drivebase;
         opMode = _opMode;
-        autoArmFSM = autoArm;
+        autoFSM = autoArm;
     }
 
     public static class AutoTrajectory {
@@ -81,18 +67,18 @@ public class AutoTrajectoryManager {
 
     private AutoTrajectory getAutoTrajectory() {
         // TODO Refactor all these to new framework
-        if (pos == StartingPos.center) {
+        if (startingPos == StartingPos.center) {
             return new AutoTrajectory(
                     drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                             .addDisplacementMarker(() ->
                             {
-                                autoArmFSM.wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-                                autoArmFSM.grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                                autoFSM.wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                                autoFSM.grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                             })
                             .lineTo(new Vector2d(5, 0))
                             .addDisplacementMarker(() ->
                             {
-                                autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                                autoFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
                             })
                             .lineTo(new Vector2d(0, 0))
                             .build()
@@ -100,30 +86,10 @@ public class AutoTrajectoryManager {
         }
         AutoTrajectory result = new AutoTrajectory();
         Pose2d initPose = null;
-        double toSpikeMarkY = 0; //Forward
-        double toSpikeMarkX = 0; //Right
-        double toSpikeMarkRot = 0;
-        switch (teamPropPosition) {
-            case LEFT:
-                toSpikeMarkY = LEFT_SPIKE_MARK.get_0();
-                toSpikeMarkX = LEFT_SPIKE_MARK.get_1();
-                toSpikeMarkRot = LEFT_SPIKE_MARK.get_2();
-                break;
-            case RIGHT:
-                toSpikeMarkY = RIGHT_SPIKE_MARK.get_0();
-                toSpikeMarkX = RIGHT_SPIKE_MARK.get_1();
-                toSpikeMarkRot = RIGHT_SPIKE_MARK.get_2();
-                break;
-            case CENTER:
-                toSpikeMarkY = CENTER_SPIKE_MARK.get_0();
-                toSpikeMarkX = CENTER_SPIKE_MARK.get_1();
-                toSpikeMarkRot = CENTER_SPIKE_MARK.get_2();
-                break;
-            case NONE:
-                toSpikeMarkY = 0;
-                toSpikeMarkRot = 0;
-        }
-        switch (pos) {
+        boolean isCloseLeft = startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropBlue;
+
+        // Drop purple Pixel
+        switch (startingPos) {
             case wingRed:
                 initPose = WING_RED_START_POSE;
                 break;
@@ -137,25 +103,41 @@ public class AutoTrajectoryManager {
                 initPose = BACKDROP_BLUE_START_POSE;
                 break;
         }
-        if (toSpikeMarkX != 0) {
-            result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
-                    .forward(toSpikeMarkY)
-                    .strafeRight(toSpikeMarkX)
-                    .turn(toSpikeMarkRot)
-                    .build();
-        } else {
-            result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
-                    .forward(toSpikeMarkY)
-                    .turn(toSpikeMarkRot)
-                    .build();
-        }
-        Vector2d toCorrectBackdropPos = new Vector2d();
+        Pose2d initPoseToPurplePose = new Pose2d();
         switch (teamPropPosition) {
-            case LEFT:
-                toCorrectBackdropPos = LEFT_BACKDROP;
+            case CLOSE:
+                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(30));
                 break;
-            case RIGHT:
-                toCorrectBackdropPos = RIGHT_BACKDROP;
+            case FAR:
+                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(-30));
+                break;
+            case CENTER:
+                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(0));
+                break;
+            case NONE:
+        }
+        if (startingPos == StartingPos.backdropRed) {
+            initPoseToPurplePose = new Pose2d(-initPoseToPurplePose.getX(), initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
+        } else if (startingPos == StartingPos.wingBlue) {
+            initPoseToPurplePose = new Pose2d(initPoseToPurplePose.getX(), -initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
+        } else if (startingPos == StartingPos.backdropBlue) {
+            initPoseToPurplePose = new Pose2d(-initPoseToPurplePose.getX(), -initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
+        }
+        Vector2d goBack = Utility.rotateVector(new Vector2d(0, 10), initPose.getHeading());
+        result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
+                .forward(2)
+                .lineToLinearHeading(initPose.plus(initPoseToPurplePose))
+                .lineToLinearHeading(initPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
+                .build();
+
+        Vector2d toCorrectBackdropPos = new Vector2d();
+        // Yellow Pixel Offset for each team prop case
+        switch (teamPropPosition) {
+            case CLOSE:
+                toCorrectBackdropPos = isCloseLeft ? LEFT_BACKDROP : RIGHT_BACKDROP;
+                break;
+            case FAR:
+                toCorrectBackdropPos = isCloseLeft ? RIGHT_BACKDROP : LEFT_BACKDROP;
                 break;
             case CENTER:
                 toCorrectBackdropPos = CENTER_BACKDROP;
@@ -163,7 +145,7 @@ public class AutoTrajectoryManager {
         }
         // Yellow pixel drop trajectory
         Vector2d finalToCorrectBackdropPos = toCorrectBackdropPos;
-        switch (pos) {
+        switch (startingPos) {
             // TODO: Make all start of yellow traj go to a point (may not be necessary)
             case wingRed:
                 /*
@@ -212,43 +194,43 @@ public class AutoTrajectoryManager {
         }
 
         // Repeat trajectory
-        if (pos == StartingPos.wingRed || pos == StartingPos.backdropRed) {
+        if (startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropRed) {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(-55.00, -9.50))
                     .addDisplacementMarker(() ->
                     {
-                        autoArmFSM.state = AutoArmFSM.ArmState.prepare_intaking;
-                        autoArmFSM.update();
+                        autoFSM.state = AutoFSM.ArmState.prepare_intaking;
+                        autoFSM.update();
                     })
-                    .lineToConstantHeading(new Vector2d(-60.00, -9.50))
+                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
                     .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .setConstraints(
                             new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
-                            new ProfileAccelerationConstraint(1000))
-                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
+                            new ProfileAccelerationConstraint(100))
+                    .lineToConstantHeading(new Vector2d(-50.00, -9.50))
                     .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
                     .lineToConstantHeading(new Vector2d(50.65, -36.00))
                     .build();
         } else {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .setConstraints(
-                            new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
-                            new ProfileAccelerationConstraint(1000))
-                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
-                    .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
-                    .lineToConstantHeading(new Vector2d(-55.00, 9.50))
+                    .lineToConstantHeading(new Vector2d(-50.00, 9.50))
                     .addDisplacementMarker(() ->
                     {
-                        autoArmFSM.state = AutoArmFSM.ArmState.prepare_intaking;
-                        autoArmFSM.update();
+                        autoFSM.state = AutoFSM.ArmState.prepare_intaking;
+                        autoFSM.update();
                     })
-                    .lineToConstantHeading(new Vector2d(-60.00, 9.50))
+                    .lineToConstantHeading(new Vector2d(-55.00, 9.50))
                     .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .setConstraints(
+                            new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
+                            new ProfileAccelerationConstraint(100))
+                    .lineToConstantHeading(new Vector2d(-50.00, 9.50))
+                    .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
                     .lineToConstantHeading(new Vector2d(50.65, 36.00))
                     .build();
@@ -263,20 +245,20 @@ public class AutoTrajectoryManager {
 
         timer.reset();
         // For testing only
-        if (pos == StartingPos.center) {
+        if (startingPos == StartingPos.center) {
             drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
             return;
         }
 
         // Go to spike mark appropriately
-        autoArmFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+        autoFSM.grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
         drive.followTrajectorySequence(autoTrajectory.purplePixelDrop);
 
         // Drop purple Pixel
-        autoArmFSM.timeoutTimer.reset();
-        autoArmFSM.state = AutoArmFSM.ArmState.purple_pixel;
-        while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
-            autoArmFSM.update();
+        autoFSM.timeoutTimer.reset();
+        autoFSM.state = AutoFSM.ArmState.purple_pixel;
+        while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+            autoFSM.update();
         }
 
         // Go to allocated position (may not be necessary but still keep here just in case)
@@ -286,10 +268,10 @@ public class AutoTrajectoryManager {
         drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());
 
         // Drop yellow Pixel
-        autoArmFSM.waitServoTimer.reset();
-        autoArmFSM.state = AutoArmFSM.ArmState.yellow_pixel;
-        while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
-            autoArmFSM.update();
+        autoFSM.waitServoTimer.reset();
+        autoFSM.state = AutoFSM.ArmState.yellow_pixel;
+        while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+            autoFSM.update();
         }
         while (opMode.opModeIsActive()) {
             // Go to stack
@@ -297,10 +279,10 @@ public class AutoTrajectoryManager {
             drive.followTrajectorySequence(repeatToStack);
 
             // Intaking
-            autoArmFSM.waitServoTimer.reset();
-            autoArmFSM.state = AutoArmFSM.ArmState.intaking;
-            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
-                autoArmFSM.update();
+            autoFSM.waitServoTimer.reset();
+            autoFSM.state = AutoFSM.ArmState.intaking;
+            while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+                autoFSM.update();
             }
 
             // Go back FAST
@@ -312,17 +294,17 @@ public class AutoTrajectoryManager {
                             .build());
 
             // Go to backdrop
-            autoArmFSM.state = AutoArmFSM.ArmState.after_intake;
-            autoArmFSM.update();
+            autoFSM.state = AutoFSM.ArmState.after_intake;
+            autoFSM.update();
             TrajectorySequence repeatToBackdrop = autoTrajectory.repeatToBackdrop.get();
             drive.followTrajectorySequence(repeatToBackdrop);
 
             // Outtake Pixels
-            autoArmFSM.timeoutTimer.reset();
-            autoArmFSM.arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE_AUTO);
-            autoArmFSM.state = AutoArmFSM.ArmState.arm_moving_up;
-            while (autoArmFSM.state != AutoArmFSM.ArmState.roadrunner) {
-                autoArmFSM.update();
+            autoFSM.timeoutTimer.reset();
+            autoFSM.arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE_AUTO);
+            autoFSM.state = AutoFSM.ArmState.arm_moving_up;
+            while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+                autoFSM.update();
             }
             if (30 - timer.seconds() <= repeatToStack.duration() + repeatToBackdrop.duration() + 5)
                 break;
