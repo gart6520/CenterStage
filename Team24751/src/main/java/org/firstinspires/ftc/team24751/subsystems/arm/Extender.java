@@ -25,7 +25,7 @@ public class Extender {
 
         extenderEncoder = new Encoder(opMode.hardwareMap.get(DcMotorEx.class, EXTENDER_ENCODER));
         extenderEncoder.setDirection(Encoder.Direction.REVERSE);
-        resetPosition();
+        resetEncoder();
     }
 
     /**
@@ -42,7 +42,7 @@ public class Extender {
         return extenderEncoder.getPosition();
     }
 
-    public void resetPosition() {
+    public void resetEncoder() {
         extenderEncoder.reset();
     }
 }

@@ -35,14 +35,41 @@ public class Arm {
             new FuseSensor.FuseSensorParameter(3, 3, 1));
     double currentAngle = Double.NaN;
 
+    public enum ArmEncoderStatus {
+        BOTH, LEFT_ONLY, RIGHT_ONLY
+    }
+
+    ArmEncoderStatus armEncoderStatus = ArmEncoderStatus.BOTH;
+
     public Arm(LinearOpMode _opMode) {
         opMode = _opMode;
     }
 
+    public ArmEncoderStatus getArmEncoderStatus()
+    {
+        return armEncoderStatus;
+    }
     public void update() {
+
+        int leftArmEncoderPosition = leftArmEncoder.getPosition();
+        int rightArmEncoderPosition = rightArmEncoder.getPosition();
+        // Right side is faulty
+        if (leftArmEncoderPosition - rightArmEncoderPosition >= FAULTY_ARM_ENCODER_THRESHOLD
+                || armEncoderStatus == ArmEncoderStatus.LEFT_ONLY) {
+            armEncoderStatus = ArmEncoderStatus.LEFT_ONLY;
+            currentAngle = armAngleEstimator.update(leftArmEncoderPosition, null);
+            return;
+        }
+        // Left side is faulty
+        if (rightArmEncoderPosition - leftArmEncoderPosition >= FAULTY_ARM_ENCODER_THRESHOLD
+                || armEncoderStatus == ArmEncoderStatus.RIGHT_ONLY) {
+            armEncoderStatus = ArmEncoderStatus.RIGHT_ONLY;
+            currentAngle = armAngleEstimator.update(rightArmEncoderPosition, null);
+            return;
+        }
         currentAngle = armAngleEstimator.update(
-                tickToDeg(leftArmEncoder.getPosition()),
-                tickToDeg(rightArmEncoder.getPosition()));
+                tickToDeg(leftArmEncoderPosition),
+                tickToDeg(rightArmEncoderPosition));
     }
 
     public double tickToDeg(int tick) {

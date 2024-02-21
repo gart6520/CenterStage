@@ -399,7 +399,13 @@ public class Drivebase extends MecanumDrive {
         // Left joystick is used for driving bot in up/down/left/right direction, while right joystick is used for rotating the bot
         double left_y = -sense(opMode.gamepad1.left_stick_y, SENSE_Y); // Y axis is inverted
         double left_x = sense(opMode.gamepad1.left_stick_x, SENSE_X);
-        double right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z);
+        double right_x;
+        if (opMode.gamepad1.right_stick_x > SENSE_Z)
+            right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z);
+        else
+        {
+            right_x = sense(opMode.gamepad2.right_stick_x, SENSE_Z);
+        }
         if (opMode.gamepad1.right_trigger <= SENSE_TRIGGER) {
             left_y = Math.pow(left_y, 5);
             left_x = Math.pow(left_x, 5);
@@ -417,7 +423,7 @@ public class Drivebase extends MecanumDrive {
             boolean dpad_up = opMode.gamepad1.dpad_up || opMode.gamepad2.dpad_up;
             boolean dpad_down = opMode.gamepad1.dpad_down || opMode.gamepad2.dpad_down;
             boolean dpad_left = opMode.gamepad1.dpad_left || opMode.gamepad2.dpad_left;
-            boolean dpad_right = opMode.gamepad1.dpad_right ||opMode.gamepad2.dpad_right;
+            boolean dpad_right = opMode.gamepad1.dpad_right || opMode.gamepad2.dpad_right;
 
             if (!dpad_up && !dpad_down && !dpad_left && !dpad_right) {
                 // No dpad is pressed -> normal field-oriented driving using joystick
@@ -454,6 +460,8 @@ public class Drivebase extends MecanumDrive {
         }
     }
 
+    // TODO Oudated, dont use if havent update
+
     /**
      * Call this method in the while loop in your opMode to enable drive using joystick
      * Note: this method already includes pose update from drive/driveFieldOriented, so
@@ -462,6 +470,7 @@ public class Drivebase extends MecanumDrive {
      *
      * @param fieldOriented whether the drive is field oriented (false is bot oriented)
      */
+    @Deprecated
     public void manualControlLimitSpeed(boolean fieldOriented) {
         // Control drivebase manually, using gamepad1's joystick
         // Check for boost button: if boost enabled -> run at max speed, otherwise run at half max speed

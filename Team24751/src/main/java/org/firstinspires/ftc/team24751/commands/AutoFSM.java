@@ -16,7 +16,10 @@ import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
+import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
+
+import java.util.function.Supplier;
 
 public class AutoFSM {
     public Extender extender;
@@ -47,7 +50,7 @@ public class AutoFSM {
 
         arm.resetEncoder();
         arm.setPower(0);
-        extender.resetPosition();
+        extender.resetEncoder();
 
         // Set initial state to intaking
         // After drop arm and reset, the arm now should be at intake position
@@ -62,6 +65,9 @@ public class AutoFSM {
     }
 
     public ArmState state;
+    public TrajectorySequence result;
+    public Supplier<TrajectorySequence> borrowThread;
+    public boolean hasBorrowThread;
 
     public AutoFSM(LinearOpMode _opMode) {
         opMode = _opMode;
@@ -92,10 +98,15 @@ public class AutoFSM {
             case roadrunner:
                 break;
             /*
-             * Must reset timeoutTimer
+             * Must reset timeoutTimer and hasBorrowThread
              * */
             case purple_pixel:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                if (!hasBorrowThread)
+                {
+                    result = borrowThread.get();
+                    hasBorrowThread = true;
+                }
                 if (distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD || timeoutTimer.seconds() >= 2) {
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
@@ -103,13 +114,17 @@ public class AutoFSM {
                 }
                 break;
             /*
-             * Must reset waitServoTimer
+             * Must reset waitServoTimer and hasBorrowThread
              * */
             case yellow_pixel:
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 yellowPixelYeeter.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
-                if (waitServoTimer.seconds() >= 0.8) {
+                if (waitServoTimer.seconds() >= 1.2) {
                     yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
+                    if (!hasBorrowThread) {
+                        result = borrowThread.get();
+                        hasBorrowThread = true;
+                    }
                 }
                 if (waitServoTimer.seconds() >= 1.5) {
                     state = ArmState.roadrunner;
@@ -121,11 +136,16 @@ public class AutoFSM {
                 state = ArmState.roadrunner;
                 break;
             /*
-             * Must reset waitServoTimer
+             * Must reset waitServoTimer and hasBorrowThread
              * */
             case intaking:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
+                if (!hasBorrowThread)
+                {
+                    result = borrowThread.get();
+                    hasBorrowThread = true;
+                }
                 if (waitServoTimer.seconds() >= 1) {
                     state = ArmState.roadrunner;
                 }

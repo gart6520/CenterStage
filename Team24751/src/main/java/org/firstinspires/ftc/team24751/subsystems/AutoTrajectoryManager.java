@@ -105,10 +105,10 @@ public class AutoTrajectoryManager {
         Pose2d initPoseToPurplePose = new Pose2d();
         switch (teamPropPosition) {
             case LEFT:
-                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(30));
+                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(60));
                 break;
             case RIGHT:
-                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(-30));
+                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(-60));
                 break;
             case CENTER:
                 initPoseToPurplePose = new Pose2d(27.36, 0, Math.toRadians(0));
@@ -118,7 +118,7 @@ public class AutoTrajectoryManager {
         Vector2d goBack = Utility.rotateVector(new Vector2d(15, 0), initPose.getHeading());
         Vector2d initPosToPurplePos = Utility.rotateVector(new Vector2d(initPoseToPurplePose.getX(), initPoseToPurplePose.getY()), initPose.getHeading());
         result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
-                .forward(12)
+                .forward(15)
                 .lineToLinearHeading(new Pose2d(initPose.getX() + initPosToPurplePos.getX(), initPose.getY() + initPosToPurplePos.getY(), initPose.getHeading() + initPoseToPurplePose.getHeading()))
                 .build();
 
@@ -251,6 +251,8 @@ public class AutoTrajectoryManager {
 
         // Drop purple Pixel
         autoFSM.timeoutTimer.reset();
+        autoFSM.hasBorrowThread = false;
+        autoFSM.borrowThread = autoTrajectory.yellowPixelDrop;
         autoFSM.state = AutoFSM.ArmState.purple_pixel;
         while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
             autoFSM.update();
@@ -260,38 +262,34 @@ public class AutoTrajectoryManager {
         // drive.followTrajectorySequence(autoTrajectory.afterPurplePixel);
 
         // Go to backdrop for yellow pixel drop
-        drive.followTrajectorySequence(autoTrajectory.yellowPixelDrop.get());
+        drive.followTrajectorySequence(autoFSM.result);
 
         // Drop yellow Pixel
         autoFSM.waitServoTimer.reset();
+        autoFSM.borrowThread = autoTrajectory.repeatToStack;
+        autoFSM.hasBorrowThread = false;
         autoFSM.state = AutoFSM.ArmState.yellow_pixel;
         while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
             autoFSM.update();
         }
         while (opMode.opModeIsActive()) {
             // Go to stack
-            TrajectorySequence repeatToStack = autoTrajectory.repeatToStack.get();
+            TrajectorySequence repeatToStack = autoFSM.result;
             drive.followTrajectorySequence(repeatToStack);
 
             // Intaking
             autoFSM.waitServoTimer.reset();
             autoFSM.state = AutoFSM.ArmState.intaking;
+            autoFSM.hasBorrowThread = false;
+            autoFSM.borrowThread = autoTrajectory.repeatToBackdrop;
             while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
                 autoFSM.update();
             }
 
-            // Go back FAST
-            Pose2d pose2 = drive.getPoseEstimate();
-            drive.followTrajectorySequenceAsync(
-                    drive.trajectorySequenceBuilder(pose2)
-//                            .setConstraints(new MecanumVelocityConstraint(), new Meca)
-                            .lineTo(new Vector2d(pose2.getX() + 5, pose2.getY()))
-                            .build());
-
             // Go to backdrop
             autoFSM.state = AutoFSM.ArmState.after_intake;
             autoFSM.update();
-            TrajectorySequence repeatToBackdrop = autoTrajectory.repeatToBackdrop.get();
+            TrajectorySequence repeatToBackdrop = autoFSM.result;
             drive.followTrajectorySequence(repeatToBackdrop);
 
             // Outtake Pixels

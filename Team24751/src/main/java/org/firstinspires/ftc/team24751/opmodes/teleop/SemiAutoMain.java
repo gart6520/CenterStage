@@ -41,7 +41,6 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_RIGHT;
 import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_WRIST;
 import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.HOLD_CLIMBER_HOLDER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.RELEASE_CLIMBER_HOLDER_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.*;
@@ -93,6 +92,7 @@ public class SemiAutoMain extends LinearOpMode {
     Gamepad curr1 = null;
     boolean grabLeftClose = false;
     boolean grabRightClose = false;
+    boolean manualWristParallel = false;
 
     // Gamepad 2
     Gamepad prev2 = null;
@@ -106,6 +106,7 @@ public class SemiAutoMain extends LinearOpMode {
     ElapsedTime climberHolderHoldingTimer = new ElapsedTime();
     boolean isClimberHolderReleased = false;
     boolean isRetractExtenderTimeoutReset = false;
+    boolean isSemiAuto = true;
 
     // Hubs objects
     List<LynxModule> allHubs = null;
@@ -138,7 +139,7 @@ public class SemiAutoMain extends LinearOpMode {
 
         arm.resetEncoder();
         arm.setPower(0);
-        extender.resetPosition();
+        extender.resetEncoder();
 
         // Set initial state to intaking
         // After drop arm and reset, the arm now should be at intake position
@@ -235,241 +236,273 @@ public class SemiAutoMain extends LinearOpMode {
             // Update the arm position with kalman filter
             arm.update();
 
-            // Check if these buttons are just newly pressed
-            boolean grabberButton = curr2.cross && !prev2.cross;
-            boolean armButton = curr2.triangle && !prev2.triangle;
-            boolean quickResetButton = curr2.square && !prev2.square;
+            if (isSemiAuto) {// Check if these buttons are just newly pressed
+                boolean grabberButton = curr2.cross && !prev2.cross;
+                boolean armButton = curr2.triangle && !prev2.triangle;
+                boolean quickResetButton = curr2.square && !prev2.square;
 
-            // Arm finite state machine
-            switch (state) {
-                case none:
-                    // Impossible state
-                    break;
-                case base_moving:
-                    // This state will move the grabber up to avoid touching the ground
+                // Arm finite state machine
+                switch (state) {
+                    case none:
+                        // Impossible state
+                        break;
+                    case base_moving:
+                        // This state will move the grabber up to avoid touching the ground
 
-                    // Stop the arm
-                    arm.setPower(0);
-
-                    // Move grabber up -> no longer blocking drivebase's movement
-                    wristLED.turnOff();
-                    wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
-
-                    // If arm is extended -> retract it before moving
-                    if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && retractExtenderTimeout.seconds() < 1) {
-                        extender.setPower(1);
-                        isRetractExtenderTimeoutReset = true;
-                    }
-
-                    // When done retracing the arm's extender -> stop extender motor
-                    else if (retractExtenderTimeout.seconds() < 1.5) {
-                        isRetractExtenderTimeoutReset = false;
-
-                        // Allow extender control
-                        extenderControl();
-                    }
-
-                    // If grabber button is pressed -> change state from base_moving to intaking
-                    // (Technically just move the grabber down to intake position)
-                    if (grabberButton) {
-                        state = ArmState.intaking;
-                    }
-
-                    // If arm switch state button is pressed -> switch to arm_moving_up state
-                    // (Technically moving arm up to outtake position)
-                    else if (armButton) {
-                        state = ArmState.arm_moving_up;
-                        armMoveUpTimeout.reset();
-                        arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
-                        arm.resetPID();
-
-                        retractExtenderTimeout.reset();
-                    }
-
-                    break;
-                case arm_moving_up:
-                    // This state will move the arm up to outtake position
-
-                    // If arm is extended -> retract it before moving
-                    // Or the arm's PID will get crazy
-                    if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && armMoveUpTimeout.seconds() < 1) {
-                        extender.setPower(1);
-                        isRetractExtenderTimeoutReset = true;
-                    }
-                    // When done retracing the arm's extender -> stop extender motor
-                    else if (armMoveUpTimeout.seconds() < 1.5) {
-                        extender.setPower(0);
-                        isRetractExtenderTimeoutReset = false;
-                    }
-
-                    // Move grabber up
-                    wristLED.turnOff();
-                    wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
-
-                    // Use arm PID to move arm to desired angle
-                    if (arm.outakePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
-                        arm.setPower(0);
-                        state = ArmState.outaking;
-                    }
-                    if (arm.getAngle() > 90) {
-                        extenderControl();
-                    }
-
-                    break;
-                case intaking:
-                    // This state will move grabber to intake position
-
-                    // Set wrist angle to intake position (fully touch the ground)
-                    wristLED.setGreen();
-                    wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-
-                    // Allow extender control
-                    extenderControl();
-
-                    // If grabber's reset button is pressed -> switch to quick_reset state
-                    // Used to force the grabber to fully touch the ground
-                    if (quickResetButton) {
-                        armMoveDownTimeout.reset();
-                        state = ArmState.quick_reset;
-                    }
-
-                    // If grabber button is pressed -> change state from intaking to base_moving
-                    // (Technically just move the grabber up to avoid touching the ground)
-                    else if (grabberButton) {
-                        state = ArmState.base_moving;
-                        retractExtenderTimeout.reset();
-                    }
-
-                    // If arm switch state button is pressed -> switch to arm_moving_up state
-                    // (Technically moving arm up to outtake position)
-                    else if (armButton) {
-                        state = ArmState.arm_moving_up;
-                        armMoveUpTimeout.reset();
-                        arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
-                        arm.resetPID();
-
-                        retractExtenderTimeout.reset();
-                    }
-
-                    break;
-                case outaking:
-                    // This state move grabber to outtake position
-
-                    // Set grabber to auto parallel with backdrop
-                    wrist.autoParallel(arm.getAngle());
-                    extenderControl();
-
-                    // If arm switch state button is pressed -> switch to arm_moving_down state
-                    // (Technically moving arm down to intake position)
-                    if (armButton) {
-                        armMoveDownTimeout.reset();
-                        state = ArmState.arm_moving_down;
-                    }
-
-                    // Buttons for further tuning the arm's angle (just in case)
-                    if (gamepad2.right_trigger > SENSE_TRIGGER) {
-                        arm.setPower(Math.pow(gamepad2.right_trigger, 5));
-                    } else if (gamepad2.right_bumper) {
-                        arm.setPower(-0.4);
-                    } else {
-                        arm.setPower(0);
-                    }
-
-                    break;
-                case arm_moving_down:
-                    // This state move the arm down to intake position
-
-                    // Get current arm angle
-                    double angle = arm.getAngle();
-
-                    // If arm angle is < 20
-                    if (angle < 20) {
-                        arm.setPower(-0.05);
-                    }
-
-                    // If arm angle is < 90
-                    else if (angle < 90) {
-                        // If just enter 90 degree state
-                        if (!isRetractExtenderTimeoutReset) {
-                            // Retract extender
-                            retractExtenderTimeout.reset();
-                            isRetractExtenderTimeoutReset = true;
-                            extender.setPower(1);
-
-                            // Move wrist down to detect if arm has touched the ground
-                            wristLED.setGreen();
-                            wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-
-                            // Stop the arm a little bit
-                            arm.setPower(0);
-                        }
-
-                        // Continue to move arm down
-                        arm.setPower(-0.1);
-
-                        // If extender is fully retracted
-                        if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1.5) {
-                            extender.setPower(0);
-                        }
-                    }
-
-                    // If angle > 90 -> move arm down
-                    else {
-                        arm.setPower(-0.55);
-                    }
-
-                    // If distance sensor reported touching ground or if arm is timeout
-                    if (armMoveDownTimeout.seconds() > 1 && (armMoveDownTimeout.seconds() > 3 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD)) {
-                        // Stop arm
+                        // Stop the arm
                         arm.setPower(0);
 
-                        // Reset arm encoder
-                        arm.resetEncoder();
-
-                        // Reset boolean
-                        isRetractExtenderTimeoutReset = false;
-
-                        // Move wrist up
+                        // Move grabber up -> no longer blocking drivebase's movement
                         wristLED.turnOff();
                         wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
 
-                        // Switch to base_moving state
-                        state = ArmState.base_moving;
+                        // If arm is extended -> retract it before moving
+                        if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && retractExtenderTimeout.seconds() < 1) {
+                            extender.setPower(1);
+                            isRetractExtenderTimeoutReset = true;
+                        }
+
+                        // When done retracing the arm's extender -> stop extender motor
+                        else if (retractExtenderTimeout.seconds() < 1.5) {
+                            isRetractExtenderTimeoutReset = false;
+
+                            // Allow extender control
+                            extenderControl();
+                        }
+
+                        // If grabber button is pressed -> change state from base_moving to intaking
+                        // (Technically just move the grabber down to intake position)
+                        if (grabberButton) {
+                            state = ArmState.intaking;
+                        }
+
+                        // If arm switch state button is pressed -> switch to arm_moving_up state
+                        // (Technically moving arm up to outtake position)
+                        else if (armButton) {
+                            state = ArmState.arm_moving_up;
+                            armMoveUpTimeout.reset();
+                            arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
+                            arm.resetPID();
+
+                            retractExtenderTimeout.reset();
+                        }
+
+                        break;
+                    case arm_moving_up:
+                        // This state will move the arm up to outtake position
+
+                        // If arm is extended -> retract it before moving
+                        // Or the arm's PID will get crazy
+                        if (extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD && armMoveUpTimeout.seconds() < 1) {
+                            extender.setPower(1);
+                            isRetractExtenderTimeoutReset = true;
+                        }
+                        // When done retracing the arm's extender -> stop extender motor
+                        else if (armMoveUpTimeout.seconds() < 1.5) {
+                            extender.setPower(0);
+                            isRetractExtenderTimeoutReset = false;
+                        }
+
+                        // Move grabber up
+                        wristLED.turnOff();
+                        wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
+
+                        // Use arm PID to move arm to desired angle
+                        if (arm.outakePIDLoop() || armMoveUpTimeout.seconds() > 1.75) {
+                            arm.setPower(0);
+                            state = ArmState.outaking;
+                        }
+                        if (arm.getAngle() > 90) {
+                            extenderControl();
+                        }
+
+                        break;
+                    case intaking:
+                        // This state will move grabber to intake position
+
+                        // Set wrist angle to intake position (fully touch the ground)
+                        wristLED.setGreen();
+                        wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+
+                        // Allow extender control
+                        extenderControl();
+
+                        // If grabber's reset button is pressed -> switch to quick_reset state
+                        // Used to force the grabber to fully touch the ground
+                        if (quickResetButton) {
+                            armMoveDownTimeout.reset();
+                            state = ArmState.quick_reset;
+                        }
+
+                        // If grabber button is pressed -> change state from intaking to base_moving
+                        // (Technically just move the grabber up to avoid touching the ground)
+                        else if (grabberButton) {
+                            state = ArmState.base_moving;
+                            retractExtenderTimeout.reset();
+                        }
+
+                        // If arm switch state button is pressed -> switch to arm_moving_up state
+                        // (Technically moving arm up to outtake position)
+                        else if (armButton) {
+                            state = ArmState.arm_moving_up;
+                            armMoveUpTimeout.reset();
+                            arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE);
+                            arm.resetPID();
+
+                            retractExtenderTimeout.reset();
+                        }
+
+                        break;
+                    case outaking:
+                        // This state move grabber to outtake position
+
+                        // Set grabber to auto parallel with backdrop
+                        wrist.autoParallel(arm.getAngle());
+                        extenderControl();
+
+                        // If arm switch state button is pressed -> switch to arm_moving_down state
+                        // (Technically moving arm down to intake position)
+                        if (armButton) {
+                            armMoveDownTimeout.reset();
+                            state = ArmState.arm_moving_down;
+                        }
+
+                        // Buttons for further tuning the arm's angle (just in case)
+                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
+                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
+                        } else if (gamepad2.right_bumper) {
+                            arm.setPower(-0.4);
+                        } else {
+                            arm.setPower(0);
+                        }
+
+                        break;
+                    case arm_moving_down:
+                        // This state move the arm down to intake position
+
+                        // Get current arm angle
+                        double angle = arm.getAngle();
+
+                        // If arm angle is < 20
+                        if (angle < 20) {
+                            arm.setPower(-0.05);
+                        }
+
+                        // If arm angle is < 90
+                        else if (angle < 90) {
+                            // If just enter 90 degree state
+                            if (!isRetractExtenderTimeoutReset) {
+                                // Retract extender
+                                retractExtenderTimeout.reset();
+                                isRetractExtenderTimeoutReset = true;
+                                extender.setPower(1);
+
+                                // Move wrist down to detect if arm has touched the ground
+                                wristLED.setGreen();
+                                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+
+                                // Stop the arm a little bit
+                                arm.setPower(0);
+                            }
+
+                            // Continue to move arm down
+                            arm.setPower(-0.1);
+
+                            // If extender is fully retracted
+                            if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1.5) {
+                                extender.setPower(0);
+                            }
+                        }
+
+                        // If angle > 90 -> move arm down
+                        else {
+                            arm.setPower(-0.55);
+                        }
+
+                        // If distance sensor reported touching ground or if arm is timeout
+                        if (armMoveDownTimeout.seconds() > 1 && (armMoveDownTimeout.seconds() > 3 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD)) {
+                            // Stop arm
+                            arm.setPower(0);
+
+                            // Reset arm encoder
+                            arm.resetEncoder();
+
+                            // Reset boolean
+                            isRetractExtenderTimeoutReset = false;
+
+                            // Move wrist up
+                            wristLED.turnOff();
+                            wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
+
+                            // Switch to base_moving state
+                            state = ArmState.base_moving;
+                        }
+
+                        break;
+                    case quick_reset:
+                        // This state move the arm up and down a little bit to force the grabber to fully touch the ground
+
+                        // Set wrist angle to correct position
+                        wristLED.setGreen();
+                        wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+
+                        // Move arm up for 0.5 seconds
+                        if (armMoveDownTimeout.seconds() < 0.5) {
+                            arm.setPower(0.5);
+                        }
+
+                        // Then move arm down
+                        else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD) {
+                            arm.setPower(-0.1);
+                        }
+
+                        // Finally, after fully touching the ground
+                        else {
+                            // Stop arm
+                            arm.setPower(0);
+
+                            // Reset arm encoder
+                            arm.resetEncoder();
+
+                            // Switch to intaking state
+                            state = ArmState.intaking;
+                        }
+
+                        break;
+                }
+                if (curr2.options && !prev2.options && curr2.share && !prev2.share) {
+                    isSemiAuto = false;
+                }
+            } else {
+                double armAngle = arm.getAngle();
+                if (armAngle < 110) {
+                    wrist.setAngle(manualWristParallel ? WRIST_GROUND_PARALLEL_DEG : WRIST_FULL_BACKWARD_DEG);
+                    if (curr2.cross && !prev2.cross)
+                    {
+                        manualWristParallel = !manualWristParallel;
                     }
-
-                    break;
-                case quick_reset:
-                    // This state move the arm up and down a little bit to force the grabber to fully touch the ground
-
-                    // Set wrist angle to correct position
-                    wristLED.setGreen();
+                }
+                else {
+                    wrist.autoParallel(armAngle);
+                }
+                extenderControl();
+                // Buttons for manual tuning of the arm angle
+                if (gamepad2.right_trigger > SENSE_TRIGGER) {
+                    arm.setPower(0.7);
+                } else if (gamepad2.right_bumper) {
+                    arm.setPower(-0.7);
+                } else {
+                    arm.setPower(0);
+                }
+                if (curr2.options && !prev2.options && curr2.share && !prev2.share) {
+                    isSemiAuto = true;
                     wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                    arm.resetEncoder();
+                    extender.resetEncoder();
+                    state = ArmState.intaking;
+                }
 
-                    // Move arm up for 0.5 seconds
-                    if (armMoveDownTimeout.seconds() < 0.5) {
-                        arm.setPower(0.5);
-                    }
-
-                    // Then move arm down
-                    else if (armMoveDownTimeout.seconds() < 3 && distance.getDistanceCM() >= DISTANCE_TO_GROUND_THRESHOLD) {
-                        arm.setPower(-0.1);
-                    }
-
-                    // Finally, after fully touching the ground
-                    else {
-                        // Stop arm
-                        arm.setPower(0);
-
-                        // Reset arm encoder
-                        arm.resetEncoder();
-
-                        // Switch to intaking state
-                        state = ArmState.intaking;
-                    }
-
-                    break;
             }
-
             /**
              * General buttons mapping for gamepad1
              */
@@ -543,6 +576,10 @@ public class SemiAutoMain extends LinearOpMode {
             prev2.copy(curr2);
 
             // Show telemetry
+            if (arm.getArmEncoderStatus() != Arm.ArmEncoderStatus.BOTH)
+            {
+                telemetry.addLine("ARM ENCODER IS FAULTY, PLEASE CHECK!!!");
+            }
             telemetry.addData("Current arm angle (L + R)", arm.getAngle());
             telemetry.addData("Current distance", distance.getDistanceCM());
             telemetry.addData("FSM state", state.toString());

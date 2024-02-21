@@ -189,6 +189,7 @@ public class Constants {
             //TODO: tune/calculate
             public static final double MOTOR_DEG_PER_TICK = 90.0 / (MOTOR_POSITION_AT_UPWARD_VERTICAL - MOTOR_POSITION_AT_FRONT_HORIZONTAL);
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
+            public static final double FAULTY_ARM_ENCODER_THRESHOLD = 50;
             public static double ARM_BACKDROP_PARALLEL_ANGLE = 139;
             public static double ARM_BACKDROP_PARALLEL_ANGLE_AUTO = 130;
             /*
