@@ -323,7 +323,7 @@ public class Constants {
         public static class CV {
             // Team prop position
             public enum TeamPropPosition {
-                NONE, CLOSE, CENTER, FAR
+                NONE, LEFT, CENTER, RIGHT
             }
 
             // Area threshold
@@ -334,7 +334,7 @@ public class Constants {
 
             // Red team prop
             public static final Scalar TEAM_PROP_RED_MIN = new Scalar(0, 115, 133);
-            public static final Scalar TEAM_PROP_RED_MAX = new Scalar(5, 228, 255);
+            public static final Scalar TEAM_PROP_RED_MAX = new Scalar(5, 255, 255);
 
             // Blue team prop
             public static final Scalar TEAM_PROP_BLUE_MIN = new Scalar(90, 68, 75);
@@ -369,10 +369,10 @@ public class Constants {
     public static class AUTONOMOUS {
         // TODO tune/measure these number
         // TODO: DON'T FUCKING CHANGE INIT POSE OR I WILL PLAY SKIBIDI TOILET FOR AN HOUR WHILE TRAPPING YOU IN EP MEETING WITH PROF DUNG
-        public static final Pose2d WING_RED_START_POSE = new Pose2d(-39.90625, -63.46875, Math.toRadians(90));
-        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-39.90625, 63.46875, Math.toRadians(-90));
-        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(15.90625, -63.46875, Math.toRadians(90));
-        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(15.90625, 63.46875, Math.toRadians(-90));
+        public static final Pose2d WING_RED_START_POSE = new Pose2d(-36.00, -63.46875, Math.toRadians(90));
+        public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36.00, 63.46875, Math.toRadians(-90));
+        public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(12.00, -63.46875, Math.toRadians(90));
+        public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(12.00, 63.46875, Math.toRadians(-90));
         public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6.5);
         public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
         public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6.5);

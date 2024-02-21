@@ -41,6 +41,8 @@ public class TestServo extends LinearOpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+        yellowPixelYeeter.init();
+        climberHolder.init();
 
         // Wait for the driver to press PLAY
         waitForStart();

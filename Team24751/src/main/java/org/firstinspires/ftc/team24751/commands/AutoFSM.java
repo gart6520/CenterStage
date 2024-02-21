@@ -38,7 +38,7 @@ public class AutoFSM {
         opMode.telemetry.addLine("Resetting arm and extender");
         opMode.telemetry.update();
 
-        while (timer.seconds() <= 5 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
+        while (timer.seconds() <= 2 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
             if (timer.seconds() >= 1) {
                 arm.setPower(-0.05);
             }
@@ -112,7 +112,6 @@ public class AutoFSM {
                     yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
                 }
                 if (waitServoTimer.seconds() >= 1.5) {
-                    yellowPixelYeeter.getServo().setPwmDisable();
                     state = ArmState.roadrunner;
                 }
                 break;

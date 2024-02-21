@@ -58,6 +58,8 @@ public abstract class BaseAuto extends LinearOpMode {
             telemetry.update();
         }
         autoFSM.dropArmAndReset();
+        telemetry.addData("Team Prop Pos", teamPropProcessor.getPos());
+        telemetry.update();
         autoTrajectoryManager = new AutoTrajectoryManager(startingPos, teamPropProcessor.getPos(), drivebase, autoFSM, this);
         //frontCam.close();
 //        autoTrajectoryManager = new AutoTrajectoryManager(startingPos, Constants.VISION.CV.TeamPropPosition.LEFT, drivebase, autoFSM, this);

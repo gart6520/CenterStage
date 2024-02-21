@@ -86,7 +86,6 @@ public class AutoTrajectoryManager {
         }
         AutoTrajectory result = new AutoTrajectory();
         Pose2d initPose = null;
-        boolean isCloseLeft = startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropBlue;
 
         // Drop purple Pixel
         switch (startingPos) {
@@ -105,39 +104,32 @@ public class AutoTrajectoryManager {
         }
         Pose2d initPoseToPurplePose = new Pose2d();
         switch (teamPropPosition) {
-            case CLOSE:
-                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(30));
+            case LEFT:
+                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(30));
                 break;
-            case FAR:
-                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(-30));
+            case RIGHT:
+                initPoseToPurplePose = new Pose2d(18.7, 0, Math.toRadians(-30));
                 break;
             case CENTER:
-                initPoseToPurplePose = new Pose2d(3.90625, 25.46875, Math.toRadians(0));
+                initPoseToPurplePose = new Pose2d(27.36, 0, Math.toRadians(0));
                 break;
             case NONE:
         }
-        if (startingPos == StartingPos.backdropRed) {
-            initPoseToPurplePose = new Pose2d(-initPoseToPurplePose.getX(), initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
-        } else if (startingPos == StartingPos.wingBlue) {
-            initPoseToPurplePose = new Pose2d(initPoseToPurplePose.getX(), -initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
-        } else if (startingPos == StartingPos.backdropBlue) {
-            initPoseToPurplePose = new Pose2d(-initPoseToPurplePose.getX(), -initPoseToPurplePose.getY(), initPoseToPurplePose.getHeading());
-        }
-        Vector2d goBack = Utility.rotateVector(new Vector2d(0, 10), initPose.getHeading());
+        Vector2d goBack = Utility.rotateVector(new Vector2d(15, 0), initPose.getHeading());
+        Vector2d initPosToPurplePos = Utility.rotateVector(new Vector2d(initPoseToPurplePose.getX(), initPoseToPurplePose.getY()), initPose.getHeading());
         result.purplePixelDrop = drive.trajectorySequenceBuilder(initPose)
-                .forward(2)
-                .lineToLinearHeading(initPose.plus(initPoseToPurplePose))
-                .lineToLinearHeading(initPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
+                .forward(12)
+                .lineToLinearHeading(new Pose2d(initPose.getX() + initPosToPurplePos.getX(), initPose.getY() + initPosToPurplePos.getY(), initPose.getHeading() + initPoseToPurplePose.getHeading()))
                 .build();
 
         Vector2d toCorrectBackdropPos = new Vector2d();
         // Yellow Pixel Offset for each team prop case
         switch (teamPropPosition) {
-            case CLOSE:
-                toCorrectBackdropPos = isCloseLeft ? LEFT_BACKDROP : RIGHT_BACKDROP;
+            case LEFT:
+                toCorrectBackdropPos = LEFT_BACKDROP;
                 break;
-            case FAR:
-                toCorrectBackdropPos = isCloseLeft ? RIGHT_BACKDROP : LEFT_BACKDROP;
+            case RIGHT:
+                toCorrectBackdropPos = RIGHT_BACKDROP;
                 break;
             case CENTER:
                 toCorrectBackdropPos = CENTER_BACKDROP;
@@ -145,6 +137,7 @@ public class AutoTrajectoryManager {
         }
         // Yellow pixel drop trajectory
         Vector2d finalToCorrectBackdropPos = toCorrectBackdropPos;
+        Pose2d finalInitPose = initPose;
         switch (startingPos) {
             // TODO: Make all start of yellow traj go to a point (may not be necessary)
             case wingRed:
@@ -154,9 +147,10 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
                         .lineToLinearHeading(new Pose2d(-36.00, -62.00, Math.toRadians(180.00)))
                         .lineToConstantHeading(new Vector2d(25.00, -62.00))
-                        .lineToConstantHeading(new Vector2d(50.65, -44.00).plus(finalToCorrectBackdropPos))
+                        .lineToConstantHeading(new Vector2d(48.00, -44.00).plus(finalToCorrectBackdropPos))
                         .build();
                 break;
             case wingBlue:
@@ -166,9 +160,10 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-36.00, 62.00, Math.toRadians(180.00)))
-                        .lineToConstantHeading(new Vector2d(25.00, 62.00))
-                        .lineToConstantHeading(new Vector2d(50.65, 28.00).plus(finalToCorrectBackdropPos))
+                        .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
+                        .lineToLinearHeading(new Pose2d(-36.00, 60.69, Math.toRadians(180.00)))
+                        .lineToConstantHeading(new Vector2d(25.00, 60.69))
+                        .lineToConstantHeading(new Vector2d(48.00, 27.00).plus(finalToCorrectBackdropPos))
                         .build();
                 break;
             case backdropRed:
@@ -178,7 +173,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), -44.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
+                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), -44.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
             case backdropBlue:
@@ -188,7 +183,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50.65 + finalToCorrectBackdropPos.getX(), 28.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
+                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), 27.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
         }
@@ -197,7 +192,7 @@ public class AutoTrajectoryManager {
         if (startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropRed) {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
-                    .lineToConstantHeading(new Vector2d(-55.00, -9.50))
+                    .lineToConstantHeading(new Vector2d(-50.00, -9.50))
                     .addDisplacementMarker(() ->
                     {
                         autoFSM.state = AutoFSM.ArmState.prepare_intaking;
@@ -209,10 +204,10 @@ public class AutoTrajectoryManager {
                     .setConstraints(
                             new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
                             new ProfileAccelerationConstraint(100))
-                    .lineToConstantHeading(new Vector2d(-50.00, -9.50))
+                    .lineToConstantHeading(new Vector2d(-47.00, -9.50))
                     .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, -9.50))
-                    .lineToConstantHeading(new Vector2d(50.65, -36.00))
+                    .lineToConstantHeading(new Vector2d(49.00, -36.00))
                     .build();
         } else {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -229,10 +224,10 @@ public class AutoTrajectoryManager {
                     .setConstraints(
                             new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH),
                             new ProfileAccelerationConstraint(100))
-                    .lineToConstantHeading(new Vector2d(-50.00, 9.50))
+                    .lineToConstantHeading(new Vector2d(-47.00, 9.50))
                     .resetConstraints()
                     .lineToConstantHeading(new Vector2d(30.00, 9.50))
-                    .lineToConstantHeading(new Vector2d(50.65, 36.00))
+                    .lineToConstantHeading(new Vector2d(49.00, 36.00))
                     .build();
         }
         return result;

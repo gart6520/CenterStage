@@ -60,8 +60,9 @@ public class TeamPropProcessor implements VisionProcessor {
 
     /**
      * Init processor
-     * @param width frame width
-     * @param height frame height
+     *
+     * @param width       frame width
+     * @param height      frame height
      * @param calibration camera calibartion data
      */
     @Override
@@ -83,7 +84,8 @@ public class TeamPropProcessor implements VisionProcessor {
 
     /**
      * Process frame
-     * @param frame input frame from camera
+     *
+     * @param frame            input frame from camera
      * @param captureTimeNanos exposure time
      * @return
      */
@@ -91,7 +93,7 @@ public class TeamPropProcessor implements VisionProcessor {
     public Object processFrame(Mat frame, long captureTimeNanos) {
         try {
             // Rotate image
-            Core.rotate(frame.clone(), frame, Core.ROTATE_180);
+            //Core.rotate(frame.clone(), frame, Core.ROTATE_180);
 
             // Initial image mat
             Mat img1 = new Mat();
@@ -152,20 +154,18 @@ public class TeamPropProcessor implements VisionProcessor {
             this.boundingRect = Imgproc.boundingRect(max_contour);
 
             // Calculate the center
-            center = kalmanFilter.estimate(this.boundingRect.x + this.boundingRect.width/2.0);
+            center = kalmanFilter.estimate(this.boundingRect.x + this.boundingRect.width / 2.0);
             return center;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return center; // I know it's bad but we have to do something instead of crashing
         }
     }
 
     /**
-     * @param canvas Android canvas to draw on
-     * @param onscreenWidth real onscreen width
-     * @param onscreenHeight real onscreen height
+     * @param canvas               Android canvas to draw on
+     * @param onscreenWidth        real onscreen width
+     * @param onscreenHeight       real onscreen height
      * @param scaleBmpPxToCanvasPx drawing scale
      * @param scaleCanvasDensity
      * @param userContext
@@ -206,38 +206,27 @@ public class TeamPropProcessor implements VisionProcessor {
 
     /**
      * Get team prop position
+     *
      * @return team prop position. If no team prop is found, return NONE
      */
     public TeamPropPosition getPos() {
         // Get the correct threshold object
-        AutoTrajectoryManager.StartingPos startingPos = Constants.startingPos;
         TeamPropRegion regionData;
 
         // Bot is placed on the right edge of the grid
-        if (startingPos == AutoTrajectoryManager.StartingPos.wingBlue || startingPos == AutoTrajectoryManager.StartingPos.backdropRed) {
-            regionData = RIGHT_CLOSE_TEAM_PROP_REGION;
+        regionData = RIGHT_CLOSE_TEAM_PROP_REGION;
 
-            // Decide the position
-            if (center < regionData.LEFT_CENTER_POS) return this.pos = FAR;
-            if (center < regionData.CENTER_RIGHT_POS) return this.pos = CENTER;
-            if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = FAR;
-            return this.pos = CLOSE;
-        }
+        // Decide the position
+        if (center < regionData.LEFT_CENTER_POS) return this.pos = LEFT;
+        if (center < regionData.CENTER_RIGHT_POS) return this.pos = CENTER;
+        if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = LEFT;
+        return this.pos = RIGHT;
 
-        // Bot is placed on the left edge of the grid
-        else {
-            regionData = LEFT_CLOSE_TEAM_PROP_REGION;
-
-            // Decide the position
-            if (center < regionData.LEFT_CENTER_POS) return this.pos = CLOSE;
-            if (center < regionData.CENTER_RIGHT_POS) return this.pos = CENTER;
-            if (nanCount >= TEAM_PROP_NAN_COUNT_THRESHOLD) return this.pos = FAR;
-            return this.pos = FAR;
-        }
     }
 
     /**
      * Get team prop's center
+     *
      * @return team prop's center. If no team prop is found, return 0
      */
     public double getCenter() {
