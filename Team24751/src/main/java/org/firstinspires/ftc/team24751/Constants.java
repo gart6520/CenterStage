@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
-import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
+import org.firstinspires.ftc.team24751.commands.AutoTrajectoryManager;
 import org.opencv.core.Scalar;
 
 import android.util.Size;
@@ -191,7 +191,7 @@ public class Constants {
             public static final double MOTOR_DEG_AT_ZERO_TICK = -MOTOR_POSITION_AT_FRONT_HORIZONTAL * MOTOR_DEG_PER_TICK;
             public static final double FAULTY_ARM_ENCODER_THRESHOLD = 50;
             public static double ARM_BACKDROP_PARALLEL_ANGLE = 139;
-            public static double ARM_BACKDROP_PARALLEL_ANGLE_AUTO = 130;
+            public static double ARM_BACKDROP_PARALLEL_ANGLE_AUTO = 50;
             /*
              *                       grabber
              *     arm        ======= || |++++++++|  grabber only
@@ -236,13 +236,13 @@ public class Constants {
              * ========\
              *           \====
              * */
-            public static double WRIST_GROUND_PARALLEL_DEG = 180;
+            public static double WRIST_GROUND_PARALLEL_DEG = 190;
 
             /* Fully backward and touch arm (min/max angle)
              *      ====\
              * ===========\
              * */
-            public static double WRIST_FULL_BACKWARD_DEG = 30;
+            public static double WRIST_FULL_BACKWARD_DEG = 38;
             /*                 //||
              *               //  ||
              *             //beta||
@@ -262,6 +262,7 @@ public class Constants {
              *                           |--------|  3 untouched
              * */
             public static double WRIST_AUTO_INTAKING_DEG = 210;
+            public static double WRIST_AUTO_OUTAKING_DEG = 190;
 
             public static double OPEN_CLAW_POSITION = 0.25;
             public static double CLOSE_CLAW_POSITION = 0.011111111111111112;
@@ -279,8 +280,8 @@ public class Constants {
         @Config
         public static class ClimberHolder
         {
-            public static double HOLD_CLIMBER_HOLDER_POSITION = 0.32666666666666666;
-            public static double RELEASE_CLIMBER_HOLDER_POSITION = 0;
+            public static double HOLD_CLIMBER_HOLDER_POSITION = 1.0;
+            public static double RELEASE_CLIMBER_HOLDER_POSITION = 0.5;
         }
 
         @Config

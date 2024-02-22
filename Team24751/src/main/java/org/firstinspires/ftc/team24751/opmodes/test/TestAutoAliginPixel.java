@@ -1,5 +1,33 @@
-package org.firstinspires.ftc.team24751.opmodes.teleop;
+package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_LEFT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_RIGHT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_WRIST;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_LEFT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_RIGHT;
+import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_WRIST;
+import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.initFieldParameters;
+import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.SENSE_TRIGGER;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.ARM_BACKDROP_PARALLEL_ANGLE;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.RELEASE_CLIMBER_HOLDER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.SHOOT_DRONE_LAUNCHER_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.EXTENDER_FULLY_IN_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
+import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
+import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
+import static org.firstinspires.ftc.team24751.Utility.rotateVector;
+
+import android.util.Size;
+
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -11,52 +39,26 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.commands.AutoAimApriltagServo;
+import org.firstinspires.ftc.team24751.subsystems.Climber;
 import org.firstinspires.ftc.team24751.subsystems.ClimberHolder;
 import org.firstinspires.ftc.team24751.subsystems.DroneLauncher;
 import org.firstinspires.ftc.team24751.subsystems.FullPoseEstimator;
 import org.firstinspires.ftc.team24751.subsystems.LedIndicator;
-import org.firstinspires.ftc.team24751.subsystems.Climber;
-import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
-
-
 import org.firstinspires.ftc.team24751.subsystems.arm.Arm;
 import org.firstinspires.ftc.team24751.subsystems.arm.Extender;
 import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.firstinspires.ftc.team24751.subsystems.arm.Wrist;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
+import org.firstinspires.ftc.team24751.subsystems.sensor.Distance;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
-import org.firstinspires.ftc.team24751.subsystems.vision.PoseEstimatorAprilTagProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import static org.firstinspires.ftc.team24751.Constants.BOT_PARAMETERS.ROBOT_TO_CAMERA;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.BACK_CAMERA_NAME;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.CAMERA_SERVO;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAME;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_LEFT;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_RIGHT;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_GREEN_WRIST;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_LEFT;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_RIGHT;
-import static org.firstinspires.ftc.team24751.Constants.DEVICES.LED_RED_WRIST;
-import static org.firstinspires.ftc.team24751.Constants.GAMEPAD_SENSITIVITY.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.ClimberHolder.RELEASE_CLIMBER_HOLDER_POSITION;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.DroneLauncher.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.*;
-import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.*;
-import static org.firstinspires.ftc.team24751.Constants.VISION.BACK_CAMERA_RESOLUTION;
-import static org.firstinspires.ftc.team24751.Utility.enableBulkRead;
-import static org.firstinspires.ftc.team24751.Constants.FIELD_PARAMETER.*;
-
-import static org.firstinspires.ftc.team24751.Utility.*;
-
-import android.annotation.SuppressLint;
+import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelAlignProcessor;
+import org.firstinspires.ftc.team24751.subsystems.vision.sim.PixelProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Semi-auto Main", group = "Manual")
-public class SemiAutoMain extends LinearOpMode {
+@TeleOp(name = "Test Auto Aligin Pixel", group = "Test")
+public class TestAutoAliginPixel extends LinearOpMode {
     // Run timer (mostly used for practicing)
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -73,7 +75,8 @@ public class SemiAutoMain extends LinearOpMode {
     LedIndicator leftLED = new LedIndicator(this, LED_RED_LEFT, LED_GREEN_LEFT);
     LedIndicator rightLED = new LedIndicator(this, LED_RED_RIGHT, LED_GREEN_RIGHT);
     LedIndicator wristLED = new LedIndicator(this, LED_RED_WRIST, LED_GREEN_WRIST);
-    //    Camera frontCamera = new Camera(FRONT_CAMERA_NAME, this);
+    Camera frontCamera = new Camera(FRONT_CAMERA_NAME, this);
+    PixelAlignProcessor pixelProcessor = new PixelAlignProcessor();
 //    Camera backCamera = new Camera(BACK_CAMERA_NAME, this);
 //    PoseEstimatorAprilTagProcessor aprilTag = new PoseEstimatorAprilTagProcessor(backCamera, this);
     FullPoseEstimator poseEstimator;
@@ -110,6 +113,7 @@ public class SemiAutoMain extends LinearOpMode {
 
     // Hubs objects
     List<LynxModule> allHubs = null;
+    PIDEx anglePID = new PIDEx(new PIDCoefficientsEx(0.1, 0, 0, 1, 20, 0.1));
 
     // Helper function for dropping the arm down and reset
     private void dropArmAndReset() {
@@ -171,6 +175,10 @@ public class SemiAutoMain extends LinearOpMode {
         wristLED.init();
 //        aprilTag.initAprilTagProcessor();
 //        backCamera.buildCamera(BACK_CAMERA_RESOLUTION);
+
+        frontCamera.addProcessorToQueue(pixelProcessor);
+        frontCamera.buildCamera(FRONT_CAMERA_RESOLUTION);
+
         poseEstimator = new FullPoseEstimator(
 //                this::getBotPosFromAprilTag,
                 (double deg) -> null,
@@ -231,7 +239,6 @@ public class SemiAutoMain extends LinearOpMode {
             // Control drivebase manually using joystick (field-oriented)
             Pose2d odoPose = drivebase.getPoseEstimate();
             Vector2d botPos = new Vector2d(odoPose.getX(), odoPose.getY());
-            this.manualDrive(botPos);
 
             // Update the arm position with kalman filter
             arm.update();
@@ -368,13 +375,13 @@ public class SemiAutoMain extends LinearOpMode {
                         }
 
                         // Buttons for further tuning the arm's angle (just in case)
-//                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
-//                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
-//                        } else if (gamepad2.right_bumper) {
-//                            arm.setPower(-0.4);
-//                        } else {
-//                            arm.setPower(0);
-//                        }
+                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
+                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
+                        } else if (gamepad2.right_bumper) {
+                            arm.setPower(-0.4);
+                        } else {
+                            arm.setPower(0);
+                        }
 
                         break;
                     case arm_moving_down:
@@ -485,9 +492,9 @@ public class SemiAutoMain extends LinearOpMode {
                 }
                 extenderControl();
                 // Buttons for manual tuning of the arm angle
-                if (curr2.triangle) {
+                if (gamepad2.right_trigger > SENSE_TRIGGER) {
                     arm.setPower(0.7);
-                } else if (curr2.square) {
+                } else if (gamepad2.right_bumper) {
                     arm.setPower(-0.7);
                 } else {
                     arm.setPower(0);
@@ -505,22 +512,22 @@ public class SemiAutoMain extends LinearOpMode {
              * General buttons mapping for gamepad1
              */
 
-//            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
-//                grabLeftClose = !grabLeftClose;
-//                grabRightClose = !grabRightClose;
-//                grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
-//            } else {// Control left claw
-            if (curr2.left_bumper && !prev2.left_bumper) {
+            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
                 grabLeftClose = !grabLeftClose;
-                grabber.leftClaw.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
-            }
-
-            // Control right claw
-            if (curr2.right_bumper && !prev2.right_bumper) {
                 grabRightClose = !grabRightClose;
-                grabber.rightClaw.setPosition(grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+            } else {// Control left claw
+                if (curr1.left_bumper && !prev1.left_bumper) {
+                    grabLeftClose = !grabLeftClose;
+                    grabber.leftClaw.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                }
+
+                // Control right claw
+                if (curr1.right_bumper && !prev1.right_bumper) {
+                    grabRightClose = !grabRightClose;
+                    grabber.rightClaw.setPosition(grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                }
             }
-//            }
 
             // Back LED indicator
             if (grabLeftClose) leftLED.setAmber();
@@ -568,6 +575,14 @@ public class SemiAutoMain extends LinearOpMode {
                 }
             }
 
+            if (curr1.square)
+            {
+                drivebase.drive(0,0, anglePID.calculate(0, pixelProcessor.getAng()));
+            }
+            else {
+                this.manualDrive(botPos);
+            }
+
             // Update prev1 gamepad
             prev1.copy(curr1);
 
@@ -598,9 +613,9 @@ public class SemiAutoMain extends LinearOpMode {
 
     private void extenderControl() {
         // Control extender
-        if (curr2.right_trigger > SENSE_TRIGGER) {
+        if (gamepad2.left_bumper) {
             extender.setPower(0.7);
-        } else if (curr2.left_trigger > SENSE_TRIGGER) {
+        } else if (gamepad2.left_trigger > SENSE_TRIGGER) {
             extender.setPower(-0.7);
         } else if (!isRetractExtenderTimeoutReset) {
             extender.setPower(0);

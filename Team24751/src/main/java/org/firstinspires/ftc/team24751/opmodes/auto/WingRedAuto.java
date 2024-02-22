@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.team24751.Constants.allianceColor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.team24751.Constants;
-import org.firstinspires.ftc.team24751.subsystems.AutoTrajectoryManager;
+import org.firstinspires.ftc.team24751.commands.AutoTrajectoryManager;
 
 @Autonomous(name = "Wing Red Auto", group = "Auto")
 public class WingRedAuto extends BaseAuto{

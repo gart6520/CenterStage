@@ -270,6 +270,16 @@ public class PixelAlignProcessor implements VisionProcessor {
         return angs;
     }
 
+    public double getAng() {
+        List<Double> angs = this.getObjectAngles();
+        double total = 0;
+        for (Double ang : angs) {
+            total += ang;
+        }
+
+        return (total/(double)angs.size());
+    }
+
     /**
      * Get recognition bounding box
      */

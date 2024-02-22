@@ -400,12 +400,13 @@ public class Drivebase extends MecanumDrive {
         double left_y = -sense(opMode.gamepad1.left_stick_y, SENSE_Y); // Y axis is inverted
         double left_x = sense(opMode.gamepad1.left_stick_x, SENSE_X);
         double right_x;
-        if (opMode.gamepad1.right_stick_x > SENSE_Z)
+
+        if (Math.abs(opMode.gamepad1.right_stick_x) >= SENSE_Z)
             right_x = sense(opMode.gamepad1.right_stick_x, SENSE_Z);
-        else
-        {
+        else {
             right_x = sense(opMode.gamepad2.right_stick_x, SENSE_Z);
         }
+
         if (opMode.gamepad1.right_trigger <= SENSE_TRIGGER) {
             left_y = Math.pow(left_y, 5);
             left_x = Math.pow(left_x, 5);

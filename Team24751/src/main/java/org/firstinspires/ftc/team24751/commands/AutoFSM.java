@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.commands;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_AUTO_OUTAKING_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.YellowPixelYeeter.LOAD_YELLOW_PIXEL_YEETER_POSITION;
@@ -64,6 +65,7 @@ public class AutoFSM {
         arm_moving_up, arm_moving_down, intaking, after_intake
     }
 
+    boolean hasPlacedPurplePixel = false;
     public ArmState state;
     public TrajectorySequence result;
     public Supplier<TrajectorySequence> borrowThread;
@@ -101,17 +103,23 @@ public class AutoFSM {
              * Must reset timeoutTimer and hasBorrowThread
              * */
             case purple_pixel:
-                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-                if (!hasBorrowThread)
-                {
-                    result = borrowThread.get();
-                    hasBorrowThread = true;
+                if (!hasPlacedPurplePixel) {
+                    wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 }
-                if (distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD || timeoutTimer.seconds() >= 2) {
+                if ((distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD || timeoutTimer.seconds() >= 2) && !hasPlacedPurplePixel) {
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
+                    waitServoTimer.reset();
+                    hasPlacedPurplePixel = true;
+                    if (!hasBorrowThread) {
+                        result = borrowThread.get();
+                        hasBorrowThread = true;
+                    }
+                }
+                if (waitServoTimer.seconds() >= 0.75 && hasPlacedPurplePixel) {
                     state = ArmState.roadrunner;
                 }
+
                 break;
             /*
              * Must reset waitServoTimer and hasBorrowThread
@@ -141,8 +149,7 @@ public class AutoFSM {
             case intaking:
                 wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                 grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
-                if (!hasBorrowThread)
-                {
+                if (!hasBorrowThread) {
                     result = borrowThread.get();
                     hasBorrowThread = true;
                 }
@@ -159,12 +166,16 @@ public class AutoFSM {
              * Must reset waitServoTimer
              * */
             case outaking:
-                wrist.autoParallel(arm.getAngle());
+                wrist.setAngle(WRIST_AUTO_OUTAKING_DEG);
                 if (waitServoTimer.seconds() >= 1) {
-                    timeoutTimer.reset();
-                    state = ArmState.arm_moving_down;
+                    state = ArmState.roadrunner;
                 } else if (waitServoTimer.seconds() >= 0.5) {
+                    extender.setPower(0);
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
+                } else if (extender.getPosition() < 300) {
+                    extender.setPower(-0.5);
+                } else {
+                    extender.setPower(0);
                 }
                 break;
             /*
@@ -206,7 +217,7 @@ public class AutoFSM {
                 }
 
                 // If distance sensor reported touching ground or if arm is timeout
-                if (timeoutTimer.seconds() > 3 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
+                if (timeoutTimer.seconds() > 2 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
                     // Stop arm
                     arm.setPower(0);
 

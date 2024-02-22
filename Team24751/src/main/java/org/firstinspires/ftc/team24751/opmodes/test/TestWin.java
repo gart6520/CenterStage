@@ -1,19 +1,27 @@
 package org.firstinspires.ftc.team24751.opmodes.test;
 
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.commands.standard.LynxSetModuleLEDColorCommand;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24751.subsystems.arm.Grabber;
 import org.opencv.core.Mat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-@TeleOp(name = "Test Lynx LED", group = "Test")
-public class TestLynxLED extends LinearOpMode {
+@TeleOp(name = "Win", group = "Test")
+public class TestWin extends LinearOpMode {
+    private Grabber grabber = new Grabber(this);
+    boolean rightClaw = true, leftClaw = false;
+    ElapsedTime timer = new ElapsedTime();
+
     private double mod(double x, double y) {
         return x - Math.floor(x / y) * y;
     }
@@ -96,10 +104,18 @@ public class TestLynxLED extends LinearOpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+        grabber.init();
 
         waitForStart();
-        int i = 0;
+        double i = 0;
         while (opModeIsActive()) {
+            grabber.setPosition(leftClaw ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION, rightClaw ? OPEN_CLAW_POSITION : CLOSE_CLAW_POSITION);
+            if (timer.seconds() >= 0.5) {
+                leftClaw = !leftClaw;
+                rightClaw = !rightClaw;
+                timer.reset();
+            }
+
             Mat.Tuple3<Double> rgb = HSVtoRGB(i, 1, 1);
 
             // Command for the first hub
@@ -118,7 +134,7 @@ public class TestLynxLED extends LinearOpMode {
             try {
                 cmd0.send();
                 cmd1.send();
-                sleep(5);
+//                sleep(0);
             } catch (InterruptedException | LynxNackException e) {
                 e.printStackTrace();
             }
@@ -133,7 +149,7 @@ public class TestLynxLED extends LinearOpMode {
 
             // Start over if it's done
             if (i >= 360) i = 0;
-            else i++;
+            else i += 0.5;
         }
     }
 }
