@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24751.opmodes.teleop;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -25,6 +26,7 @@ import static org.firstinspires.ftc.team24751.Constants.SPEED.*;
 import java.util.List;
 
 @TeleOp(name = "Manual Main", group = "Manual")
+@Disabled
 public class ManualMain extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

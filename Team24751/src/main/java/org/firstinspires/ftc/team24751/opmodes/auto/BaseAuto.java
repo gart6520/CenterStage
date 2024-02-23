@@ -47,6 +47,7 @@ public abstract class BaseAuto extends LinearOpMode {
         // Init subsystems
         drivebase = new Drivebase(this);
         autoFSM.init();
+        PoseStorage.init();
 
         // Update status
         telemetry.addData("Status", "Initialized");

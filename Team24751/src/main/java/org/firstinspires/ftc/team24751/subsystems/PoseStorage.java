@@ -17,11 +17,11 @@ public class PoseStorage {
     // The init value is just 0. I tried to just use new Pose2d() but it causes error
     public static Pose2d pose = new Pose2d(new Vector2d(0, 0), 0);
     @SuppressLint("SdCardPath")
-    String fileName = "/sdcard/FIRST/pose.txt";
+    static String fileName = "/sdcard/FIRST/pose.txt";
     static FileWriter fileWriter;
     static Scanner fileReader;
 
-    PoseStorage() {
+    public static void init() {
         try {
             File file = new File(fileName);
             file.createNewFile();
