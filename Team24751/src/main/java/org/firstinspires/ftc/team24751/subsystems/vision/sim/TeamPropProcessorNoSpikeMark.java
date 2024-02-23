@@ -1,26 +1,8 @@
-package org.firstinspires.ftc.team24751.subsystems.vision;
-
-import static org.firstinspires.ftc.team24751.Constants.AllianceColor;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.RIGHT_CLOSE_TEAM_PROP_REGION;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_AREA_THRESHOLD;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_BLUE_MAX;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_BLUE_MIN;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_NAN_COUNT_THRESHOLD;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_RED_MAX;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TEAM_PROP_RED_MIN;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.CENTER;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.LEFT;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.NONE;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.RIGHT;
-import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropRegion;
-import static org.firstinspires.ftc.team24751.Constants.allianceColor;
+package org.firstinspires.ftc.team24751.subsystems.vision.sim;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-
-import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -32,10 +14,17 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import static org.firstinspires.ftc.team24751.Constants.VISION.CV.*;
+import static org.firstinspires.ftc.team24751.Constants.VISION.CV.TeamPropPosition.*;
+import static org.firstinspires.ftc.team24751.Constants.allianceColor;
+import static org.firstinspires.ftc.team24751.Constants.AllianceColor;
+
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamPropProcessor implements VisionProcessor {
+public class TeamPropProcessorNoSpikeMark implements VisionProcessor {
     /**
      * Frame properties
      */
@@ -53,7 +42,7 @@ public class TeamPropProcessor implements VisionProcessor {
     private Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(9, 9));
 
     // Bounding rect
-    public Rect boundingRect = new Rect(0, 0, 0, 0);
+    private Rect boundingRect = new Rect(0, 0, 0, 0);
 
     // Processed position
     private TeamPropPosition pos = NONE;
@@ -64,7 +53,6 @@ public class TeamPropProcessor implements VisionProcessor {
     private Paint paint = new Paint();
     double center;
     double area = 0;
-    double rectRatio = 0;
     long nanCount = 0;
     KalmanFilter kalmanFilter = new KalmanFilter(0.4, 0.1, 3);
 
@@ -132,32 +120,18 @@ public class TeamPropProcessor implements VisionProcessor {
             List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(img2, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
-            List<MatOfPoint> passedContours = new ArrayList<>();
-
-            // Filter out contour without correct size ratio
-            for (MatOfPoint contour : contours) {
-                // Get contour's bounding rect
-                Rect rect = Imgproc.boundingRect(contour);
-
-                // Filter by bounding box ratio
-                this.rectRatio = ((double) rect.width / (double) rect.height);
-                if (this.rectRatio <= 3) {
-                    passedContours.add(contour);
-                }
-            }
-
             // If no contours is found
-            if (passedContours.size() < 1) {
+            if (contours.size() < 1) {
                 this.boundingRect = new Rect(0, 0, 0, 0);
-                this.center = Double.NaN;
                 nanCount++;
                 return this.pos = NONE;
             }
+            nanCount--;
 
             // Find contour with largest area
             double max_area = 0;
-            MatOfPoint max_contour = new MatOfPoint();
-            for (MatOfPoint contour : passedContours) {
+            Mat max_contour = new Mat();
+            for (MatOfPoint contour : contours) {
                 double area = Imgproc.contourArea(contour);
                 if (area >= max_area) {
                     max_area = area;
@@ -171,16 +145,14 @@ public class TeamPropProcessor implements VisionProcessor {
             if (this.area < TEAM_PROP_AREA_THRESHOLD) {
                 this.boundingRect = new Rect(0, 0, 0, 0);
                 this.center = Double.NaN;
-                nanCount++;
                 return this.pos = NONE;
             }
 
+            // Get contour's bounding rect
             this.boundingRect = Imgproc.boundingRect(max_contour);
-            this.rectRatio = ((double) boundingRect.width / (double) boundingRect.height);
 
             // Calculate the center
             center = kalmanFilter.estimate(this.boundingRect.x + this.boundingRect.width / 2.0);
-            nanCount--;
             return center;
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,9 +233,5 @@ public class TeamPropProcessor implements VisionProcessor {
 
     public double getArea() {
         return this.area;
-    }
-
-    public double getRectRatio() {
-        return this.rectRatio;
     }
 }

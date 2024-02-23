@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.team24751.Constants.DEVICES.FRONT_CAMERA_NAM
 import static org.firstinspires.ftc.team24751.Constants.VISION.FRONT_CAMERA_RESOLUTION;
 import static org.firstinspires.ftc.team24751.Constants.allianceColor;
 
-import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -25,7 +23,7 @@ public class TestOCVTeamProp extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        allianceColor = Constants.AllianceColor.RED;
+        allianceColor = Constants.AllianceColor.BLUE;
 
         frontCam.addProcessorToQueue(teamPropProcessor);
         frontCam.buildCamera(FRONT_CAMERA_RESOLUTION);
@@ -43,6 +41,9 @@ public class TestOCVTeamProp extends LinearOpMode {
                 telemetry.addData("Team prop position", teamPropProcessor.getPos().toString());
                 telemetry.addData("Contour area", teamPropProcessor.getArea());
                 telemetry.addData("Center (X)", teamPropProcessor.getCenter());
+                telemetry.addData("Width", teamPropProcessor.boundingRect.width);
+                telemetry.addData("Height", teamPropProcessor.boundingRect.height);
+                telemetry.addData("Ratio", teamPropProcessor.getRectRatio());
                 telemetry.update();
             }
 

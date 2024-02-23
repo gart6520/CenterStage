@@ -205,7 +205,7 @@ public class Constants {
             public static PIDCoefficientsEx ARM_OUTAKE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.0975, 5, 0.01,
                     40, 100, 0.1);
-            public static PIDCoefficientsEx ARM_AUTO_INTAKE_PID_COEFFICIENTS = new PIDCoefficientsEx(
+            public static PIDCoefficientsEx ARM_AUTO_OUTAKE_PID_COEFFICIENTS = new PIDCoefficientsEx(
                     0.0975, 5, 0.01,
                     40, 100, 0.1);
             public static PIDCoefficientsEx ARM_DISTANCE_PID_COEFFICIENTS = new PIDCoefficientsEx(
@@ -261,8 +261,8 @@ public class Constants {
              *                           |-pixels-|  leaving the other
              *                           |--------|  3 untouched
              * */
-            public static double WRIST_AUTO_INTAKING_DEG = 210;
-            public static double WRIST_AUTO_OUTAKING_DEG = 190;
+            public static double WRIST_AUTO_INTAKING_DEG = 195;
+            public static double WRIST_AUTO_OUTAKING_DEG = 160;
 
             public static double OPEN_CLAW_POSITION = 0.25;
             public static double CLOSE_CLAW_POSITION = 0.011111111111111112;
@@ -375,9 +375,9 @@ public class Constants {
         public static final Pose2d WING_BLUE_START_POSE = new Pose2d(-36.00, 63.46875, Math.toRadians(-90));
         public static final Pose2d BACKDROP_RED_START_POSE = new Pose2d(12.00, -63.46875, Math.toRadians(90));
         public static final Pose2d BACKDROP_BLUE_START_POSE = new Pose2d(12.00, 63.46875, Math.toRadians(-90));
-        public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 6.5);
+        public static final Vector2d LEFT_BACKDROP = new Vector2d(0, 7.5);
         public static final Vector2d CENTER_BACKDROP = new Vector2d(0, 0);
-        public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -6.5);
+        public static final Vector2d RIGHT_BACKDROP = new Vector2d(0, -7.5);
 
     }
 }

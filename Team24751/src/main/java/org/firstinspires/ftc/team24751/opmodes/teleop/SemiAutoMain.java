@@ -470,7 +470,7 @@ public class SemiAutoMain extends LinearOpMode {
 
                         break;
                 }
-                if (curr2.options && !prev2.options && curr2.share && !prev2.share) {
+                if (curr2.options && curr2.share && !prev2.share) {
                     isSemiAuto = false;
                 }
             } else {
@@ -492,7 +492,7 @@ public class SemiAutoMain extends LinearOpMode {
                 } else {
                     arm.setPower(0);
                 }
-                if (curr2.options && !prev2.options && curr2.share && !prev2.share) {
+                if (curr2.options && curr2.share && !prev2.share) {
                     isSemiAuto = true;
                     wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
                     arm.resetEncoder();
@@ -505,22 +505,22 @@ public class SemiAutoMain extends LinearOpMode {
              * General buttons mapping for gamepad1
              */
 
-//            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
-//                grabLeftClose = !grabLeftClose;
-//                grabRightClose = !grabRightClose;
-//                grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
-//            } else {// Control left claw
-            if (curr2.left_bumper && !prev2.left_bumper) {
+            if (curr1.left_trigger > SENSE_TRIGGER && prev1.left_trigger <= SENSE_TRIGGER) {
                 grabLeftClose = !grabLeftClose;
-                grabber.leftClaw.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
-            }
-
-            // Control right claw
-            if (curr2.right_bumper && !prev2.right_bumper) {
                 grabRightClose = !grabRightClose;
-                grabber.rightClaw.setPosition(grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                grabber.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION, grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+            } else {// Control left claw
+                if (curr1.left_bumper && !prev1.left_bumper) {
+                    grabLeftClose = !grabLeftClose;
+                    grabber.leftClaw.setPosition(grabLeftClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                }
+
+                // Control right claw
+                if (curr1.right_bumper && !prev1.right_bumper) {
+                    grabRightClose = !grabRightClose;
+                    grabber.rightClaw.setPosition(grabRightClose ? CLOSE_CLAW_POSITION : OPEN_CLAW_POSITION);
+                }
             }
-//            }
 
             // Back LED indicator
             if (grabLeftClose) leftLED.setAmber();
@@ -598,7 +598,7 @@ public class SemiAutoMain extends LinearOpMode {
 
     private void extenderControl() {
         // Control extender
-        if (curr2.right_trigger > SENSE_TRIGGER) {
+        if (curr2.left_bumper) {
             extender.setPower(0.7);
         } else if (curr2.left_trigger > SENSE_TRIGGER) {
             extender.setPower(-0.7);

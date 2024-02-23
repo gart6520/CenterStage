@@ -25,7 +25,8 @@ public class Arm {
     LinearOpMode opMode;
     PIDEx outakePID = new PIDEx(ARM_OUTAKE_PID_COEFFICIENTS);
     PIDEx distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
-    PIDEx autoIntakePID = new PIDEx(ARM_AUTO_INTAKE_PID_COEFFICIENTS);
+    PIDEx autoOutakePID = new PIDEx(ARM_AUTO_OUTAKE_PID_COEFFICIENTS);
+
     FeedforwardEx feedforward = new FeedforwardEx(ARM_VELOCITY_FEEDFORWARD_COEFFICIENTS);
     Double targetAngle = null;
     WPILibMotionProfile motionProfile = null;
@@ -91,7 +92,7 @@ public class Arm {
     public void setTargetAngle(Double targetAngle) {
         this.targetAngle = targetAngle;
         outakePID = new PIDEx(ARM_OUTAKE_PID_COEFFICIENTS);
-        autoIntakePID = new PIDEx(ARM_AUTO_INTAKE_PID_COEFFICIENTS);
+        autoOutakePID = new PIDEx(ARM_AUTO_OUTAKE_PID_COEFFICIENTS);
         if (targetAngle != null)
             motionProfile = new WPILibMotionProfile(
                     ARM_VA_CONSTRAINT,
@@ -105,9 +106,6 @@ public class Arm {
         distancePID = new PIDEx(ARM_DISTANCE_PID_COEFFICIENTS);
     }
 
-    /**
-     * @return whether the PID loop has finished
-     */
     public boolean outakePIDLoop() {
         if (targetAngle == null) {
             outakePID.calculate(0, getAngle());
@@ -148,16 +146,16 @@ public class Arm {
         rightArmMotor.setPower(vel);
     }
 
-    public boolean autoIntakePIDLoop() {
+    public boolean autoOutakePIDLoop() {
         if (targetAngle == null) {
-            autoIntakePID.calculate(0, getAngle());
+            autoOutakePID.calculate(0, getAngle());
             return true;
         }
         if (Math.abs(getAngle() - targetAngle) < ANGLE_TOLERANCE) {
             setPower(0);
             return true;
         }
-        setPower(autoIntakePID.calculate(targetAngle, getAngle()));
+        setPower(autoOutakePID.calculate(targetAngle, getAngle()));
         return false;
     }
 

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.team24751.commands.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
-import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
+import org.firstinspires.ftc.team24751.subsystems.vision.sim.TeamPropProcessorNoSpikeMark;
 
 public abstract class BaseAuto extends LinearOpMode {
     // Total run time
@@ -21,7 +21,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected Drivebase drivebase = null;
     AutoTrajectoryManager autoTrajectoryManager;
     Camera frontCam = new Camera(FRONT_CAMERA_NAME, this);
-    TeamPropProcessor teamPropProcessor = new TeamPropProcessor();
+    TeamPropProcessorNoSpikeMark teamPropProcessor = new TeamPropProcessorNoSpikeMark();
     protected AutoTrajectoryManager.StartingPos startingPos;
     ElapsedTime timer = new ElapsedTime();
 
@@ -54,7 +54,11 @@ public abstract class BaseAuto extends LinearOpMode {
 //        sleep(4000);
         while (opModeInInit())
         {
-            telemetry.addData("Front Cam state", frontCam.getCamera().getCameraState().toString());
+            //telemetry.addData("Front Cam state", frontCam.getCamera().getCameraState().toString());
+            telemetry.addData("Team prop position", teamPropProcessor.getPos().toString());
+            telemetry.addData("Contour area", teamPropProcessor.getArea());
+            telemetry.addData("Center (X)", teamPropProcessor.getCenter());
+//            telemetry.addData("Ratio", teamPropProcessor.getRectRatio());
             telemetry.update();
         }
         autoFSM.dropArmAndReset();

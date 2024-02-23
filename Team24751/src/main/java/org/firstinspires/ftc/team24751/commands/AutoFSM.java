@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.team24751.commands;
 
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Arm.DISTANCE_TO_GROUND_THRESHOLD;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Extender.EXTENDER_FULLY_IN_THRESHOLD;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.CLOSE_CLAW_POSITION;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.OPEN_CLAW_POSITION;
+import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_AUTO_INTAKING_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_AUTO_OUTAKING_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_FULL_BACKWARD_DEG;
 import static org.firstinspires.ftc.team24751.Constants.HARDWARE_CONSTANT.Hand.WRIST_GROUND_PARALLEL_DEG;
@@ -111,10 +113,10 @@ public class AutoFSM {
                     wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                     waitServoTimer.reset();
                     hasPlacedPurplePixel = true;
-                    if (!hasBorrowThread) {
-                        result = borrowThread.get();
-                        hasBorrowThread = true;
-                    }
+                }
+                if (!hasBorrowThread) {
+                    result = borrowThread.get();
+                    hasBorrowThread = true;
                 }
                 if (waitServoTimer.seconds() >= 0.75 && hasPlacedPurplePixel) {
                     state = ArmState.roadrunner;
@@ -127,27 +129,32 @@ public class AutoFSM {
             case yellow_pixel:
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 yellowPixelYeeter.setPosition(YEET_YELLOW_PIXEL_YEETER_POSITION);
-                if (waitServoTimer.seconds() >= 1.2) {
+                if (waitServoTimer.seconds() >= 0.7) {
                     yellowPixelYeeter.setPosition(LOAD_YELLOW_PIXEL_YEETER_POSITION);
                     if (!hasBorrowThread) {
                         result = borrowThread.get();
                         hasBorrowThread = true;
                     }
                 }
-                if (waitServoTimer.seconds() >= 1.5) {
+                if (waitServoTimer.seconds() >= 1.2) {
                     state = ArmState.roadrunner;
                 }
                 break;
+            /*
+             * Must reset waitServoTimer
+             * */
             case prepare_intaking:
-                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                wrist.setAngle(WRIST_AUTO_INTAKING_DEG);
                 grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
-                state = ArmState.roadrunner;
+                if (waitServoTimer.seconds() > 0.75) {
+                    state = ArmState.roadrunner;
+                }
                 break;
             /*
              * Must reset waitServoTimer and hasBorrowThread
              * */
             case intaking:
-                wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
+                wrist.setAngle(WRIST_AUTO_INTAKING_DEG);
                 grabber.setPosition(CLOSE_CLAW_POSITION, CLOSE_CLAW_POSITION);
                 if (!hasBorrowThread) {
                     result = borrowThread.get();
@@ -172,8 +179,8 @@ public class AutoFSM {
                 } else if (waitServoTimer.seconds() >= 0.5) {
                     extender.setPower(0);
                     grabber.setPosition(OPEN_CLAW_POSITION, OPEN_CLAW_POSITION);
-                } else if (extender.getPosition() < 300) {
-                    extender.setPower(-0.5);
+                } else if (extender.getPosition() < 680) {
+                    extender.setPower(-1);
                 } else {
                     extender.setPower(0);
                 }
@@ -184,40 +191,23 @@ public class AutoFSM {
             case arm_moving_up:
                 wrist.setAngle(WRIST_FULL_BACKWARD_DEG);
                 if (arm.outakePIDLoop() || timeoutTimer.seconds() >= 1.75) {
-                    waitServoTimer.reset();
-                    state = ArmState.outaking;
+                    state = ArmState.roadrunner;
                 }
                 break;
             /*
              * Must reset timeoutTimer
              * */
             case arm_moving_down:
-                // Get current arm angle
-                double angle = arm.getAngle();
 
-                // If arm angle is < 20
-                if (angle < 20) {
-                    arm.setPower(-0.05);
-                }
-
-                // If arm angle is < 90
-                else if (angle < 90) {
-                    // If just enter 90 degree state
-
-                    // Move wrist up to allow base moving
-                    wrist.setAngle(WRIST_GROUND_PARALLEL_DEG);
-
-                    // Continue to move arm down
+                if (timeoutTimer.seconds() < 2 && extender.getPosition() > EXTENDER_FULLY_IN_THRESHOLD) {
+                    extender.setPower(1);
+                } else {
+                    extender.setPower(0);
                     arm.setPower(-0.1);
-
-                }
-                // If angle > 90 -> move arm down
-                else {
-                    arm.setPower(-0.4);
                 }
 
                 // If distance sensor reported touching ground or if arm is timeout
-                if (timeoutTimer.seconds() > 2 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
+                if (timeoutTimer.seconds() > 4 || distance.getDistanceCM() <= DISTANCE_TO_GROUND_THRESHOLD) {
                     // Stop arm
                     arm.setPower(0);
 

@@ -76,10 +76,10 @@ public class AutoTrajectoryManager {
         if (startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropBlue) {
             switch (teamPropPosition) {
                 case LEFT:
-                    initPoseToPurplePose = new Pose2d(18.7, 3, Math.toRadians(25));
+                    initPoseToPurplePose = new Pose2d(18.7, 3, Math.toRadians(20));
                     break;
                 case RIGHT:
-                    initPoseToPurplePose = new Pose2d(21.00, -3, Math.toRadians(-45));
+                    initPoseToPurplePose = new Pose2d(21.00, -5, Math.toRadians(-45));
                     break;
                 case CENTER:
                     initPoseToPurplePose = new Pose2d(22.00, 0, Math.toRadians(0));
@@ -89,10 +89,10 @@ public class AutoTrajectoryManager {
         } else { // Truss to the left
             switch (teamPropPosition) {
                 case LEFT:
-                    initPoseToPurplePose = new Pose2d(20.00, 0, Math.toRadians(45));
+                    initPoseToPurplePose = new Pose2d(20.00, 0, Math.toRadians(40));
                     break;
                 case RIGHT:
-                    initPoseToPurplePose = new Pose2d(18.7, -5, Math.toRadians(-30));
+                    initPoseToPurplePose = new Pose2d(18.7, -7, Math.toRadians(-25));
                     break;
                 case CENTER:
                     initPoseToPurplePose = new Pose2d(22.00, 0, Math.toRadians(0));
@@ -160,7 +160,7 @@ public class AutoTrajectoryManager {
                         .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
                         .lineToLinearHeading(new Pose2d(-36.00, -62.00, Math.toRadians(180.00)))
                         .lineToLinearHeading(new Pose2d(25.00, -62.00, Math.toRadians(180.00)))
-                        .lineToConstantHeading(new Vector2d(48.00, -44.00).plus(finalToCorrectBackdropPos))
+                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), -44.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
             case wingBlue:
@@ -184,7 +184,7 @@ public class AutoTrajectoryManager {
                         .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
                         .lineToLinearHeading(new Pose2d(-36.00, 60.69, Math.toRadians(180.00)))
                         .lineToLinearHeading(new Pose2d(25.00, 60.69, Math.toRadians(180.00)))
-                        .lineToConstantHeading(new Vector2d(48.00, 27.00).plus(finalToCorrectBackdropPos))
+                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), 26.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
             case backdropRed:
@@ -194,6 +194,7 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
                         .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), -44.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
@@ -204,7 +205,8 @@ public class AutoTrajectoryManager {
                         .build();
                  */
                 result.yellowPixelDrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), 27.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
+                        .lineToLinearHeading(finalInitPose.plus(new Pose2d(goBack.getX(), goBack.getY(), 0)))
+                        .lineToLinearHeading(new Pose2d(48.00 + finalToCorrectBackdropPos.getX(), 29.00 + finalToCorrectBackdropPos.getY(), Math.toRadians(180.00)))
                         .build();
                 break;
         }
@@ -212,46 +214,57 @@ public class AutoTrajectoryManager {
         // Repeat trajectory
         if (startingPos == StartingPos.wingRed || startingPos == StartingPos.backdropRed) {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToConstantHeading(new Vector2d(48.00, -12.00))
-                    .lineToLinearHeading(new Pose2d(-41.00, -12.00, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(48.00, -12.50, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-35.00, -12.50, Math.toRadians(180)))
                     .addDisplacementMarker(() -> {
                         autoFSM.state = AutoFSM.ArmState.prepare_intaking;
-                        autoFSM.update();
+                        autoFSM.waitServoTimer.reset();
+                        while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+                            autoFSM.update();
+                        }
                     })
                     .setVelConstraint(new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH))
-                    .lineToConstantHeading(new Vector2d(-55.00, -12.00))
+                    .lineToLinearHeading(new Pose2d(-58.00, -12.50, Math.toRadians(180)))
                     .resetConstraints()
                     .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .setConstraints(new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH), new ProfileAccelerationConstraint(100))
-                    .lineToConstantHeading(new Vector2d(-35.00, -12.00))
+                    .lineToConstantHeading(new Vector2d(-35.00, -12.50))
                     .resetConstraints()
                     .addDisplacementMarker(() -> {
                         autoFSM.state = AutoFSM.ArmState.after_intake;
                         autoFSM.update();
                     })
-                    .lineToLinearHeading(new Pose2d(-28.00, -12.00, Math.toRadians(0.00)))
-                    .lineToConstantHeading(new Vector2d(30.00, -12.00))
-                    .lineToConstantHeading(new Vector2d(46.00, -36.00))
+                    .lineToLinearHeading(new Pose2d(-28.00, -12.50, Math.toRadians(0.00)))
+                    .lineToConstantHeading(new Vector2d(39.00, -12.50))
+                    .lineToLinearHeading(new Pose2d(48.00, -36.00, Math.toRadians(0.00)))
                     .build();
         } else {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToConstantHeading(new Vector2d(48.00, 10.00))
-                    .lineToLinearHeading(new Pose2d(-41.00, 10.00, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(48.00, 10.00, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-35.00, 10.00, Math.toRadians(180)))
                     .addDisplacementMarker(() -> {
                         autoFSM.state = AutoFSM.ArmState.prepare_intaking;
-                        autoFSM.update();
-                    }).setVelConstraint(new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH))
-                    .lineToConstantHeading(new Vector2d(-55.00, 10.00)).resetConstraints().build();
+                        autoFSM.waitServoTimer.reset();
+                        while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+                            autoFSM.update();
+                        }
+                    })
+                    .setVelConstraint(new MecanumVelocityConstraint(35, DriveConstants.TRACK_WIDTH))
+                    .lineToLinearHeading(new Pose2d(-58.00, 10.00, Math.toRadians(180)))
+                    .resetConstraints()
+                    .build();
             result.repeatToBackdrop = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .setConstraints(new MecanumVelocityConstraint(56, DriveConstants.TRACK_WIDTH), new ProfileAccelerationConstraint(100))
-                    .lineToConstantHeading(new Vector2d(-35.00, 10.00)).resetConstraints().addDisplacementMarker(() -> {
+                    .lineToConstantHeading(new Vector2d(-35.00, 10.00))
+                    .resetConstraints()
+                    .addDisplacementMarker(() -> {
                         autoFSM.state = AutoFSM.ArmState.after_intake;
                         autoFSM.update();
                     })
                     .lineToLinearHeading(new Pose2d(-28.00, 10.00, Math.toRadians(0.00)))
-                    .lineToConstantHeading(new Vector2d(30.00, 10.00))
-                    .lineToConstantHeading(new Vector2d(46.00, 36.00))
+                    .lineToConstantHeading(new Vector2d(39.00, 10.00))
+                    .lineToLinearHeading(new Pose2d(48.00, 36.00, Math.toRadians(0.00)))
                     .build();
         }
         return result;
@@ -321,7 +334,19 @@ public class AutoTrajectoryManager {
             while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
                 autoFSM.update();
             }
-            drive.followTrajectorySequence(drive.trajectorySequenceBuilder(drive.getPoseEstimate()).setVelConstraint(new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH)).back(5).resetConstraints().build());
+            drive.followTrajectorySequence(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .forward(4)
+                    .build());
+
+            autoFSM.waitServoTimer.reset();
+            autoFSM.state = AutoFSM.ArmState.outaking;
+            while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
+                autoFSM.update();
+            }
+            // TODO: Go back to backstage
+            drive.followTrajectorySequence(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .setVelConstraint(new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH))
+                    .back(9).resetConstraints().build());
             autoFSM.timeoutTimer.reset();
             autoFSM.state = AutoFSM.ArmState.arm_moving_down;
             while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
