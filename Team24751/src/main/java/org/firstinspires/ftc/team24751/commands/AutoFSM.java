@@ -45,7 +45,7 @@ public class AutoFSM {
         opMode.telemetry.update();
 
         while (timer.seconds() <= 2 && distance.getDistanceCM() > DISTANCE_TO_GROUND_THRESHOLD) {
-            if (timer.seconds() >= 1) {
+            if (timer.seconds() >= 0) {
                 arm.setPower(-0.05);
             }
         }

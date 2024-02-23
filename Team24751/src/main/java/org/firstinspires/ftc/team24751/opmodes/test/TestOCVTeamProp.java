@@ -23,7 +23,7 @@ public class TestOCVTeamProp extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        allianceColor = Constants.AllianceColor.BLUE;
+        allianceColor = Constants.AllianceColor.RED;
 
         frontCam.addProcessorToQueue(teamPropProcessor);
         frontCam.buildCamera(FRONT_CAMERA_RESOLUTION);

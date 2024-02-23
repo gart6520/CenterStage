@@ -12,6 +12,7 @@ import org.firstinspires.ftc.team24751.commands.AutoTrajectoryManager;
 import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.vision.Camera;
+import org.firstinspires.ftc.team24751.subsystems.vision.TeamPropProcessor;
 import org.firstinspires.ftc.team24751.subsystems.vision.sim.TeamPropProcessorNoSpikeMark;
 
 public abstract class BaseAuto extends LinearOpMode {
@@ -21,7 +22,7 @@ public abstract class BaseAuto extends LinearOpMode {
     protected Drivebase drivebase = null;
     AutoTrajectoryManager autoTrajectoryManager;
     Camera frontCam = new Camera(FRONT_CAMERA_NAME, this);
-    TeamPropProcessorNoSpikeMark teamPropProcessor = new TeamPropProcessorNoSpikeMark();
+    TeamPropProcessor teamPropProcessor = new TeamPropProcessor();
     protected AutoTrajectoryManager.StartingPos startingPos;
     ElapsedTime timer = new ElapsedTime();
 

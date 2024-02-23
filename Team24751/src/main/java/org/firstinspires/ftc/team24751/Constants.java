@@ -329,7 +329,7 @@ public class Constants {
             }
 
             // Area threshold
-            public static double TEAM_PROP_AREA_THRESHOLD = 550; //px^2
+            public static double TEAM_PROP_AREA_THRESHOLD = 900; //px^2
             public static double TEAM_PROP_NAN_COUNT_THRESHOLD = 15; //px^2
 
             // Color threshold

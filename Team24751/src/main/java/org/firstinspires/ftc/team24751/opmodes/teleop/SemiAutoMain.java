@@ -265,6 +265,7 @@ public class SemiAutoMain extends LinearOpMode {
                         // When done retracing the arm's extender -> stop extender motor
                         else if (retractExtenderTimeout.seconds() < 1.5) {
                             isRetractExtenderTimeoutReset = false;
+                            extender.resetEncoder();
 
                             // Allow extender control
                             extenderControl();
@@ -300,6 +301,7 @@ public class SemiAutoMain extends LinearOpMode {
                         // When done retracing the arm's extender -> stop extender motor
                         else if (armMoveUpTimeout.seconds() < 1.5) {
                             extender.setPower(0);
+                            extender.resetEncoder();
                             isRetractExtenderTimeoutReset = false;
                         }
 
@@ -326,6 +328,15 @@ public class SemiAutoMain extends LinearOpMode {
 
                         // Allow extender control
                         extenderControl();
+
+                        // Buttons for further tuning the arm's angle (just in case)
+                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
+                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
+                        } else if (gamepad2.right_bumper) {
+                            arm.setPower(-0.4);
+                        } else {
+                            arm.setPower(0);
+                        }
 
                         // If grabber's reset button is pressed -> switch to quick_reset state
                         // Used to force the grabber to fully touch the ground
@@ -368,13 +379,13 @@ public class SemiAutoMain extends LinearOpMode {
                         }
 
                         // Buttons for further tuning the arm's angle (just in case)
-//                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
-//                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
-//                        } else if (gamepad2.right_bumper) {
-//                            arm.setPower(-0.4);
-//                        } else {
-//                            arm.setPower(0);
-//                        }
+                        if (gamepad2.right_trigger > SENSE_TRIGGER) {
+                            arm.setPower(Math.pow(gamepad2.right_trigger, 5));
+                        } else if (gamepad2.right_bumper) {
+                            arm.setPower(-0.4);
+                        } else {
+                            arm.setPower(0);
+                        }
 
                         break;
                     case arm_moving_down:
@@ -411,6 +422,7 @@ public class SemiAutoMain extends LinearOpMode {
                             // If extender is fully retracted
                             if (extender.getPosition() < EXTENDER_FULLY_IN_THRESHOLD || retractExtenderTimeout.seconds() > 1.5) {
                                 extender.setPower(0);
+                                extender.resetEncoder();
                             }
                         }
 

@@ -27,7 +27,9 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -102,6 +104,7 @@ public class TeamPropProcessor implements VisionProcessor {
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         try {
+            nanCount = Math.min(nanCount, 20);
             // Rotate image
             //Core.rotate(frame.clone(), frame, Core.ROTATE_180);
 
@@ -137,10 +140,10 @@ public class TeamPropProcessor implements VisionProcessor {
             // Filter out contour without correct size ratio
             for (MatOfPoint contour : contours) {
                 // Get contour's bounding rect
-                Rect rect = Imgproc.boundingRect(contour);
+                RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
 
                 // Filter by bounding box ratio
-                this.rectRatio = ((double) rect.width / (double) rect.height);
+                this.rectRatio = ((double) rect.size.width / (double) rect.size.height);
                 if (this.rectRatio <= 3) {
                     passedContours.add(contour);
                 }
@@ -175,11 +178,12 @@ public class TeamPropProcessor implements VisionProcessor {
                 return this.pos = NONE;
             }
 
+            RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(max_contour.toArray()));
+            this.rectRatio = ((double) rect.size.width / (double) rect.size.height);
             this.boundingRect = Imgproc.boundingRect(max_contour);
-            this.rectRatio = ((double) boundingRect.width / (double) boundingRect.height);
 
             // Calculate the center
-            center = kalmanFilter.estimate(this.boundingRect.x + this.boundingRect.width / 2.0);
+            center = kalmanFilter.estimate(rect.center.x);
             nanCount--;
             return center;
         } catch (Exception e) {
