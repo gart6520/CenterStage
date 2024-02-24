@@ -92,7 +92,7 @@ public class AutoTrajectoryManager {
                     initPoseToPurplePose = new Pose2d(20.00, 0, Math.toRadians(40));
                     break;
                 case RIGHT:
-                    initPoseToPurplePose = new Pose2d(18.7, -7, Math.toRadians(-25));
+                    initPoseToPurplePose = new Pose2d(18.7, -7, Math.toRadians(-22.5));
                     break;
                 case CENTER:
                     initPoseToPurplePose = new Pose2d(22.00, 0, Math.toRadians(0));
@@ -242,7 +242,7 @@ public class AutoTrajectoryManager {
         } else {
             result.repeatToStack = () -> drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(48.00, 11.00, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-35.00, 11.00, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-25.00, 11.00, Math.toRadians(180)))
                     .addDisplacementMarker(() -> {
                         autoFSM.state = AutoFSM.ArmState.prepare_intaking;
                         autoFSM.waitServoTimer.reset();
