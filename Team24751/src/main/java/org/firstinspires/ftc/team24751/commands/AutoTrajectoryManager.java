@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24751.Constants;
 import org.firstinspires.ftc.team24751.Utility;
+import org.firstinspires.ftc.team24751.subsystems.PoseStorage;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.DriveConstants;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.Drivebase;
 import org.firstinspires.ftc.team24751.subsystems.drivebase.trajectorysequence.TrajectorySequence;
@@ -326,7 +327,7 @@ public class AutoTrajectoryManager {
             // Go to backdrop
             TrajectorySequence repeatToBackdrop = autoFSM.result;
             drive.followTrajectorySequence(repeatToBackdrop);
-
+            PoseStorage.setPose(drive.getPoseEstimate());
             // Outtake Pixels
             autoFSM.timeoutTimer.reset();
             autoFSM.arm.setTargetAngle(ARM_BACKDROP_PARALLEL_ANGLE_AUTO);
@@ -337,6 +338,7 @@ public class AutoTrajectoryManager {
             drive.followTrajectorySequence(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .forward(4)
                     .build());
+            PoseStorage.setPose(drive.getPoseEstimate());
 
             autoFSM.waitServoTimer.reset();
             autoFSM.state = AutoFSM.ArmState.outaking;
@@ -347,6 +349,7 @@ public class AutoTrajectoryManager {
             drive.followTrajectorySequence(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .setVelConstraint(new MecanumVelocityConstraint(20, DriveConstants.TRACK_WIDTH))
                     .back(9).resetConstraints().build());
+            PoseStorage.setPose(drive.getPoseEstimate());
             autoFSM.timeoutTimer.reset();
             autoFSM.state = AutoFSM.ArmState.arm_moving_down;
             while (autoFSM.state != AutoFSM.ArmState.roadrunner) {
