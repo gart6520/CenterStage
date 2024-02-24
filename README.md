@@ -1,5 +1,7 @@
 # Source code repo for FTC#24751 GreenAms Robotics Team for the 2023-2024 CenterStage season
 
+**WINNING ALLIANCE CAPTAIN - FIRST TECH CHALLENGE VIETNAM 2023-2024**
+
 This repo contains the Android Studio projects with code for FTC#24751 GreenAms Robotics Team's FTC robot for the CenterStage season. It's based on the [original FTC SDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController).
 
 # How to build?
@@ -16,3 +18,5 @@ The build should success. You can either deploy to Control Hub via `adb` and And
 - [FtcDashboard](https://github.com/acmerobotics/ftc-dashboard) by [acmerobotics](https://github.com/acmerobotics). Should be disabled on official events.
 - [MeepMeep](https://github.com/NoahBres/MeepMeep) by [NoahBres](https://github.com/NoahBres/MeepMeep). Used for testing trajectory.
 - [homeostasis](https://github.com/Thermal-Equilibrium/homeostasis-FTC) by [Thermal-Equilibrium](https://github.com/Thermal-Equilibrium)
+
+Made possible by @KhiemGOM, @gvl610 and @mynameiskhanhhh.
