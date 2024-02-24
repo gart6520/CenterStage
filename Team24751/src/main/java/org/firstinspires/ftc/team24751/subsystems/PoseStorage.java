@@ -18,18 +18,18 @@ public class PoseStorage {
     public static Pose2d pose = new Pose2d(new Vector2d(0, 0), 0);
     @SuppressLint("SdCardPath")
     String fileName = "/sdcard/FIRST/pose.txt";
-    static FileWriter fileWriter;
-    static Scanner fileReader;
+//    static FileWriter fileWriter;
+//    static Scanner fileReader;
 
     PoseStorage() {
-        try {
-            File file = new File(fileName);
-            file.createNewFile();
-            fileWriter = new FileWriter(file);
-            fileReader = new Scanner(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            File file = new File(fileName);
+//            file.createNewFile();
+//            fileWriter = new FileWriter(file);
+//            fileReader = new Scanner(file);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**
@@ -41,11 +41,11 @@ public class PoseStorage {
      */
     public static void setPose(Pose2d pose) {
         PoseStorage.pose = pose;
-        try {
-            fileWriter.write(pose.getX() + " " + pose.getY() + " " + pose.getHeading());
-            fileWriter.close();
-        } catch (IOException ignored) {
-        }
+//        try {
+//            fileWriter.write(pose.getX() + " " + pose.getY() + " " + pose.getHeading());
+//            fileWriter.close();
+//        } catch (IOException ignored) {
+//        }
     }
 
     /**
@@ -56,13 +56,6 @@ public class PoseStorage {
      * @return stored Pose2d object
      */
     public static Pose2d getPose() {
-        if (pose.getX() == 0 &&
-                pose.getY() == 0 &&
-                pose.getHeading() == 0)
-            return PoseStorage.pose;
-        double x = fileReader.nextDouble();
-        double y = fileReader.nextDouble();
-        double heading = fileReader.nextDouble();
-        return new Pose2d(x, y, heading);
+        return pose;
     }
 }
